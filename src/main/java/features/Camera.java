@@ -33,6 +33,7 @@ public class Camera {
 
     public void manageTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
         // opreste camera la marginile hartii
+
         if (gPanel.player.screenX > gPanel.player.worldX) {
             screenX = worldX;
         }
@@ -87,6 +88,33 @@ public class Camera {
         }
     }
 
+    public static void rescaleTiles() {
+        for (int i = 0; i < gPanel.tiles.generalTiles.size(); i++) {
+            gPanel.tiles.generalTiles.get(i).image = UtilityTool.scaledImage(TileManager.originalTilesImage.get(i), gPanel.tileSize, gPanel.tileSize);
+        }
+    }
+
+    public static void rescalePlayer() {
+        for (AnimationState animationState : gPanel.player.movement.states) {
+            for (int j = 0; j < animationState.animationFrames.size(); j++) {
+                BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(j), gPanel.tileSize, gPanel.tileSize);
+                animationState.animationFrames.set(j, scaledImage);
+            }
+        }
+    }
+
+    public static void rescaleObjects() {
+        for (SuperObject object : gPanel.objects) {
+            object.image = UtilityTool.scaledImage(object.originalObjImage, gPanel.tileSize, gPanel.tileSize);
+        }
+    }
+
+    public static void rescaleAll() {
+        rescaleTiles();
+        rescalePlayer();
+        rescaleObjects();
+    }
+
     public static void zoomInOut(int i) {
 //        System.out.println("default zoom: " + gPanel.defaultZoom);
 
@@ -109,6 +137,10 @@ public class Camera {
         int newWorldWidth = gPanel.tileSize * gPanel.maxWorldCol; // 2350
         gPanel.player.speed = (double) newWorldWidth / 600;
         double mul = (double) newWorldWidth / oldWorldWidth; // 0.9791(6)
+
+        // actualizare latime si lungime world
+        gPanel.worldWidth *= mul;
+        gPanel.worldHeight *= mul;
 
         double newPlayerWorldX = gPanel.player.worldX * mul;
         double newPlayerWorldY = gPanel.player.worldY * mul;

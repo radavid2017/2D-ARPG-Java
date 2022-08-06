@@ -17,6 +17,7 @@ public class TileManager {
     public GamePanel gPanel;
     public List<Tile> generalTiles;
     public List<Tile> specialTiles;
+    public static List<BufferedImage> originalTilesImage = new ArrayList<>();
     public int[][] mapTileNum;
     private int idTiles = 9;
 
@@ -51,6 +52,7 @@ public class TileManager {
                 tile.idTile = ++idTiles;
                 tile.isColliding = isSolid;
                 // se adauga textura in lista
+                originalTilesImage.add(tile.image);
                 tileList.add(tile);
             }
             return tileList;

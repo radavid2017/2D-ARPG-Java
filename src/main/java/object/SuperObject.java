@@ -24,6 +24,8 @@ public abstract class SuperObject {
     public int solidAreaDefaultX = 0;
     public int solidAreaDefaultY = 0;
 
+    public BufferedImage originalObjImage;
+
     public void loadObject(GamePanel gp, String imageFilePath) {
         name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
 //        name = name.substring(0, name.indexOf("."));
@@ -31,6 +33,7 @@ public abstract class SuperObject {
         try {
             image = ImageIO.read(new FileInputStream(imageFilePath));
             image = UtilityTool.scaledImage(image, gp.tileSize, gp.tileSize);
+            image = originalObjImage;
         } catch (IOException e) {
             e.printStackTrace();
         }

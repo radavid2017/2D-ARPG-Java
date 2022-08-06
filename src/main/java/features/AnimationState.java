@@ -19,6 +19,7 @@ public class AnimationState {
     public String title; // titlul animatiei
     public Direction direction;
     public List<BufferedImage> animationFrames = new ArrayList<>();
+    public List<BufferedImage> entityOriginalImages = new ArrayList<>();
 
     /** variabile pentru rularea animatiilor */
     // interval de cadre pentru schimbare imagine
@@ -38,6 +39,7 @@ public class AnimationState {
                 System.out.println("CADRUL " + spriteName + " incarcat cu succes.");
                 BufferedImage image = ImageIO.read(new FileInputStream(spriteName));
                 image = UtilityTool.scaledImage(image,gp.tileSize, gp.tileSize);
+                entityOriginalImages.add(image);
                 imgList.add(image);
             }
             this.direction = direction;

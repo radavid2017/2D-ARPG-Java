@@ -48,9 +48,15 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_A -> leftPressed = true;
                 case KeyEvent.VK_D -> rightPressed = true;
                 // ZOOM IN
-                case KeyEvent.VK_UP -> Camera.zoomInOut(1);
+                case KeyEvent.VK_UP -> {
+                    Camera.zoomInOut(1);
+                    Camera.rescaleAll();
+                }
                 // ZOOM OUT
-                case KeyEvent.VK_DOWN -> Camera.zoomInOut(-1);
+                case KeyEvent.VK_DOWN -> {
+                    Camera.zoomInOut(-1);
+                    Camera.rescaleAll();
+                }
             }
         }
 
