@@ -2,6 +2,7 @@ package entity;
 
 import features.*;
 import game.GamePanel;
+import game.GameState;
 import game.UI;
 import object.TypeObject;
 
@@ -21,7 +22,7 @@ public class Player extends Entity {
     public final int screenY;
 
     // numarul de chei pe care jucatorul le detine in timp real
-    public int numKeys = 0;
+//    public int numKeys = 0;
 
 
     /** Constructor player */
@@ -69,9 +70,28 @@ public class Player extends Entity {
 
         /** Management animatii */
         BufferedImage sprite = null;
-        boolean isIdle = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
-        sprite = movement.manageAnimations(direction, isIdle);
-        g2D.drawImage(sprite, screenX, screenY, null);
+        boolean inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+        sprite = movement.manageAnimations(direction, inMotion);
+
+        int x = screenX;
+        int y = screenY;
+
+        if (screenX > worldX) {
+            x = (int) worldX;
+        }
+        if (screenY > worldY) {
+            y = (int) worldY;
+        }
+        int rightOffset = gPanel.screenWidth - screenX;
+        if (rightOffset > gPanel.worldWidth - worldX) {
+            x = (int) (gPanel.screenWidth - (gPanel.worldWidth - worldX));
+        }
+        int bottomOffset = gPanel.screenHeight - screenY;
+        if (bottomOffset > gPanel.worldHeight - worldY) {
+            y = (int) (gPanel.screenHeight - (gPanel.worldHeight - worldY));
+        }
+
+        g2D.drawImage(sprite, x, y, null);
 //        g2D.setColor(Color.red);
 //        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
@@ -104,41 +124,42 @@ public class Player extends Entity {
 
     public void pickUpObj(int objIndex) {
         if (objIndex > -1) {
-            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
-            switch (typeObject) {
-                case Key -> {
-                    gPanel.playSE("coin.wav");
-                    numKeys++;
-                    gPanel.objects.remove(objIndex);
-                    gPanel.ui.showMessage("Ai gasit o cheie!");
-                }
-                case Door -> {
-                    if (numKeys > 0) {
-                        gPanel.playSE("unlock.wav");
-                        gPanel.objects.remove(objIndex);
-                        numKeys--;
-                        gPanel.ui.showMessage("Ai deschis usa!");
-                    } else {
-                        gPanel.ui.showMessage("Iti trebuie o cheie!");
-                    }
-                }
-                case Boots -> {
-                    gPanel.playSE("powerup.wav");
-                    // mareste viteza jucatorului
-                    float increaseSpeed = 4f;
-                    speed += increaseSpeed;
-                    AnimationState.timeToChangeFrame -= increaseSpeed;
-                    gPanel.objects.remove(objIndex);
-                    gPanel.ui.showMessage("Acum esti mai rapid!");
-                }
-                case Chest -> {
-                    gPanel.ui.gameOver = true;
-                    UI.GAME_OVER = true;
-                    gPanel.stopMusic();
-                    gPanel.playSE("fanfare.wav");
-                    gPanel.hasPlayed = true;
-                }
-            }
+
+//            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
+//            switch (typeObject) {
+//                case Key -> {
+//                    gPanel.playSE("coin.wav");
+//                    numKeys++;
+//                    gPanel.objects.remove(objIndex);
+//                    gPanel.ui.showMessage("Ai gasit o cheie!");
+//                }
+//                case Door -> {
+//                    if (numKeys > 0) {
+//                        gPanel.playSE("unlock.wav");
+//                        gPanel.objects.remove(objIndex);
+//                        numKeys--;
+//                        gPanel.ui.showMessage("Ai deschis usa!");
+//                    } else {
+//                        gPanel.ui.showMessage("Iti trebuie o cheie!");
+//                    }
+//                }
+//                case Boots -> {
+//                    gPanel.playSE("powerup.wav");
+//                    // mareste viteza jucatorului
+//                    float increaseSpeed = 4f;
+//                    speed += increaseSpeed;
+//                    AnimationState.timeToChangeFrame -= increaseSpeed;
+//                    gPanel.objects.remove(objIndex);
+//                    gPanel.ui.showMessage("Acum esti mai rapid!");
+//                }
+//                case Chest -> {
+//                    gPanel.ui.gameOver = true;
+//                    UI.GAME_OVER = true;
+//                    gPanel.stopMusic();
+//                    gPanel.playSE("fanfare.wav");
+//                    gPanel.hasPlayed = true;
+//                }
+//            }
         }
     }
 

@@ -1,12 +1,9 @@
 package game;
 
-import object.SuperObject;
-
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -15,8 +12,9 @@ import java.util.Random;
 public class UI {
 
     GamePanel gPanel;
+    Graphics2D g2D;
     Font font;
-    BufferedImage keyImage;
+//    BufferedImage keyImage;
     int xKey = 40,yKey=40, keySize;
     int xMsg, yMsg;
     int screenWidth;
@@ -34,7 +32,7 @@ public class UI {
     public UI(GamePanel gPanel) {
         this.gPanel = gPanel;
         // instantiere imagini
-        keyImage = SuperObject.setImage("res/objects/key.png");
+//        keyImage = SuperObject.setImage("res/objects/key.png");
         keySize = gPanel.tileSize;
         // nume font, stil font, dimensiune font
         try {
@@ -56,19 +54,37 @@ public class UI {
      *  - Mesaje de notificare
      *  - Informatii utile legate de jucator si joc */
     public void draw(Graphics2D g2D) {
-        if (!gameOver) {
-            // setarea culorii si a fontului default
-            setFontColorDefault(g2D);
-            // afisarea informatiilor
-            drawKey(g2D);
-            displayTime(g2D);
-            // manevrarea afisarii textelor notificatoare
-            manageTextDisplays(g2D);
-        } else {
-            // game over
-            // manevrarea si afisarea textelor pentru finalul rundei / jocului
-            manageGameOverDisplay(g2D);
+
+        this.g2D = g2D;
+        g2D.setFont(font);
+        g2D.setColor(Color.WHITE);
+
+        switch (gPanel.gameState) {
+            case Play -> {
+                // play staff
+            }
+            case Pause -> {
+                // pause stuff
+                drawPauseScreen();
+            }
         }
+//        if (!gameOver) {
+//            // setarea culorii si a fontului default
+//            setFontColorDefault(g2D);
+//            // afisarea informatiilor
+//            drawKey(g2D);
+//            displayTime(g2D);
+//            // manevrarea afisarii textelor notificatoare
+//            manageTextDisplays(g2D);
+//        } else {
+//            // game over
+//            // manevrarea si afisarea textelor pentru finalul rundei / jocului
+//            manageGameOverDisplay(g2D);
+//        }
+    }
+
+    public void drawPauseScreen() {
+        displayCenterNotification(g2D, "PAUZA", 220f);
     }
 
     // setarea fontului si a culorii sale
@@ -81,8 +97,8 @@ public class UI {
     // afisarea numarului de chei si a imaginii
     private void drawKey(Graphics2D g2D) {
         g2D.setFont(g2D.getFont().deriveFont(80.0f));
-        g2D.drawImage(keyImage, xKey, yKey, keySize, keySize, null);
-        g2D.drawString("" + gPanel.player.numKeys, xKey + 95, yKey + 95);
+//        g2D.drawImage(keyImage, xKey, yKey, keySize, keySize, null);
+//        g2D.drawString("" + gPanel.player.numKeys, xKey + 95, yKey + 95);
     }
 
     // functie de preluare text si declansare de afisare a textului
@@ -104,7 +120,7 @@ public class UI {
     // manevrarea afisarii notificarilor
     private void manageTextDisplays(Graphics2D g2D) {
         if (messageOn) {
-            displayNotificationLayout(g2D, message);
+            displayCenterNotification(g2D, message, null);
             if (messageCounter > 120) { // textul dispare dupa 2 secunde
                 messageCounter = 0;
                 messageOn = false;
@@ -115,9 +131,9 @@ public class UI {
     }
 
     // afisarea unui mesaj notificator
-    private void displayNotificationLayout(Graphics2D g2D, String text) {
+    private void displayCenterNotification(Graphics2D g2D, String text, Float sizeFont) {
         FontRenderContext frc = g2D.getFontRenderContext();
-        TextLayout layout = new TextLayout(text, font.deriveFont(60.0f), frc);
+        TextLayout layout = new TextLayout(text, font.deriveFont(sizeFont == null ? 60.0f : sizeFont), frc);
         Rectangle2D bounds = layout.getBounds();
 
         int width = (int) Math.round(bounds.getWidth());

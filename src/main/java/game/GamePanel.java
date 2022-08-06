@@ -67,6 +67,9 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
     public List<SuperObject> objects = new ArrayList<>();
 
+    // GAME STATE - starea jocului
+    public static GameState gameState = GameState.NULL;
+
     /** Constructorul panoului de joc */
     public GamePanel() {
         System.out.println("scale: " + scale);
@@ -90,6 +93,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         // setup muzica de fundal
         playMusic("BlueBoyAdventure.wav");
+        stopMusic();
+        gameState = GameState.Play;
     }
 
     /** startGameThread - instantierea la inceperea rularii jocului */
@@ -147,7 +152,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     /** Metoda de actualizare a informatiilor */
     public void update() {
-        player.update();
+        switch (gameState) {
+            case Play -> player.update();
+            case Pause -> {
+                // nimic
+            }
+        }
     }
 
     /** Metoda de redesenare a informatiilor actualizate */

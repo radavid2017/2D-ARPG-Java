@@ -32,23 +32,49 @@ public class Camera {
     }
 
     public void manageTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
+        // opreste camera la marginile hartii
+        if (gPanel.player.screenX > gPanel.player.worldX) {
+            screenX = worldX;
+        }
+        if (gPanel.player.screenY > gPanel.player.worldY) {
+            screenY = worldY;
+        }
+        int rightOffset = gPanel.screenWidth - gPanel.player.screenX;
+        if (rightOffset > gPanel.worldWidth - gPanel.player.worldX) {
+            screenX = gPanel.screenWidth - (gPanel.worldWidth - worldX);
+        }
+        int bottomOffset = gPanel.screenHeight - gPanel.player.screenY;
+        if (bottomOffset > gPanel.worldHeight - gPanel.player.worldY) {
+            screenY = gPanel.screenHeight - (gPanel.worldHeight - worldY);
+        }
+
         if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
                 worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
                 worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
                 worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
 
-            boolean gasit = false;
-            for (Tile tile : tiles.generalTiles) {
-                if (tile.idTile == idTileMap) {
-                    g2D.drawImage(tile.image, (int) screenX, (int) screenY, null);
-                    gasit = true;
-                    break;
-                }
-            }
-            if (!gasit)
-                System.out.println("TILE NEGASIT");
+            drawTiles(g2D, tiles, idTileMap);
 //            g2D.drawImage(tiles.generalTiles.get(tileNum).image, (int) screenX, (int) screenY, null);
         }
+        else if (gPanel.player.screenX > gPanel.player.worldX ||
+                gPanel.player.screenY > gPanel.player.worldY ||
+                rightOffset > gPanel.worldWidth - gPanel.player.worldX ||
+                bottomOffset > gPanel.worldHeight - gPanel.player.worldY) {
+            drawTiles(g2D, tiles, idTileMap);
+        }
+    }
+
+    private void drawTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
+        boolean gasit = false;
+        for (Tile tile : tiles.generalTiles) {
+            if (tile.idTile == idTileMap) {
+                g2D.drawImage(tile.image, (int) screenX, (int) screenY, null);
+                gasit = true;
+                break;
+            }
+        }
+        if (!gasit)
+            System.out.println("TILE NEGASIT");
     }
 
     public void manageObjects(Graphics2D g2D, BufferedImage image) {

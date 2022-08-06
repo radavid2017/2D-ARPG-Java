@@ -42,7 +42,7 @@ public class TileManager {
             for (int i = 0; i < directory.list().length; i++) {
                 // citirea imaginii
                 String spriteName = filePath + "/" + filePath.substring(filePath.lastIndexOf("/")+1) + decFormat.format(i) + ".png";
-                System.out.println("TEXTURA " + spriteName + "incarcata cu succes.");
+                System.out.println("TEXTURA " + spriteName + " incarcata cu succes.");
                 Tile tile = new Tile();
                 tile.image = ImageIO.read(new FileInputStream(spriteName));
                 // scalarea imaginii

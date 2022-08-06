@@ -1,6 +1,7 @@
 package features;
 
 import game.GamePanel;
+import game.GameState;
 import game.UI;
 
 import java.awt.event.KeyEvent;
@@ -38,9 +39,8 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         /** getKeyCode - returneaza valoarea din codul ascii asociat butonului */
         int code = e.getKeyCode();
-        boolean cd = e.isActionKey();
 
-        if (!UI.GAME_OVER) {
+        if (!UI.GAME_OVER && gPanel.gameState == GameState.Play) {
             switch (code) {
                 // MOVEMENT
                 case KeyEvent.VK_W -> upPressed = true;
@@ -54,14 +54,16 @@ public class KeyHandler implements KeyListener {
             }
         }
 
-        // EXIT GAME
-        if (code == KeyEvent.VK_ESCAPE)
-            System.exit(0);
-
-        // DEBUG
-        if (code == KeyEvent.VK_T) {
-            checkDrawTime = !checkDrawTime;
+        switch (code) {
+            // EXIT GAME
+            case KeyEvent.VK_ESCAPE -> System.exit(0);
+            // DEBUG
+            case KeyEvent.VK_T -> checkDrawTime = !checkDrawTime;
+            // PAUSE - UNPAUSE
+            case KeyEvent.VK_P -> gPanel.gameState =
+                    gPanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
         }
+
     }
 
     @Override

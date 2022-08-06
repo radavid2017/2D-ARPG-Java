@@ -1,5 +1,7 @@
 package features;
 
+import game.GamePanel;
+import game.GameState;
 import game.UI;
 
 import java.awt.image.BufferedImage;
@@ -23,9 +25,9 @@ public class StateMachine {
     }
 
     /** Management animatii */
-    public BufferedImage manageAnimations(Direction direction, boolean isIdle) {
+    public BufferedImage manageAnimations(Direction direction, boolean inMotion) {
         if (!UI.GAME_OVER) {
-            if (isIdle) {
+            if (inMotion && GamePanel.gameState == GameState.Play) {
                 for (int i = 0; i < states.size(); i++) {
                     if (states.get(i).direction == direction) {
                         return states.get(i).nextFrame();
