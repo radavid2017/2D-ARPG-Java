@@ -1,8 +1,15 @@
 package features;
 
 import entity.Entity;
+import entity.NPC_OldMan;
+import entity.TypeNPC;
 import game.GamePanel;
+import object.SuperObject;
+import object.TypeObject;
 import tile.Tile;
+
+import java.util.List;
+import java.util.Objects;
 
 public class CollisionDetector {
 
@@ -133,5 +140,72 @@ public class CollisionDetector {
             }
         }
         return index;
+    }
+
+    /** NPC SAU MONSTRII */
+    public int checkEntity(Entity entity, List<Entity> target) {
+
+        int index=-1;
+        for (int i = 0; i < target.size(); i++) {
+            if (target.get(i) != null) {
+                if (collisionOnTarget(entity, target.get(i))) {
+                    entity.collisionOn = true;
+                    index = i;
+                }
+            }
+        }
+        return index;
+    }
+
+    /** PLAYER */
+    public void checkPlayer(Entity entity) {
+        if (collisionOnTarget(entity, gPanel.player))
+            entity.collisionOn = true;
+    }
+
+    /** fucntia returneaza true daca exista coliziune intre doua entitati */
+    private boolean collisionOnTarget(Entity entity, Entity target) {
+        boolean isColliding = false;
+        if (target != null) {
+            // preia pozitia ariei de coliziune a entitatii
+            entity.solidArea.x += entity.worldX;
+            entity.solidArea.y += entity.worldY;
+
+            // preia pozitia ariei de coliziune a obiectului
+            target.solidArea.x += target.worldX;
+            target.solidArea.y += target.worldY;
+
+            switch (entity.direction) {
+                case UP -> {
+                    entity.solidArea.y -= entity.speed;
+                    if (entity.solidArea.intersects(target.solidArea)) {
+                        isColliding = true;
+                    }
+                }
+                case DOWN -> {
+                    entity.solidArea.y += entity.speed;
+                    if (entity.solidArea.intersects(target.solidArea)) {
+                        isColliding = true;
+                    }
+                }
+                case LEFT -> {
+                    entity.solidArea.x -= entity.speed;
+                    if (entity.solidArea.intersects(target.solidArea)) {
+                        isColliding = true;
+                    }
+                }
+                case RIGHT -> {
+                    entity.solidArea.x += entity.speed;
+                    if (entity.solidArea.intersects(target.solidArea)) {
+                        isColliding = true;
+                    }
+                }
+            }
+            entity.solidArea.x = entity.solidAreaDefaultX;
+            entity.solidArea.y = entity.solidAreaDefaultY;
+            target.solidArea.x = target.solidAreaDefaultX;
+            target.solidArea.y = target.solidAreaDefaultY;
+        }
+        return isColliding;
     }
 }

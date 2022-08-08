@@ -1,5 +1,8 @@
 package features;
 
+import entity.Entity;
+import entity.NPC_OldMan;
+import entity.TypeNPC;
 import game.GamePanel;
 import object.*;
 
@@ -40,5 +43,18 @@ public class AssetPool {
         object.loadObject(gPanel, filePath);
         object.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
         gPanel.objects.add(object);
+    }
+
+    public void setNPC() {
+        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 21);
+    }
+
+    public void loadNPC( TypeNPC typeNPC, double worldX, double worldY) {
+        Entity entity = null;
+        switch (typeNPC) {
+            case OldMan -> entity = new NPC_OldMan(gPanel);
+        }
+        entity.setPosition(worldX, worldY);
+        gPanel.npc.add(entity);
     }
 }

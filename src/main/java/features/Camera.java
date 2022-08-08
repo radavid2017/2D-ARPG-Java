@@ -1,5 +1,6 @@
 package features;
 
+import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
 import tile.Tile;
@@ -32,8 +33,8 @@ public class Camera {
     }
 
     public void manageTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
-        // opreste camera la marginile hartii
 
+        // opreste camera la marginile hartii
         if (gPanel.player.screenX > gPanel.player.worldX) {
             screenX = worldX;
         }
@@ -78,6 +79,16 @@ public class Camera {
             System.out.println("TILE NEGASIT");
     }
 
+    public void manageEntity(Graphics2D g2D, BufferedImage image) {
+        if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
+                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
+                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
+                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
+
+            g2D.drawImage(image, (int) screenX, (int) screenY, null);
+        }
+    }
+
     public void manageObjects(Graphics2D g2D, BufferedImage image) {
         if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
                 worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
@@ -85,6 +96,17 @@ public class Camera {
                 worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
 
             g2D.drawImage(image, (int) screenX, (int) screenY, null);
+        }
+    }
+
+    public static void rescaleNPC() {
+        for (Entity npc : gPanel.npc) {
+            for (AnimationState animation : npc.movement.states) {
+                for (int i = 0; i < animation.animationFrames.size(); i++) {
+                    BufferedImage scaledImg = UtilityTool.scaledImage(animation.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
+                    animation.animationFrames.set(i, scaledImg);
+                }
+            }
         }
     }
 
@@ -96,9 +118,9 @@ public class Camera {
 
     public static void rescalePlayer() {
         for (AnimationState animationState : gPanel.player.movement.states) {
-            for (int j = 0; j < animationState.animationFrames.size(); j++) {
-                BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(j), gPanel.tileSize, gPanel.tileSize);
-                animationState.animationFrames.set(j, scaledImage);
+            for (int i = 0; i < animationState.animationFrames.size(); i++) {
+                BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
+                animationState.animationFrames.set(i, scaledImage);
             }
         }
     }
@@ -113,6 +135,7 @@ public class Camera {
         rescaleTiles();
         rescalePlayer();
         rescaleObjects();
+        rescaleNPC();
     }
 
     public static void zoomInOut(int i) {
@@ -155,11 +178,20 @@ public class Camera {
             gPanel.player.solidArea.width += i * mul;
             gPanel.player.solidArea.height += i * mul;
         }
-//        gPanel.player.solidArea.x += mul;
-//        gPanel.player.solidArea.y += mul;
 
-//        System.out.println("player: " + gPanel.player.worldX + " " + gPanel.player.worldY);
-//        System.out.println("solidArea: " + gPanel.player.solidArea.x + " " + gPanel.player.solidArea.y);
+        // NPCs
+        for (Entity npcCurrent : gPanel.npc) {
+            // update speed
+            npcCurrent.speed = newWorldWidth / (600f*gPanel.player.speed);
+            // update pozitii
+            npcCurrent.worldX *= mul;
+            npcCurrent.worldY *= mul;
+            // update solid area
+            if (canScale && nr > gPanel.limitZoomOut+150 && nr < gPanel.limitZoomIn-100) {
+                npcCurrent.solidArea.width += i * mul;
+                npcCurrent.solidArea.height += i * mul;
+            }
+        }
 
         // actualizare marime zoom pentru obiecte
         for (SuperObject object : gPanel.objects) {

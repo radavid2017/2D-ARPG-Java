@@ -15,7 +15,6 @@ import java.util.Arrays;
 // precum pozitia sa si viteza de deplasare
 public class Player extends Entity {
 
-    GamePanel gPanel;
     KeyHandler keyH;
 
     public final int screenX;
@@ -27,7 +26,9 @@ public class Player extends Entity {
 
     /** Constructor player */
     public Player(GamePanel gPanel, KeyHandler keyH, int x, int y, Direction direction) {
-        this.gPanel = gPanel;
+
+        super(gPanel);
+
         this.keyH = keyH;
         this.worldX = x;
         this.worldY = y;
@@ -52,10 +53,8 @@ public class Player extends Entity {
 
     /** incarcarea animatiilor pentru player */
     public void getPlayerSprites() {
-        this.loadMovementAnimations();
+        this.loadMovementAnimations("res\\player\\mage");
     }
-
-    @Override
     public void update() {
 
         // Deplasari jucator
@@ -65,7 +64,6 @@ public class Player extends Entity {
         AnimationState.updateFrames();
     }
 
-    @Override
     public void draw(Graphics2D g2D) {
 
         /** Management animatii */
@@ -92,35 +90,35 @@ public class Player extends Entity {
         }
 
         g2D.drawImage(sprite, x, y, null);
-//        g2D.setColor(Color.red);
-//        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+        g2D.setColor(Color.red);
+        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
 
     /** inregistrarea animatiilor pentru player */
-    @Override
-    public void loadMovementAnimations() {
-        /** ANIMATII MOVEMENT */
-        String movementFolderName = JOptionPane.showInputDialog("Numele folderului de animatie:");
-//        String movementFolderName = "archer";
-        // UP
-//        RenameFolderFiles.rename("E:\\AplicatiiCV\\2DAdventure\\res\\player\\movement\\north");
-        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, "res\\player\\" + movementFolderName + "\\north");
-        System.out.println("Animatia " + walkUp.title + " incarcata cu succes.");
-        // RIGHT
-        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,"res\\player\\" + movementFolderName + "\\east");
-        System.out.println("Animatia " + walkRight.title + " incarcata cu succes.");
-        // DOWN
-        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, "res\\player\\" + movementFolderName + "\\south");
-        System.out.println("Animatia " + walkDown.title + " incarcata cu succes.");
-        // LEFT
-        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, "res\\player\\" + movementFolderName + "\\west");
-        System.out.println("Animatia " + walkLeft.title + " incarcata cu succes.");
-
-        movement = new StateMachine();
-        for (AnimationState animationState : Arrays.asList(this.walkUp, this.walkDown, this.walkRight, this.walkLeft)) {
-            this.movement.add(animationState);
-        }
-    }
+//    @Override
+//    public void loadMovementAnimations() {
+//        /** ANIMATII MOVEMENT */
+//        String movementFolderName = JOptionPane.showInputDialog("Numele folderului de animatie:");
+////        String movementFolderName = "archer";
+//        // UP
+////        RenameFolderFiles.rename("E:\\AplicatiiCV\\2DAdventure\\res\\player\\movement\\north");
+//        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, "res\\player\\" + movementFolderName + "\\north");
+//        System.out.println("Animatia " + walkUp.title + " incarcata cu succes.");
+//        // RIGHT
+//        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,"res\\player\\" + movementFolderName + "\\east");
+//        System.out.println("Animatia " + walkRight.title + " incarcata cu succes.");
+//        // DOWN
+//        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, "res\\player\\" + movementFolderName + "\\south");
+//        System.out.println("Animatia " + walkDown.title + " incarcata cu succes.");
+//        // LEFT
+//        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, "res\\player\\" + movementFolderName + "\\west");
+//        System.out.println("Animatia " + walkLeft.title + " incarcata cu succes.");
+//
+//        movement = new StateMachine();
+//        for (AnimationState animationState : Arrays.asList(this.walkUp, this.walkDown, this.walkRight, this.walkLeft)) {
+//            this.movement.add(animationState);
+//        }
+//    }
 
     public void pickUpObj(int objIndex) {
         if (objIndex > -1) {
@@ -183,15 +181,6 @@ public class Player extends Entity {
         return false;
     }
 
-    public void manageMovement() {
-        switch (this.direction) {
-            case UP -> this.worldY -= this.speed;
-            case DOWN -> this.worldY += this.speed;
-            case LEFT -> this.worldX -= this.speed;
-            case RIGHT -> this.worldX += this.speed;
-        }
-    }
-
     public void managePlayerMovement() {
         if (isMoving()) {
 //            System.out.println("up: " + keyH.upPressed + " down: " + keyH.downPressed + " left: " + keyH.leftPressed + " right: " + keyH.rightPressed);
@@ -203,8 +192,18 @@ public class Player extends Entity {
             int objIndex = gPanel.collisionDetector.manageObjCollision(this, true);
             pickUpObj(objIndex);
 
+            // verifica coliziunea cu NPC
+            int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npc);
+            interactNPC(npcIndex);
+
             if (!collisionOn)
                 manageMovement();
+        }
+    }
+
+    private void interactNPC(int npcIndex) {
+        if (npcIndex > -1) {
+            // interactionari cu npc-uri
         }
     }
 }

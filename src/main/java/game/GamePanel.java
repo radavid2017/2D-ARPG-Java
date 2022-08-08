@@ -1,5 +1,7 @@
 package game;
 
+import entity.Entity;
+import entity.NPC_OldMan;
 import entity.Player;
 import features.*;
 import object.SuperObject;
@@ -24,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
     // original scale * scaleValue --> tileSize
     public int tileSize = originalTileSize*scale; // valoarea dimensiunii finale a obiectului de joc
     // realizarea aspectului ratio - 4:3
-    public int maxScreenCol = Toolkit.getDefaultToolkit().getScreenSize().width/tileSize;//20; // 16 tiles horizontal
+    public int maxScreenCol = Toolkit.getDefaultToolkit().getScreenSize().width/tileSize + 1;//20; // 16 tiles horizontal
     public int maxSCreenRow = Toolkit.getDefaultToolkit().getScreenSize().height/tileSize + 1;//12; // 12 tiles vertical
     // realizarea dimensiunii jocului
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixeli
@@ -64,8 +66,13 @@ public class GamePanel extends JPanel implements Runnable {
 
     /** Entitate si obiect */
     // Setarea pozitiei implicite a jucatorului
+    // player
     public Player player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
+    // lista NPC
+    public List<Entity> npc = new ArrayList<>();
+    // lista obiecte
     public List<SuperObject> objects = new ArrayList<>();
+
 
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.NULL;
@@ -90,7 +97,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         // adaugarea obiectelor in joc
         assetPool.setObjects();
-
+        // adaugarea npc-urilor
+        assetPool.setNPC();
         // setup muzica de fundal
         playMusic("BlueBoyAdventure.wav");
         stopMusic();
@@ -153,7 +161,16 @@ public class GamePanel extends JPanel implements Runnable {
     /** Metoda de actualizare a informatiilor */
     public void update() {
         switch (gameState) {
-            case Play -> player.update();
+            case Play -> {
+                // PLAYER UPDATE
+                player.update();
+                // NPC UPDATE
+                for (Entity npc : npc) {
+                    if (npc != null) {
+                        npc.update();
+                    }
+                }
+            }
             case Pause -> {
                 // nimic
             }
@@ -179,6 +196,13 @@ public class GamePanel extends JPanel implements Runnable {
         for (SuperObject obj : objects) {
             if (obj != null) {
                 obj.draw(g2D, this);
+            }
+        }
+
+        // NPC
+        for (Entity entity : npc) {
+            if (entity != null) {
+                entity.draw(g2D);
             }
         }
 

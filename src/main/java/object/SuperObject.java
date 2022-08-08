@@ -26,6 +26,10 @@ public abstract class SuperObject {
 
     public BufferedImage originalObjImage;
 
+    public SuperObject() {
+
+    }
+
     public void loadObject(GamePanel gp, String imageFilePath) {
         name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
 //        name = name.substring(0, name.indexOf("."));
