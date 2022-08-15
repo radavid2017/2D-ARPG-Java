@@ -41,12 +41,18 @@ public class Player extends Entity {
 
         // INSTANTIERE COLIZIUNE
         solidArea = new Rectangle();
-        solidArea.x = 32;
-        solidArea.y = 32;
-        solidAreaDefaultX = 32;
-        solidAreaDefaultY = 32;
-        solidArea.width = 38; // 64;
-        solidArea.height = 48; //62;
+        solidArea.x = gPanel.tileSize/4;
+        solidArea.y = gPanel.tileSize/4;
+        solidAreaDefaultX = gPanel.tileSize/4;
+        solidAreaDefaultY = gPanel.tileSize/4;
+        solidArea.width = gPanel.tileSize/2;
+        solidArea.height = (int) (gPanel.tileSize/1.5);
+//        solidArea.x = 32;
+//        solidArea.y = 32;
+//        solidAreaDefaultX = 32;
+//        solidAreaDefaultY = 32;
+//        solidArea.width = 38; // 64;
+//        solidArea.height = 62; //48; //62;
 
         this.getPlayerSprites();
     }
@@ -203,7 +209,12 @@ public class Player extends Entity {
 
     private void interactNPC(int npcIndex) {
         if (npcIndex > -1) {
-            // interactionari cu npc-uri
+            if (gPanel.keyH.enterPressed) {
+                // interactionari cu npc-uri
+                GamePanel.gameState = GameState.Dialogue;
+                gPanel.npc.get(npcIndex).speak();
+            }
+            gPanel.keyH.enterPressed = false;
         }
     }
 }

@@ -12,6 +12,7 @@ public class KeyHandler implements KeyListener {
 
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     private boolean upWasPressed,downWasPressed,leftWasPressed,rightWasPressed;
+    public boolean enterPressed;
     public boolean checkDrawTime = false;
     GamePanel gPanel;
 
@@ -40,7 +41,8 @@ public class KeyHandler implements KeyListener {
         /** getKeyCode - returneaza valoarea din codul ascii asociat butonului */
         int code = e.getKeyCode();
 
-        if (!UI.GAME_OVER && gPanel.gameState == GameState.Play) {
+        // PLAY STATE
+        if (!UI.GAME_OVER && GamePanel.gameState == GameState.Play) {
             switch (code) {
                 // MOVEMENT
                 case KeyEvent.VK_W -> upPressed = true;
@@ -51,12 +53,27 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_UP -> {
                     Camera.zoomInOut(1);
                     Camera.rescaleAll();
+//                    Camera.validatePositions(gPanel.npc, gPanel.player);
+//                    Camera.fixPlayerStuckInTile();
                 }
                 // ZOOM OUT
                 case KeyEvent.VK_DOWN -> {
                     Camera.zoomInOut(-1);
                     Camera.rescaleAll();
+//                    Camera.validatePositions(gPanel.npc, gPanel.player);
+//                    Camera.fixPlayerStuckInTile();
                 }
+                // ENTER DIALOGUE
+                case KeyEvent.VK_ENTER -> {
+                    enterPressed = true;
+                }
+            }
+        }
+
+        // DIALOGUE STATE
+        else if (GamePanel.gameState == GameState.Dialogue) {
+            if (code == KeyEvent.VK_ENTER) {
+                GamePanel.gameState = GameState.Play;
             }
         }
 
@@ -66,8 +83,8 @@ public class KeyHandler implements KeyListener {
             // DEBUG
             case KeyEvent.VK_T -> checkDrawTime = !checkDrawTime;
             // PAUSE - UNPAUSE
-            case KeyEvent.VK_P -> gPanel.gameState =
-                    gPanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
+            case KeyEvent.VK_P -> GamePanel.gameState =
+                    GamePanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
         }
 
     }

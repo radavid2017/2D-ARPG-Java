@@ -144,7 +144,6 @@ public class CollisionDetector {
 
     /** NPC SAU MONSTRII */
     public int checkEntity(Entity entity, List<Entity> target) {
-
         int index=-1;
         for (int i = 0; i < target.size(); i++) {
             if (target.get(i) != null) {
@@ -159,8 +158,9 @@ public class CollisionDetector {
 
     /** PLAYER */
     public void checkPlayer(Entity entity) {
-        if (collisionOnTarget(entity, gPanel.player))
+        if (collisionOnTarget(entity, gPanel.player)) {
             entity.collisionOn = true;
+        }
     }
 
     /** fucntia returneaza true daca exista coliziune intre doua entitati */

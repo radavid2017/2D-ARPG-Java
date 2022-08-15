@@ -1,7 +1,8 @@
 package game;
 
 public enum GameState {
+    NULL,
     Play,
     Pause,
-    NULL
+    Dialogue
 }

@@ -1,15 +1,14 @@
 package entity;
 
-import features.AnimationState;
-import features.Camera;
-import features.Direction;
-import features.StateMachine;
+import features.*;
 import game.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /** Super clasa - Entitate
  *  Aceasta contine variabile care pot fi folosite
@@ -32,16 +31,24 @@ public abstract class Entity {
     public Direction direction;
 
     /** Declararea blocului de coliziune */
-    public Rectangle solidArea = new Rectangle(32, 32, 38, 48); // aria de coliziune implicita pentru toate entitatile
-    public int solidAreaDefaultX = 32, solidAreaDefaultY = 32;
+    public Rectangle solidArea;
+    public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
     public int actionLockCounter = 0;
     public int timeToChangeFrame = 12;
     public int currentTime = 0;
+//    public ArrayList<String> dialogues = new ArrayList<>();
+//    private int dialogueIndex = 0;
+//    public boolean endedDialogue = false;
+    public Dialogue dialogue = new Dialogue();
+//    private Iterator<String> dialogueIndex = dialogue.textStack.iterator();
 
     /** Constrcutor entitate */
     public Entity(GamePanel gPanel) {
         this.gPanel = gPanel;
+         solidArea = new Rectangle(gPanel.tileSize/4, gPanel.tileSize/4, gPanel.tileSize, (int) (gPanel.tileSize/1.25)); // aria de coliziune implicita pentru toate entitatile
+        solidAreaDefaultX = gPanel.tileSize/8;
+        solidAreaDefaultY = 0;
     }
 
     public Entity() {
@@ -51,7 +58,7 @@ public abstract class Entity {
     /** Metodele de actualizare si scriere a informatiilor asupra entitatii */
     // actualizare
     public void update() {
-        setAction();
+        AI();
 
         collisionOn = false;
         gPanel.collisionDetector.manageTileCollision(this);
@@ -69,8 +76,23 @@ public abstract class Entity {
 
     }
 
-    public void setAction() {
+    public void AI() {
 
+    }
+
+    public void speak() {
+
+        gPanel.ui.setCurrentDialogue(dialogue);
+        dialogue.indexText = dialogue.indexText >= dialogue.size()-1 ? 0 : ++dialogue.indexText;
+//          endedDialogue = dialogueIndex >= dialogues.size() - 1;
+//        dialogueIndex = dialogueIndex >= dialogues.size()-1 ? 0 : ++dialogueIndex;
+
+        switch (gPanel.player.direction) {
+            case UP -> direction = Direction.DOWN;
+            case DOWN -> direction = Direction.UP;
+            case LEFT -> direction = Direction.RIGHT;
+            case RIGHT -> direction = Direction.LEFT;
+        }
     }
 
     /** Movement management */

@@ -1,5 +1,7 @@
 package game;
 
+import features.Dialogue;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -7,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Iterator;
 import java.util.Random;
 
 public class UI {
@@ -22,6 +25,7 @@ public class UI {
 
     public boolean messageOn = false;
     public String message = "";
+    private Dialogue currentDialogue;
     public boolean gameOver = false;
     public static boolean GAME_OVER = false;
 
@@ -59,13 +63,17 @@ public class UI {
         g2D.setFont(font);
         g2D.setColor(Color.WHITE);
 
-        switch (gPanel.gameState) {
+        switch (GamePanel.gameState) {
             case Play -> {
                 // play staff
             }
             case Pause -> {
                 // pause stuff
                 drawPauseScreen();
+            }
+            case Dialogue -> {
+                // starea de dialog
+                drawDialogueScreen();
             }
         }
 //        if (!gameOver) {
@@ -105,6 +113,40 @@ public class UI {
     public void showMessage(String text) {
         message = text;
         messageOn = true;
+    }
+
+    private void drawDialogueScreen() {
+
+        // fereastra de dialog
+        int x = gPanel.tileSize*2;
+        int y = gPanel.tileSize/2;
+        int width = gPanel.screenWidth - (gPanel.tileSize*5);
+        int height = gPanel.tileSize*4;
+
+        drawSubWindow(x, y, width, height);
+
+        // textul de afisat in fereastra de dialog
+        g2D.setFont(font.deriveFont(Font.PLAIN, 28f));
+        x += gPanel.tileSize;
+        y += gPanel.tileSize;
+
+        String text = currentDialogue.peekText();
+        for (String line : text.split("\n")) {
+            g2D.drawString(line, x, y);
+            y += 40;
+        }
+    }
+
+    private void drawSubWindow(int x, int y, int width, int height) {
+
+        Color c = new Color(0, 0, 0, 210);
+        g2D.setColor(c);
+        g2D.fillRoundRect(x,y,width,height,35, 35);
+
+        c = new Color(255, 255, 255);
+        g2D.setColor(c);
+        g2D.setStroke(new BasicStroke(5));
+        g2D.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
     }
 
     // manevrarea afisarii textelor din Game Over si a opririi thread-ului de rulare a jocului dupa un anumit timp
@@ -219,5 +261,13 @@ public class UI {
         TextLayout layout = new TextLayout(timePlayed, font.deriveFont(40.0f), frc); // 220 sau 120
 
         layout.draw(g2D, (float) xKey*42 - 55f, (float) yKey + 35f);
+    }
+
+    public Dialogue getCurrentDialogue() {
+        return currentDialogue;
+    }
+
+    public void setCurrentDialogue(Dialogue currentDialogue) {
+        this.currentDialogue = currentDialogue;
     }
 }

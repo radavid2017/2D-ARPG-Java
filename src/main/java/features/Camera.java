@@ -8,6 +8,7 @@ import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class Camera {
     public double worldX;
@@ -138,6 +139,67 @@ public class Camera {
         rescaleNPC();
     }
 
+    public static void fixNPCStuckInTile() {
+        for (Entity npc : gPanel.npc) {
+            int tileHoldingEntity = gPanel.tiles.mapTileNum[(int) npc.worldX][(int) npc.worldY];
+            for (Tile tile : gPanel.tiles.generalTiles){
+                if (tile.idTile == tileHoldingEntity && tile.isColliding) {
+                    npc.collisionOn = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void fixPlayerStuckInTile() {
+        int tileHoldingEntity = gPanel.tiles.mapTileNum[(int) gPanel.player.worldX/gPanel.tileSize][(int) gPanel.player.worldY/gPanel.tileSize];
+        for (Tile tile : gPanel.tiles.generalTiles){
+            if (tile.idTile == tileHoldingEntity && tile.isColliding) {
+                gPanel.player.collisionOn = false;
+                break;
+            }
+        }
+    }
+
+    private static void switchDirection(Entity entity) {
+        switch (entity.direction) {
+            case UP -> entity.direction = Direction.DOWN;
+            case DOWN -> entity.direction = Direction.UP;
+            case LEFT -> entity.direction = Direction.RIGHT;
+            case RIGHT -> entity.direction = Direction.LEFT;
+        }
+    }
+
+    public static void validatePositions(Entity entity, Entity target) {
+        double entityLeftWorldX = entity.worldX + entity.solidArea.x;
+        double entityRightWorldX = entityLeftWorldX + entity.solidArea.width;
+        double entityTopWorldY = entity.worldY + entity.solidArea.y;
+        double entityBottomWorldY = entityTopWorldY + entity.solidArea.height;
+
+        double targetLeftWorldX = target.worldX + target.solidArea.x;
+        double targetRightWorldX = targetLeftWorldX + target.solidArea.width;
+        double targetTopWorldY = target.worldY + target.solidArea.y;
+        double targetBottomWorldY = entityTopWorldY + target.solidArea.height;
+
+        if (entityLeftWorldX < targetRightWorldX && entityRightWorldX > targetRightWorldX) {
+            entity.collisionOn = false;
+            target.collisionOn = false;
+        }
+        else if (entityBottomWorldY > targetTopWorldY && entityTopWorldY < targetTopWorldY) {
+            entity.collisionOn = false;
+            target.collisionOn = false;
+        }
+        else if (entityRightWorldX > targetLeftWorldX && entityLeftWorldX < targetLeftWorldX) {
+            entity.collisionOn = false;
+            target.collisionOn = false;
+        }
+        else if (entityTopWorldY < targetBottomWorldY && entityBottomWorldY > targetBottomWorldY) {
+            entity.collisionOn = false;
+            target.collisionOn = false;
+        }
+
+    }
+
     public static void zoomInOut(int i) {
 //        System.out.println("default zoom: " + gPanel.defaultZoom);
 
@@ -174,9 +236,11 @@ public class Camera {
 
         // actualizare marime zoom pentru aria de coliziune a jucatorului
         int nr = gPanel.tileSize*gPanel.maxWorldCol;
-        if (canScale && nr > gPanel.limitZoomOut+150 && nr < gPanel.limitZoomIn-100) {
-            gPanel.player.solidArea.width += i * mul;
-            gPanel.player.solidArea.height += i * mul;
+        if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
+            gPanel.player.solidAreaDefaultX = gPanel.tileSize/4;
+            gPanel.player.solidAreaDefaultY = gPanel.tileSize/4;
+            gPanel.player.solidArea.width = gPanel.tileSize/2;
+            gPanel.player.solidArea.height = (int) (gPanel.tileSize/1.5);
         }
 
         // NPCs
@@ -184,13 +248,21 @@ public class Camera {
             // update speed
             npcCurrent.speed = newWorldWidth / (600f*gPanel.player.speed);
             // update pozitii
-            npcCurrent.worldX *= mul;
-            npcCurrent.worldY *= mul;
+            double newNPCWorldX = npcCurrent.worldX * mul;
+            double newNPCWorldY = npcCurrent.worldY * mul;
+            npcCurrent.worldX = newNPCWorldX;
+            npcCurrent.worldY = newNPCWorldY;
             // update solid area
-            if (canScale && nr > gPanel.limitZoomOut+150 && nr < gPanel.limitZoomIn-100) {
-                npcCurrent.solidArea.width += i * mul;
-                npcCurrent.solidArea.height += i * mul;
+            if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
+//                npcCurrent.solidArea.width += i * mul;
+//                npcCurrent.solidArea.height += i * mul;
+                npcCurrent.solidAreaDefaultX = gPanel.tileSize/8;
+                npcCurrent.solidAreaDefaultY = 0;
+                npcCurrent.solidArea.width = gPanel.tileSize;
+                npcCurrent.solidArea.height = (int) (gPanel.tileSize/1.25);
             }
+            validatePositions(npcCurrent, gPanel.player);
+            npcCurrent.collisionOn=false;
         }
 
         // actualizare marime zoom pentru obiecte

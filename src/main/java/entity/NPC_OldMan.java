@@ -19,13 +19,23 @@ public class NPC_OldMan extends Entity {
 
         // incarcare animatii movement
         loadMovementAnimations("res\\npc\\oldMan");
+        // setarea dialogului
+        setDialogue();
     }
 
     public NPC_OldMan() {
 
     }
 
-    public void setAction() {
+    private void setDialogue() {
+        dialogue.addText("Buna, aventurierule!");
+        dialogue.addText("Stiu ce cauti aici...comoara!!");
+        dialogue.addText("Candva faceam parte din prima linie a maretilor vrajitori!\nDar acum...sunt putin cam batran pentru a mai cauta comoara secreta.");
+        dialogue.addText("Ei bine, succes tie!");
+    }
+
+    /** AI Old Man */
+    public void AI() {
 
         actionLockCounter++;
 
@@ -51,4 +61,7 @@ public class NPC_OldMan extends Entity {
         }
     }
 
+    public void speak() {
+        super.speak();
+    }
 }
