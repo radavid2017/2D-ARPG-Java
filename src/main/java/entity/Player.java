@@ -20,6 +20,7 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
 
+    public String characterClassPath = "mage";
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
 
@@ -59,7 +60,8 @@ public class Player extends Entity {
 
     /** incarcarea animatiilor pentru player */
     public void getPlayerSprites() {
-        this.loadMovementAnimations("res\\player\\mage");
+//        String playerPath = "res/player/"+characterClassPath;
+        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
     public void update() {
 

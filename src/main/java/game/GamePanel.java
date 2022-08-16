@@ -67,7 +67,7 @@ public class GamePanel extends JPanel implements Runnable {
     /** Entitate si obiect */
     // Setarea pozitiei implicite a jucatorului
     // player
-    public Player player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
+    public Player player;
     // lista NPC
     public List<Entity> npc = new ArrayList<>();
     // lista obiecte
@@ -95,6 +95,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     /** instantieri joc */
     public void setupGame() {
+        player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
         // adaugarea obiectelor in joc
         assetPool.setObjects();
         // adaugarea npc-urilor
@@ -102,7 +103,7 @@ public class GamePanel extends JPanel implements Runnable {
         // setup muzica de fundal
         playMusic("BlueBoyAdventure.wav");
         stopMusic();
-        gameState = GameState.Play;
+        gameState = GameState.Title;
     }
 
     /** startGameThread - instantierea la inceperea rularii jocului */
@@ -189,29 +190,39 @@ public class GamePanel extends JPanel implements Runnable {
             drawStart = System.nanoTime();
         }
 
-        // harta
-        tiles.draw(g2D);
-
-        // obiecte
-        for (SuperObject obj : objects) {
-            if (obj != null) {
-                obj.draw(g2D, this);
-            }
+        // TITLE SCREEN
+        if (gameState == GameState.Title) {
+            ui.draw(g2D);
         }
+        // ALTELE
+        else {
 
-        // NPC
-        for (Entity entity : npc) {
-            if (entity != null) {
-                entity.draw(g2D);
+            // harta
+            if (player != null)
+                tiles.draw(g2D);
+
+            // obiecte
+            for (SuperObject obj : objects) {
+                if (obj != null) {
+                    obj.draw(g2D, this);
+                }
             }
-        }
 
-        // player
-        player.draw(g2D);
+            // NPC
+            for (Entity entity : npc) {
+                if (entity != null) {
+                    entity.draw(g2D);
+                }
+            }
+
+            // player
+            if (player != null)
+                player.draw(g2D);
 //        System.out.println("soilidArea: " + player.solidArea.x + " " + player.solidArea.y);
 
-        // UI
-        ui.draw(g2D);
+            // UI
+            ui.draw(g2D);
+        }
 
         // DEBUG
         if (keyH.checkDrawTime) {

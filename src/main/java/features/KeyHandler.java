@@ -41,6 +41,26 @@ public class KeyHandler implements KeyListener {
         /** getKeyCode - returneaza valoarea din codul ascii asociat butonului */
         int code = e.getKeyCode();
 
+        // TITLE STATE
+        if (GamePanel.gameState == GameState.Title) {
+            switch (gPanel.ui.titleScreenState){
+                case MAIN_PAGE -> {
+                    switch (code) {
+                        case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
+                        case KeyEvent.VK_UP -> gPanel.ui.previousItem();
+                        case KeyEvent.VK_ENTER -> gPanel.ui.chooseItem();
+                    }
+                }
+                case CLASS_SELECTION -> {
+                    switch (code) {
+                        case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
+                        case KeyEvent.VK_UP -> gPanel.ui.previousItem();
+                        case KeyEvent.VK_ENTER -> gPanel.ui.chooseClass();
+                    }
+                }
+            }
+        }
+
         // PLAY STATE
         if (!UI.GAME_OVER && GamePanel.gameState == GameState.Play) {
             switch (code) {

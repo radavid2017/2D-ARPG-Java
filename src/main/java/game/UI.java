@@ -1,12 +1,16 @@
 package game;
 
 import features.Dialogue;
+import features.UtilityTool;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
@@ -32,6 +36,11 @@ public class UI {
     float playTime;
     DecimalFormat decFormat = new DecimalFormat("#0.00");
 
+    BufferedImage catBackground;
+    public Menu menu = Menu.NEW_GAME;
+    public TitleScreenState titleScreenState = TitleScreenState.MAIN_PAGE;
+    public CharacterClass characterClass = CharacterClass.MAGE;
+
     /** Constrcutor UI */
     public UI(GamePanel gPanel) {
         this.gPanel = gPanel;
@@ -51,6 +60,14 @@ public class UI {
         xMsg = gPanel.tileSize*6 + 20;
         yMsg = gPanel.tileSize*5;
         screenWidth = gPanel.tileSize*10;
+
+        // IMAGINE BACKGROUND TITLU
+        try {
+            catBackground = ImageIO.read(new FileInputStream("res/background/cat.png"));
+            catBackground = UtilityTool.scaledImage(catBackground, gPanel.tileSize*2, gPanel.tileSize*2);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** Director general UI
@@ -64,6 +81,11 @@ public class UI {
         g2D.setColor(Color.WHITE);
 
         switch (GamePanel.gameState) {
+            case Title -> {
+                // starea de titlu
+                drawTitleScreen();
+
+            }
             case Play -> {
                 // play staff
             }
@@ -89,6 +111,171 @@ public class UI {
 //            // manevrarea si afisarea textelor pentru finalul rundei / jocului
 //            manageGameOverDisplay(g2D);
 //        }
+    }
+
+    public void drawTitleScreen() {
+
+        switch (titleScreenState) {
+            case MAIN_PAGE -> {
+                // NUME TITLU
+                g2D.setFont(font.deriveFont(Font.BOLD, 96f));
+                String text = "Huntily Poke";
+                int x = getXForCenteredText(text);
+                int y = gPanel.tileSize * 2;
+
+                // UMBRIRE
+                g2D.setColor(Color.DARK_GRAY);
+                g2D.drawString(text, x+5, y+5);
+
+                // CULOARE TITLU
+                Random rand = new Random();
+                float r = rand.nextFloat();
+                float g = rand.nextFloat();
+                float b = rand.nextFloat();
+                g2D.setColor(new Color(r, g, b).brighter());
+
+                // AFISARE TITLU
+                g2D.drawString(text, x, y);
+
+                // IMAGINE CARACTER
+                x = gPanel.screenWidth / 2 - (gPanel.tileSize*2)/2;
+                y += gPanel.tileSize*2;
+
+                g2D.drawImage(catBackground, x, y, null);
+
+                // MENIU
+                g2D.setColor(Color.WHITE);
+                g2D.setFont(font.deriveFont(Font.BOLD, 48f));
+
+                drawItemMenu("JOC NOU", y += gPanel.tileSize*2, Menu.NEW_GAME);
+                drawItemMenu("INCARCA JOC", y += gPanel.tileSize, Menu.LOAD_GAME);
+                drawItemMenu("EXIT", y += gPanel.tileSize, Menu.EXIT);
+            }
+            case CLASS_SELECTION -> {
+
+                // FEREASTERA DE SELECTARE CLASA
+                g2D.setColor(Color.WHITE);
+                g2D.setFont(font.deriveFont(42f));
+
+                String text = "Selecteaza-ti clasa!";
+                int x = getXForCenteredText(text);
+                int y = gPanel.tileSize;
+
+                Random rand = new Random();
+                float r = rand.nextFloat();
+                float g = rand.nextFloat();
+                float b = rand.nextFloat();
+                g2D.setColor(new Color(r, g, b).brighter());
+
+                g2D.drawString(text, x, y);
+
+                g2D.setColor(Color.WHITE);
+                drawItemClassSelection("Vrajitor", y += gPanel.tileSize, CharacterClass.MAGE);
+                drawItemClassSelection("Arcas", y += gPanel.tileSize, CharacterClass.ARCHER);
+                drawItemClassSelection("Razboinic", y += gPanel.tileSize, CharacterClass.WARRIOR);
+                drawItemClassSelection("Pisicuta", y += gPanel.tileSize, CharacterClass.CAT);
+                drawItemClassSelection("Inapoi", y += gPanel.tileSize*2, CharacterClass.BACK);
+            }
+        }
+    }
+
+    private void drawItemMenu(String text, int y, Menu menu) {
+        int x = getXForCenteredText(text);
+        y += gPanel.tileSize;
+        g2D.drawString(text, x, y);
+
+        if (this.menu == menu) {
+            g2D.drawString(">", x-gPanel.tileSize, y);
+        }
+    }
+
+    private void drawItemClassSelection(String text, int y, CharacterClass characterClass) {
+        int x = getXForCenteredText(text);
+        y += gPanel.tileSize;
+        g2D.drawString(text, x, y);
+
+        if (this.characterClass == characterClass) {
+            g2D.drawString(">", x-gPanel.tileSize, y);
+        }
+    }
+
+    public void nextItem() {
+        switch (titleScreenState) {
+            case MAIN_PAGE -> {
+                switch (menu) {
+                    case NEW_GAME -> menu = Menu.LOAD_GAME;
+                    case LOAD_GAME -> menu = Menu.EXIT;
+                    case EXIT -> menu = Menu.NEW_GAME;
+                }
+            }
+            case CLASS_SELECTION -> {
+                switch (characterClass) {
+                    case MAGE -> characterClass = CharacterClass.ARCHER;
+                    case ARCHER -> characterClass = CharacterClass.WARRIOR;
+                    case WARRIOR -> characterClass = CharacterClass.CAT;
+                    case CAT -> characterClass = CharacterClass.BACK;
+                    case BACK -> characterClass = CharacterClass.MAGE;
+                }
+            }
+        }
+    }
+
+    public void previousItem() {
+        switch (titleScreenState){
+            case MAIN_PAGE -> {
+                switch (menu) {
+                    case EXIT -> menu = Menu.LOAD_GAME;
+                    case LOAD_GAME -> menu = Menu.NEW_GAME;
+                    case NEW_GAME -> menu = Menu.EXIT;
+                }
+            }
+            case CLASS_SELECTION -> {
+                switch (characterClass) {
+                    case CAT -> characterClass = CharacterClass.WARRIOR;
+                    case WARRIOR -> characterClass = CharacterClass.ARCHER;
+                    case ARCHER -> characterClass = CharacterClass.MAGE;
+                    case MAGE -> characterClass = CharacterClass.BACK;
+                    case BACK -> characterClass = CharacterClass.CAT;
+                }
+            }
+        }
+    }
+
+    public void chooseItem() {
+        switch (menu) {
+            case NEW_GAME -> {
+                titleScreenState = TitleScreenState.CLASS_SELECTION;
+//                GamePanel.gameState = GameState.Play;
+//                gPanel.playMusic("BlueBoyAdventure.wav");
+            }
+            case LOAD_GAME -> {
+                // adauga mai tarziu
+            }
+            case EXIT -> {
+                System.exit(0);
+            }
+        }
+    }
+
+    public void chooseClass() {
+        switch (characterClass) {
+            case MAGE -> gPanel.player.characterClassPath = "mage";
+            case ARCHER -> gPanel.player.characterClassPath = "archer";
+            case WARRIOR -> gPanel.player.characterClassPath = "warrior";
+            case CAT -> gPanel.player.characterClassPath = "cat";
+            case BACK -> {
+                titleScreenState = TitleScreenState.MAIN_PAGE;
+                return;
+            }
+        }
+        GamePanel.gameState = GameState.Play;
+        gPanel.player.getPlayerSprites();
+        gPanel.playMusic("BlueBoyAdventure.wav");
+    }
+
+    public int getXForCenteredText(String text) {
+        int length = (int) g2D.getFontMetrics().getStringBounds(text, g2D).getWidth();
+        return gPanel.screenWidth / 2 - length / 2;
     }
 
     public void drawPauseScreen() {

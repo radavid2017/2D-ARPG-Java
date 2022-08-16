@@ -129,6 +129,7 @@ public abstract class Entity {
         // UP
 //        RenameFolderFiles.rename("E:\\AplicatiiCV\\2DAdventure\\res\\player\\movement\\north");
 //        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, entityPath + "\\" + characterName + "\\movement\\north");
+
         walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, entityPath + "\\movement\\north");
         System.out.println("Animatia " + walkUp.title + " incarcata cu succes.");
         // RIGHT
