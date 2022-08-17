@@ -60,6 +60,7 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionDetector collisionDetector = new CollisionDetector(this);
     public AssetPool assetPool = new AssetPool(this);
     public UI ui = new UI(this);
+    public EventHandler eHandler = new EventHandler(this);
 
     /** Creand firul de executie al jocului, adaugam conceptul de timp in joc */
     // crearea firului de executie a jocului

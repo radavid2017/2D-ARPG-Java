@@ -18,12 +18,16 @@ public class Dialogue {
         this.textStack = textStack;
     }
 
+    public Dialogue(String text) {
+        textStack.add(text);
+    }
+
     public void addText(String text) { // adauga text in dialog
         textStack.add(text);
     }
 
     public String peekText() { // returneaza textul curent
-        return textStack.get(indexText);
+        return indexText >= 0 ? textStack.get(indexText) : textStack.get(0);
     }
 
 

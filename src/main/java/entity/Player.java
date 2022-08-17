@@ -51,7 +51,7 @@ public class Player extends Entity {
 
         // INSTANTIERE STATUS JUCATOR
         maxLife = 6;
-        life = 3;
+        life = maxLife;
 
 //        solidArea.x = 32;
 //        solidArea.y = 32;
@@ -103,8 +103,8 @@ public class Player extends Entity {
         }
 
         g2D.drawImage(sprite, x, y, null);
-//        g2D.setColor(Color.red);
-//        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+        g2D.setColor(Color.red);
+        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
 
     /** inregistrarea animatiilor pentru player */
@@ -209,6 +209,11 @@ public class Player extends Entity {
             int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npc);
             interactNPC(npcIndex);
 
+            // verifica evenimente
+            gPanel.eHandler.checkEvent();
+
+            gPanel.keyH.enterPressed = false;
+
             if (!collisionOn)
                 manageMovement();
         }
@@ -221,7 +226,6 @@ public class Player extends Entity {
                 GamePanel.gameState = GameState.Dialogue;
                 gPanel.npc.get(npcIndex).speak();
             }
-            gPanel.keyH.enterPressed = false;
         }
     }
 }
