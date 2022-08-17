@@ -33,7 +33,7 @@ public class Window {
 
         // Setari fullscreen
 //        window.setUndecorated(true);
-        window.setResizable(false);
+        window.setResizable(true);
         device.setFullScreenWindow(window);
 
         // afisarea ferestrei in centrul ecranului

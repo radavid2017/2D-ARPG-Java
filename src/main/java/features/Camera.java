@@ -3,11 +3,13 @@ package features;
 import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
+import object.SuperStatesObject;
 import tile.Tile;
 import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 import java.util.List;
 
 public class Camera {
@@ -132,11 +134,20 @@ public class Camera {
         }
     }
 
+    public static void rescaleObjectStates() {
+        for (SuperStatesObject superStatesObject : gPanel.statesObjectList) {
+            for (int i = 0; i < superStatesObject.imgStates.size(); i++) {
+                superStatesObject.imgStates.set(i, UtilityTool.scaledImage(superStatesObject.originalObjStatesImages.get(i), gPanel.tileSize, gPanel.tileSize));
+            }
+        }
+    }
+
     public static void rescaleAll() {
         rescaleTiles();
         rescalePlayer();
         rescaleObjects();
         rescaleNPC();
+        rescaleObjectStates();
     }
 
     public static void fixNPCStuckInTile() {
@@ -272,5 +283,7 @@ public class Camera {
             object.worldX = newObjWorldX;
             object.worldY = newObjWorldY;
         }
+
+        // actualizare pozitii HUD
     }
 }

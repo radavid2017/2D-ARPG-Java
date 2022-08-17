@@ -36,8 +36,8 @@ public abstract class SuperObject {
         System.out.println("numele obiectului: " + name);
         try {
             image = ImageIO.read(new FileInputStream(imageFilePath));
+            originalObjImage = image;
             image = UtilityTool.scaledImage(image, gp.tileSize, gp.tileSize);
-            image = originalObjImage;
         } catch (IOException e) {
             e.printStackTrace();
         }

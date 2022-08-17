@@ -5,6 +5,7 @@ import entity.NPC_OldMan;
 import entity.Player;
 import features.*;
 import object.SuperObject;
+import object.SuperStatesObject;
 import tile.Tile;
 import tile.TileManager;
 
@@ -72,6 +73,8 @@ public class GamePanel extends JPanel implements Runnable {
     public List<Entity> npc = new ArrayList<>();
     // lista obiecte
     public List<SuperObject> objects = new ArrayList<>();
+    // lista obiecte cu ipostaze
+    public List<SuperStatesObject> statesObjectList = new ArrayList<>();
 
 
     // GAME STATE - starea jocului

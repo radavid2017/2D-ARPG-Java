@@ -2,6 +2,9 @@ package game;
 
 import features.Dialogue;
 import features.UtilityTool;
+import object.OBJ_Heart;
+import object.SuperStatesObject;
+import object.TypeStatesObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,8 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 public class UI {
 
@@ -40,6 +42,11 @@ public class UI {
     public Menu menu = Menu.NEW_GAME;
     public TitleScreenState titleScreenState = TitleScreenState.MAIN_PAGE;
     public CharacterClass characterClass = CharacterClass.MAGE;
+
+    /** UI HUD */
+    public ArrayList<SuperStatesObject> hudList = new ArrayList<>();
+    // pozitii viata jcuator
+    public int heartX, heartY;
 
     /** Constrcutor UI */
     public UI(GamePanel gPanel) {
@@ -68,6 +75,13 @@ public class UI {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        // CREARE HUD HP JUCATOR
+        SuperStatesObject heart = new OBJ_Heart();
+        heart.loadObject(gPanel, "res/objectsWithStates/heart");
+        heartX = 15;
+        heartY = 15;
+        hudList.add(heart);
     }
 
     /** Director general UI
@@ -88,13 +102,16 @@ public class UI {
             }
             case Play -> {
                 // play staff
+                drawPlayerLife(heartX, heartY);
             }
             case Pause -> {
                 // pause stuff
+                drawPlayerLife(heartX, heartY);
                 drawPauseScreen();
             }
             case Dialogue -> {
                 // starea de dialog
+                drawPlayerLife(heartX, heartY);
                 drawDialogueScreen();
             }
         }
@@ -111,6 +128,44 @@ public class UI {
 //            // manevrarea si afisarea textelor pentru finalul rundei / jocului
 //            manageGameOverDisplay(g2D);
 //        }
+    }
+
+    private OBJ_Heart getHeart() {
+        for (int i = 0; i < hudList.size(); i++) {
+            if (hudList.get(i).typeStatesObject == TypeStatesObject.HEART)
+                return (OBJ_Heart) hudList.get(i);
+        }
+        return null;
+    }
+
+    public void drawPlayerLife(int posX, int posY) {
+
+        OBJ_Heart heart = getHeart();
+
+        int x = posX;
+
+        // AFISEAZA HP MAXIM POSIBIL
+        for (int i = 0; i < gPanel.player.maxLife/2; i++) {
+            assert heart != null;
+            g2D.drawImage(heart.imgStates.get(2), x, posY, null);
+            x += 100;
+        }
+
+        // RESETARE
+        x = posX;
+
+        // AFISEAZA HP CURENT PLAYER
+        int i = 0;
+        while (i < gPanel.player.life) {
+            assert heart != null;
+            g2D.drawImage(heart.imgStates.get(1), x, posY, null);
+            i++;
+            if (i < gPanel.player.life) {
+                g2D.drawImage(heart.imgStates.get(0), x, posY, null);
+            }
+            i++;
+            x += 100;
+        }
     }
 
     public void drawTitleScreen() {

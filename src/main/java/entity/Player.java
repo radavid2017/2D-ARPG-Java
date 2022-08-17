@@ -48,6 +48,11 @@ public class Player extends Entity {
         solidAreaDefaultY = gPanel.tileSize/4;
         solidArea.width = gPanel.tileSize/2;
         solidArea.height = (int) (gPanel.tileSize/1.5);
+
+        // INSTANTIERE STATUS JUCATOR
+        maxLife = 6;
+        life = 3;
+
 //        solidArea.x = 32;
 //        solidArea.y = 32;
 //        solidAreaDefaultX = 32;
@@ -98,8 +103,8 @@ public class Player extends Entity {
         }
 
         g2D.drawImage(sprite, x, y, null);
-        g2D.setColor(Color.red);
-        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
 
     /** inregistrarea animatiilor pentru player */

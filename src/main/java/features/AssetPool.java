@@ -31,8 +31,12 @@ public class AssetPool {
 //        loadAsset("res/objects/boots.png", 37, 42, TypeObject.Boots);
     }
 
+    public void setStatesObjects() {
+
+    }
+
     // chei
-    public void loadAsset(String filePath, int worldX, int worldY, TypeObject typeObject) {
+    public void loadSingleStateObject(String objectImgName, int worldX, int worldY, TypeObject typeObject) {
         SuperObject object = null;
         switch (typeObject) {
             case Key -> object = new OBJ_Key();
@@ -40,9 +44,19 @@ public class AssetPool {
             case Chest -> object = new OBJ_Chest();
             case Boots -> object = new OBJ_Boots();
         }
-        object.loadObject(gPanel, filePath);
+        object.loadObject(gPanel, "res/objects/" + objectImgName);
         object.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
         gPanel.objects.add(object);
+    }
+
+    public void loadMultipleStatesObject(String folderName, int worldX, int worldY, TypeStatesObject typeStatesObject) {
+        SuperStatesObject statesObject = null;
+        switch (typeStatesObject) {
+            case HEART -> statesObject = new OBJ_Heart();
+        }
+        statesObject.loadObject(gPanel, "res/objectsWithStates/" + folderName);
+        statesObject.setPosition(worldX*gPanel.tileSize, worldY*gPanel.tileSize);
+        gPanel.statesObjectList.add(statesObject);
     }
 
     public void setNPC() {
