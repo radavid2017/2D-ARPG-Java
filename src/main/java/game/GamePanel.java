@@ -12,7 +12,7 @@ import tile.TileManager;
 import javax.swing.*;
 import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /** Setari ecran
@@ -77,6 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
 
+    ArrayList<Entity> entities = new ArrayList<>();
 
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.NULL;
@@ -205,24 +206,44 @@ public class GamePanel extends JPanel implements Runnable {
             if (player != null)
                 tiles.draw(g2D);
 
-            // obiecte
-            for (SuperObject obj : objects) {
-                if (obj != null) {
-                    obj.draw(g2D, this);
-                }
-            }
 
-            // NPC
-            for (Entity entity : npc) {
-                if (entity != null) {
-                    entity.draw(g2D);
-                }
-            }
-
-            // player
             if (player != null)
-                player.draw(g2D);
-//        System.out.println("soilidArea: " + player.solidArea.x + " " + player.solidArea.y);
+                entities.add(player);
+            entities.addAll(npc);
+            entities.addAll(objects);
+
+
+            entities.sort(Comparator.comparingDouble(e -> e.worldY));
+
+            for (Entity entity : entities) {
+                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
+                entity.draw(g2D);
+            }
+
+            entities.clear();
+
+
+//            // obiecte
+//            for (SuperObject obj : objects) {
+//                if (obj != null) {
+//                    obj.draw(g2D, this);
+//                }
+//            }
+//
+//            // NPC
+//            for (Entity entity : npc) {
+//                if (entity != null) {
+//                    entity.draw(g2D);
+//                }
+//            }
+//
+//            // player
+//            if (player != null)
+//                player.draw(g2D);
+//
+////            npc.sort(Comparator.comparingDouble(e -> e.worldY));
+////            objects.sort(Comparator.comparingDouble(o -> o.worldY));
+
 
             // UI
             ui.draw(g2D);
@@ -261,5 +282,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void stopSE() {
         soundEfect.stop();
+    }
+
+    public void addAllLists() {
+        if (player != null)
+            entities.add(player);
+        entities.addAll(npc);
+        for (Entity obj : objects)
+            if (obj != null)
+                entities.add(obj);
     }
 }

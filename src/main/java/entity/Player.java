@@ -43,11 +43,11 @@ public class Player extends Entity {
         // INSTANTIERE COLIZIUNE
         solidArea = new Rectangle();
         solidArea.x = gPanel.tileSize/4;
-        solidArea.y = gPanel.tileSize/4;
+        solidArea.y = gPanel.tileSize/2;
         solidAreaDefaultX = gPanel.tileSize/4;
-        solidAreaDefaultY = gPanel.tileSize/4;
+        solidAreaDefaultY = gPanel.tileSize/2;
         solidArea.width = gPanel.tileSize/2;
-        solidArea.height = (int) (gPanel.tileSize/1.5);
+        solidArea.height = (int) (gPanel.tileSize/2.25);
 
         // INSTANTIERE STATUS JUCATOR
         maxLife = 6;

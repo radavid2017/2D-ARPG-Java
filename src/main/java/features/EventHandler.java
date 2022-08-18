@@ -8,54 +8,86 @@ import java.awt.*;
 public class EventHandler {
 
     GamePanel gPanel;
-    Rectangle eventRect;
-    int eventRectDefaultX, eventRectDefaultY;
+    EventRect[][] eventRect;
+
+    double previousEventX, previousEventY;
+    boolean canTouchEvent = true;
 
     public EventHandler(GamePanel gPanel) {
         this.gPanel = gPanel;
 
-        eventRect = new Rectangle();
-        eventRect.x = 23;
-        eventRect.y = 23;
-        eventRect.width = 2;
-        eventRect.height = 2;
-        eventRectDefaultX = eventRect.x;
-        eventRectDefaultY = eventRect.y;
+        eventRect = new EventRect[gPanel.maxWorldCol][gPanel.maxWorldRow];
+
+        int col = 0;
+        int row = 0;
+        while (col < gPanel.maxWorldCol && row < gPanel.maxWorldRow) {
+            eventRect[col][row] = new EventRect();
+            eventRect[col][row].x = 23;
+            eventRect[col][row].y = 23;
+            eventRect[col][row].width = 2;
+            eventRect[col][row].height = 2;
+            eventRect[col][row].eventRectDefaultX = eventRect[col][row].x;
+            eventRect[col][row].eventRectDefaultY = eventRect[col][row].y;
+
+            col++;
+            if (col == gPanel.maxWorldCol) {
+                col = 0;
+                row++;
+            }
+        }
     }
 
     public void checkEvent() {
 
-//        if (hit(27, 16, Direction.RIGHT)) {
-//            damagePit(GameState.Dialogue);
-//        }
-        if (hit(27, 16, Direction.RIGHT)) {
-            teleport(GameState.Dialogue);
+        // Verifica daca jucatorul este la mai mult de o textura indepartare
+        // fata de ultimul eveniment
+        double xDistance = Math.abs(gPanel.player.worldX - previousEventX);
+        double yDistance = Math.abs(gPanel.player.worldY - previousEventY);
+        double distane = Math.max(xDistance, yDistance);
+
+        if (distane > gPanel.tileSize) {
+            canTouchEvent = true;
         }
-        if (hit(23, 12, Direction.UP)) {
-            healingPool(GameState.Dialogue);
+
+        if (canTouchEvent) {
+            int col, row;
+//        if (hit(27, 16, Direction.RIGHT)) {
+//            teleport(GameState.Dialogue);
+//        }
+            col = 27; row = 16;
+            if (hit(col, row, Direction.RIGHT)) {
+                damagePit(col, row, GameState.Dialogue);
+            }
+            col = 23; row = 12;
+            if (hit(col, row, Direction.UP)) {
+                healingPool(GameState.Dialogue);
+            }
         }
     }
 
     /** Coliziune player cu arie de declansare eveniment */
-    public boolean hit(int eventCol, int eventRow, Direction reqDirection) {
+    public boolean hit(int col, int row, Direction reqDirection) {
 
         boolean hit = false;
 
         gPanel.player.solidArea.x = (int) (gPanel.player.worldX + gPanel.player.solidArea.x);
         gPanel.player.solidArea.y = (int) (gPanel.player.worldY + gPanel.player.solidArea.y);
-        eventRect.x = eventCol * gPanel.tileSize + eventRect.x;
-        eventRect.y = eventRow * gPanel.tileSize + eventRect.y;
+        eventRect[col][row].x = col * gPanel.tileSize + eventRect[col][row].x;
+        eventRect[col][row].y = row * gPanel.tileSize + eventRect[col][row].y;
 
-        if (gPanel.player.solidArea.intersects(eventRect)) {
+        if (gPanel.player.solidArea.intersects(eventRect[col][row]) && !eventRect[col][row].eventDone) {
             if (gPanel.player.direction.equals(reqDirection) || reqDirection.equals(Direction.ANY)) {
                 hit = true;
+
+                previousEventX = gPanel.player.worldX;
+                previousEventY = gPanel.player.worldY;
             }
         }
 
         gPanel.player.solidArea.x = gPanel.player.solidAreaDefaultX;
         gPanel.player.solidArea.y = gPanel.player.solidAreaDefaultY;
-        eventRect.x = eventRectDefaultX;
-        eventRect.y = eventRectDefaultY;
+        eventRect[col][row].x = eventRect[col][row].eventRectDefaultX;
+        eventRect[col][row].y = eventRect[col][row].eventRectDefaultY;
 
         return hit;
     }
@@ -68,10 +100,12 @@ public class EventHandler {
         gPanel.player.worldY = gPanel.tileSize*10;
     }
 
-    public void damagePit(GameState gameState) {
+    public void damagePit(int col, int row, GameState gameState) {
         GamePanel.gameState = gameState;
         gPanel.ui.setCurrentDialogue(new Dialogue("Ai cazut intr-o groapa!"));
         gPanel.player.life--;
+//        eventRect[col][row].eventDone = true;
+        canTouchEvent = false;
     }
 
     public void healingPool(GameState gameState) {

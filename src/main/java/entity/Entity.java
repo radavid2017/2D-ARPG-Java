@@ -31,7 +31,7 @@ public abstract class Entity {
     public Direction direction;
 
     /** Declararea blocului de coliziune */
-    public Rectangle solidArea;
+    public Rectangle solidArea = new Rectangle();
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
     public int actionLockCounter = 0;
@@ -50,9 +50,9 @@ public abstract class Entity {
     /** Constrcutor entitate */
     public Entity(GamePanel gPanel) {
         this.gPanel = gPanel;
-         solidArea = new Rectangle(gPanel.tileSize/4, gPanel.tileSize/4, gPanel.tileSize, (int) (gPanel.tileSize/1.25)); // aria de coliziune implicita pentru toate entitatile
+        solidArea = new Rectangle(gPanel.tileSize/8, gPanel.tileSize/2, (int) (gPanel.tileSize/1.5), (int) (gPanel.tileSize/2.25)); // aria de coliziune implicita pentru toate entitatile
         solidAreaDefaultX = gPanel.tileSize/8;
-        solidAreaDefaultY = 0;
+        solidAreaDefaultY = gPanel.tileSize/2;
     }
 
     public Entity() {
@@ -125,6 +125,7 @@ public abstract class Entity {
 //        g2D.setColor(Color.red);
 //        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
+
     // incarcarea animatiilor de miscare
         /** ANIMATII MOVEMENT */
     public void loadMovementAnimations(String entityPath) {
@@ -162,6 +163,10 @@ public abstract class Entity {
 
     public void setCollisionOn(boolean collisionOn) {
         this.collisionOn = collisionOn;
+    }
+
+    public GamePanel getGamePanel() {
+        return gPanel;
     }
 
 }
