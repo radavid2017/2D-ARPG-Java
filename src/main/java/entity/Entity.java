@@ -122,8 +122,8 @@ public abstract class Entity {
         // Management Camera
         camera.manageEntity(g2D, sprite);
 
-        g2D.setColor(Color.red);
-        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
     // incarcarea animatiilor de miscare
