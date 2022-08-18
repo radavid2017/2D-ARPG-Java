@@ -103,8 +103,8 @@ public class Player extends Entity {
         }
 
         g2D.drawImage(sprite, x, y, null);
-        g2D.setColor(Color.red);
-        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
 
     /** inregistrarea animatiilor pentru player */
