@@ -1,5 +1,6 @@
 package object;
 
+import entity.Entity;
 import features.Camera;
 import features.UtilityTool;
 import game.GamePanel;
@@ -13,21 +14,17 @@ import java.io.IOException;
 import static features.Camera.gPanel;
 
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
-public abstract class SuperObject {
-
+public abstract class SuperObject extends Entity {
+    GamePanel gPanel;
     public TypeObject typeObject;
     public BufferedImage image;
     public String name;
     public boolean collision = false;
-    public double worldX, worldY;
-    public Rectangle solidArea = new Rectangle(0, 0, 74, 62);
-    public int solidAreaDefaultX = 0;
-    public int solidAreaDefaultY = 0;
 
     public BufferedImage originalObjImage;
 
-    public SuperObject() {
-
+    public SuperObject(GamePanel gPanel) {
+        this.gPanel = gPanel;
     }
 
     public void loadObject(GamePanel gp, String imageFilePath) {
@@ -48,21 +45,24 @@ public abstract class SuperObject {
         worldY = y;
     }
 
-    public void draw(Graphics2D g2D, GamePanel gPanel) {
+    @Override
+    public void draw(Graphics2D g2D) {
         double screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
         double screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
         // Instantiere camera
         Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
         // Management Camera
         camera.manageObjects(g2D, image);
+        g2D.setColor(Color.red);
+        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
     public void setWidth(int width) {
-        this.solidArea.width = width;
+        solidArea.width = width;
     }
 
     public void setHeight(int height) {
-        this.solidArea.height = height;
+        solidArea.height = height;
     }
 
     public void setSolidAreaDefaultX(int solidAreaDefaultX) {

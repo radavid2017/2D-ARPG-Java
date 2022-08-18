@@ -249,9 +249,9 @@ public class Camera {
         int nr = gPanel.tileSize*gPanel.maxWorldCol;
         if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
             gPanel.player.solidAreaDefaultX = gPanel.tileSize/4;
-            gPanel.player.solidAreaDefaultY = gPanel.tileSize/4;
+            gPanel.player.solidAreaDefaultY = gPanel.tileSize/2;
             gPanel.player.solidArea.width = gPanel.tileSize/2;
-            gPanel.player.solidArea.height = (int) (gPanel.tileSize/1.5);
+            gPanel.player.solidArea.height = (int) (gPanel.tileSize/2.25);
         }
 
         // NPCs
@@ -268,9 +268,9 @@ public class Camera {
 //                npcCurrent.solidArea.width += i * mul;
 //                npcCurrent.solidArea.height += i * mul;
                 npcCurrent.solidAreaDefaultX = gPanel.tileSize/8;
-                npcCurrent.solidAreaDefaultY = 0;
-                npcCurrent.solidArea.width = gPanel.tileSize;
-                npcCurrent.solidArea.height = (int) (gPanel.tileSize/1.25);
+                npcCurrent.solidAreaDefaultY = gPanel.tileSize/2;
+                npcCurrent.solidArea.width = (int) (gPanel.tileSize/1.5);
+                npcCurrent.solidArea.height = (int) (gPanel.tileSize/2.25);
             }
             validatePositions(npcCurrent, gPanel.player);
             npcCurrent.collisionOn=false;
@@ -282,6 +282,12 @@ public class Camera {
             double newObjWorldY = object.worldY * mul;
             object.worldX = newObjWorldX;
             object.worldY = newObjWorldY;
+            if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
+                object.solidAreaDefaultX = 0;
+                object.solidAreaDefaultY = gPanel.tileSize/3;
+                object.solidArea.width = gPanel.tileSize;
+                object.solidArea.height = (int) (gPanel.tileSize/1.5);
+            }
         }
 
         // actualizare pozitii HUD

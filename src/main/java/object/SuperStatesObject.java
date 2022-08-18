@@ -1,5 +1,6 @@
 package object;
 
+import entity.Entity;
 import features.Camera;
 import features.RenameFolderFiles;
 import features.UtilityTool;
@@ -13,7 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class SuperStatesObject {
+public abstract class SuperStatesObject extends Entity {
     public TypeStatesObject typeStatesObject;
     public ArrayList<BufferedImage> imgStates = new ArrayList<>();
     public String name;
