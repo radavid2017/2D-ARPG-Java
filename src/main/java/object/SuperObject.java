@@ -53,8 +53,8 @@ public abstract class SuperObject extends Entity {
         Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
         // Management Camera
         camera.manageObjects(g2D, image);
-        g2D.setColor(Color.red);
-        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
     public void setWidth(int width) {
