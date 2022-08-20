@@ -43,12 +43,16 @@ public abstract class SuperObject extends Entity {
         worldY = y;
     }
 
+    public void update() {
+        super.update();
+    }
+
     @Override
     public void draw(Graphics2D g2D) {
-        double screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
-        double screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
+        screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
+        screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
         // Instantiere camera
-        Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
+        camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
         // Management Camera
         camera.playerIsTouchingEdgesOfCamera();
         camera.drawEntity(g2D, image);

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class NPC_OldMan extends Entity {
+public class NPC_OldMan extends NPC {
 
     public NPC_OldMan(GamePanel gPanel) {
 
@@ -24,10 +24,6 @@ public class NPC_OldMan extends Entity {
         setDialogue();
     }
 
-    public NPC_OldMan() {
-
-    }
-
     private void setDialogue() {
         dialogue.addText("Buna, aventurierule!");
         dialogue.addText("Stiu ce cauti aici...comoara!!");
@@ -36,6 +32,7 @@ public class NPC_OldMan extends Entity {
     }
 
     /** AI Old Man */
+    @Override
     public void AI() {
 
         actionLockCounter++;

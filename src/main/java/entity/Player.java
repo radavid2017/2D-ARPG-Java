@@ -66,6 +66,8 @@ public class Player extends Entity {
         setupMovement("res/player/" + characterClassPath);
 //        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
+
+    @Override
     public void update() {
 
         // Deplasari jucator

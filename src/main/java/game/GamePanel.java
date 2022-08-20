@@ -21,8 +21,6 @@ import java.util.List;
  *  */
 public class GamePanel extends JPanel implements Runnable {
 
-    Camera camera;
-
     // variabile
     public final int originalTileSize = 16; // 16x16 tile - dimensiunea implicita a unui obiect din joc
     public final int scale = (Toolkit.getDefaultToolkit().getScreenResolution() / originalTileSize);// de implementat pentru scale-ul rezolutiei: (125% de exemplu) * Toolkit.getDefaultToolkit().getScreenResolution(); // valoarea scalarii dimensiunii obiectului
@@ -45,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Instiantiere limite Zoom in & out
     public final int defaultZoom = tileSize * maxWorldCol;
     public final int limitZoomIn = defaultZoom + 1000;
-    public final int limitZoomOut = defaultZoom - 1000;
+    public final int limitZoomOut = defaultZoom - 900;
 
     // FPS - limitarea cadrelor pe secunda
     float FPS = 60.0f;

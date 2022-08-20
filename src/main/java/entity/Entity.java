@@ -15,10 +15,14 @@ import java.util.Arrays;
  */
 public abstract class Entity {
 
+    public Camera camera;
     GamePanel gPanel;
     public double worldX; // pozitia pe axa ox
     public double worldY; // pozitia pe axa oy
     public double speed; // viteza de deplasare a entitatii
+
+    public double screenX;
+    public double screenY;
 
     /** Liste de imagini pentru realizarea animatiilor de miscare */
     public AnimationState walkUp, walkDown, walkLeft, walkRight;
@@ -63,8 +67,6 @@ public abstract class Entity {
     /** Metodele de actualizare si scriere a informatiilor asupra entitatii */
     // actualizare
     public void update() {
-        AI();
-
         collisionOn = false;
         gPanel.collisionDetector.manageTileCollision(this);
         gPanel.collisionDetector.manageObjCollision(this, false);
@@ -78,11 +80,6 @@ public abstract class Entity {
         currentAnimation.updateFrames();
 //            currentTime = 0;
 //        }
-
-    }
-
-    public void AI() {
-
     }
 
     public void speak() {
@@ -112,15 +109,15 @@ public abstract class Entity {
 
     /** Desenarea entitatii */
     public void draw(Graphics2D g2D) {
-        double screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
-        double screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
+        screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
+        screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
 
         // Instantiere camera
-        Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
+        camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
 
         camera.playerIsTouchingEdgesOfCamera();
 
-        BufferedImage sprite = null;
+        BufferedImage sprite;
         sprite = movement.manageAnimations(this, direction, true);
 
         // Management Camera

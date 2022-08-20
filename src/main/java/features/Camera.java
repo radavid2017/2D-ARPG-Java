@@ -242,12 +242,12 @@ public class Camera {
         gPanel.worldWidth *= mul;
         gPanel.worldHeight *= mul;
 
-        double newPlayerWorldX = gPanel.player.worldX * mul;
-        double newPlayerWorldY = gPanel.player.worldY * mul;
+//        double newPlayerWorldX = gPanel.player.worldX * mul;
+//        double newPlayerWorldY = gPanel.player.worldY * mul;
 
         // actualizare marime zoom pentru jucator
-        gPanel.player.worldX = newPlayerWorldX;
-        gPanel.player.worldY = newPlayerWorldY;
+        gPanel.player.worldX *= mul;
+        gPanel.player.worldY *= mul;
 
         // actualizare marime zoom pentru aria de coliziune a jucatorului
         int nr = gPanel.tileSize*gPanel.maxWorldCol;
@@ -263,10 +263,10 @@ public class Camera {
             // update speed
             npcCurrent.speed = newWorldWidth / (600f*gPanel.player.speed);
             // update pozitii
-            double newNPCWorldX = npcCurrent.worldX * mul;
-            double newNPCWorldY = npcCurrent.worldY * mul;
-            npcCurrent.worldX = newNPCWorldX;
-            npcCurrent.worldY = newNPCWorldY;
+//            double newNPCWorldX = npcCurrent.worldX * mul;
+//            double newNPCWorldY = npcCurrent.worldY * mul;
+            npcCurrent.worldX *= mul;
+            npcCurrent.worldY *= mul;
             // update solid area
             if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
 //                npcCurrent.solidArea.width += i * mul;
@@ -282,10 +282,14 @@ public class Camera {
 
         // actualizare marime zoom pentru obiecte
         for (SuperObject object : gPanel.objects) {
-            double newObjWorldX = object.worldX * mul;
-            double newObjWorldY = object.worldY * mul;
-            object.worldX = newObjWorldX;
-            object.worldY = newObjWorldY;
+//            double newObjWorldX = object.worldX * mul;
+//            double newObjWorldY = object.worldY * mul;
+            object.worldX *= mul;
+            object.worldY *= mul;
+
+            object.screenX *= mul;
+            object.screenY *= mul;
+
             if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
                 object.solidAreaDefaultX = 0;
                 object.solidAreaDefaultY = gPanel.tileSize/3;
