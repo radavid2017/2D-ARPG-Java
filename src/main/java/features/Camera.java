@@ -34,37 +34,39 @@ public class Camera {
         Camera.gPanel = gPanel;
     }
 
-    public void manageTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
+    public boolean playerIsTouchingEdgesOfCamera() {
+        // afisarea cand jucatorul se afla la marginile hartii
+        boolean playerAtEdgeOfCamera = false;
 
         // opreste camera la marginile hartii
         if (gPanel.player.screenX > gPanel.player.worldX) {
+            playerAtEdgeOfCamera = true;
             screenX = worldX;
         }
         if (gPanel.player.screenY > gPanel.player.worldY) {
+            playerAtEdgeOfCamera = true;
             screenY = worldY;
         }
         int rightOffset = gPanel.screenWidth - gPanel.player.screenX;
         if (rightOffset > gPanel.worldWidth - gPanel.player.worldX) {
+            playerAtEdgeOfCamera = true;
             screenX = gPanel.screenWidth - (gPanel.worldWidth - worldX);
         }
         int bottomOffset = gPanel.screenHeight - gPanel.player.screenY;
         if (bottomOffset > gPanel.worldHeight - gPanel.player.worldY) {
+            playerAtEdgeOfCamera = true;
             screenY = gPanel.screenHeight - (gPanel.worldHeight - worldY);
         }
+        return playerAtEdgeOfCamera;
+    }
 
-        if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
-                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
-                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
-                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
-
+    public void manageTiles(Graphics2D g2D, TileManager tiles, int idTileMap) {
+        if (playerIsTouchingEdgesOfCamera()) {
+            drawTiles(g2D, tiles, idTileMap);
+        }
+        else if (isOnCamera()) {
             drawTiles(g2D, tiles, idTileMap);
 //            g2D.drawImage(tiles.generalTiles.get(tileNum).image, (int) screenX, (int) screenY, null);
-        }
-        else if (gPanel.player.screenX > gPanel.player.worldX ||
-                gPanel.player.screenY > gPanel.player.worldY ||
-                rightOffset > gPanel.worldWidth - gPanel.player.worldX ||
-                bottomOffset > gPanel.worldHeight - gPanel.player.worldY) {
-            drawTiles(g2D, tiles, idTileMap);
         }
     }
 
@@ -82,13 +84,16 @@ public class Camera {
     }
 
     public void drawEntity(Graphics2D g2D, BufferedImage image) {
-        if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
-                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
-                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
-                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
-
+        if (isOnCamera()) {
             g2D.drawImage(image, (int) screenX, (int) screenY, null);
         }
+    }
+
+    boolean isOnCamera() {
+        return worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
+                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
+                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
+                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY;
     }
 
 //    public void manageObjects(Graphics2D g2D, BufferedImage image) {

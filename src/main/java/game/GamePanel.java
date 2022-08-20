@@ -20,6 +20,9 @@ import java.util.List;
  *  si implementeaza clasa Runnable pentru a rula jocul printr-un fir de executie cu moment de start - stop
  *  */
 public class GamePanel extends JPanel implements Runnable {
+
+    Camera camera;
+
     // variabile
     public final int originalTileSize = 16; // 16x16 tile - dimensiunea implicita a unui obiect din joc
     public final int scale = (Toolkit.getDefaultToolkit().getScreenResolution() / originalTileSize);// de implementat pentru scale-ul rezolutiei: (125% de exemplu) * Toolkit.getDefaultToolkit().getScreenResolution(); // valoarea scalarii dimensiunii obiectului
@@ -77,7 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
 
-    ArrayList<Entity> entities = new ArrayList<>();
+    public ArrayList<Entity> entities = new ArrayList<>();
 
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.NULL;
@@ -101,6 +104,7 @@ public class GamePanel extends JPanel implements Runnable {
     /** instantieri joc */
     public void setupGame() {
         player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
+
         // adaugarea obiectelor in joc
         assetPool.setObjects();
         // adaugarea npc-urilor
