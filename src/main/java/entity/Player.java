@@ -1,15 +1,12 @@
 package entity;
 
+import animations.AnimationState;
 import features.*;
 import game.GamePanel;
 import game.GameState;
-import game.UI;
-import object.TypeObject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 // clasa north ce detine informatii despre jucator
 // precum pozitia sa si viteza de deplasare
@@ -66,7 +63,8 @@ public class Player extends Entity {
     /** incarcarea animatiilor pentru player */
     public void getPlayerSprites() {
 //        String playerPath = "res/player/"+characterClassPath;
-        this.loadMovementAnimations("res/player/" + characterClassPath);
+        setupMovement("res/player/" + characterClassPath);
+//        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
     public void update() {
 
@@ -74,7 +72,7 @@ public class Player extends Entity {
         this.managePlayerMovement();
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
-        AnimationState.updateFrames();
+        currentAnimation.updateFrames();
     }
 
     public void draw(Graphics2D g2D) {
@@ -82,7 +80,7 @@ public class Player extends Entity {
         /** Management animatii */
         BufferedImage sprite = null;
         boolean inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
-        sprite = movement.manageAnimations(direction, inMotion);
+        sprite = movement.manageAnimations(this, direction, inMotion);
 
         int x = screenX;
         int y = screenY;

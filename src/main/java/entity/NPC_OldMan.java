@@ -18,7 +18,8 @@ public class NPC_OldMan extends Entity {
         speed = 1;
 
         // incarcare animatii movement
-        loadMovementAnimations("res\\npc\\oldMan");
+        setupMovement("res\\npc\\oldMan");
+        //loadMovementAnimations("res\\npc\\oldMan");
         // setarea dialogului
         setDialogue();
     }

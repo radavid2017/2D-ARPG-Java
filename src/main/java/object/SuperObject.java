@@ -11,8 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static features.Camera.gPanel;
-
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
 public abstract class SuperObject extends Entity {
     GamePanel gPanel;
@@ -52,9 +50,9 @@ public abstract class SuperObject extends Entity {
         // Instantiere camera
         Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
         // Management Camera
-        camera.manageObjects(g2D, image);
-        g2D.setColor(Color.red);
-        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+        camera.drawEntity(g2D, image);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
     public void setWidth(int width) {

@@ -1,14 +1,13 @@
 package entity;
 
+import animations.AnimationState;
+import animations.StateMachine;
 import features.*;
 import game.GamePanel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 /** Super clasa - Entitate
  *  Aceasta contine variabile care pot fi folosite
@@ -43,6 +42,8 @@ public abstract class Entity {
     public Dialogue dialogue = new Dialogue();
 //    private Iterator<String> dialogueIndex = dialogue.textStack.iterator();
 
+    public AnimationState currentAnimation;
+
     /** Status caracter */
     public int maxLife;
     public int life;
@@ -72,11 +73,11 @@ public abstract class Entity {
         if (!collisionOn)
             this.manageMovement();
 
-        currentTime++;
-        if (currentTime >= timeToChangeFrame) {
-            AnimationState.updateFrames();
-            currentTime = 0;
-        }
+//        currentTime++;
+//        if (currentTime >= timeToChangeFrame) {
+        currentAnimation.updateFrames();
+//            currentTime = 0;
+//        }
 
     }
 
@@ -117,13 +118,19 @@ public abstract class Entity {
         Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
 
         BufferedImage sprite = null;
-        sprite = movement.manageAnimations(direction, true);
+        sprite = movement.manageAnimations(this, direction, true);
 
         // Management Camera
-        camera.manageEntity(g2D, sprite);
+        camera.drawEntity(g2D, sprite);
 
-        g2D.setColor(Color.red);
-        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+//        g2D.setColor(Color.red);
+//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+    }
+
+    public void setupMovement(String creaturePath) {
+        movement = new StateMachine();
+        movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement");
+        currentAnimation = movement.down;
     }
 
     // incarcarea animatiilor de miscare

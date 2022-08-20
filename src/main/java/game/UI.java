@@ -325,7 +325,7 @@ public class UI {
         }
         GamePanel.gameState = GameState.Play;
         gPanel.player.getPlayerSprites();
-        gPanel.playMusic("BlueBoyAdventure.wav");
+//        gPanel.playMusic("BlueBoyAdventure.wav");
     }
 
     public int getXForCenteredText(String text) {

@@ -1,5 +1,6 @@
 package features;
 
+import animations.AnimationState;
 import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
@@ -9,8 +10,6 @@ import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
-import java.util.List;
 
 public class Camera {
     public double worldX;
@@ -82,7 +81,7 @@ public class Camera {
             System.out.println("TILE NEGASIT");
     }
 
-    public void manageEntity(Graphics2D g2D, BufferedImage image) {
+    public void drawEntity(Graphics2D g2D, BufferedImage image) {
         if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
                 worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
                 worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
@@ -92,15 +91,15 @@ public class Camera {
         }
     }
 
-    public void manageObjects(Graphics2D g2D, BufferedImage image) {
-        if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
-                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
-                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
-                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
-
-            g2D.drawImage(image, (int) screenX, (int) screenY, null);
-        }
-    }
+//    public void manageObjects(Graphics2D g2D, BufferedImage image) {
+//        if (worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
+//                worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
+//                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
+//                worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY) {
+//
+//            g2D.drawImage(image, (int) screenX, (int) screenY, null);
+//        }
+//    }
 
     public static void rescaleNPC() {
         for (Entity npc : gPanel.npc) {

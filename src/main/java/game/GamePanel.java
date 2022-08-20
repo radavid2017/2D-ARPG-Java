@@ -206,17 +206,12 @@ public class GamePanel extends JPanel implements Runnable {
             if (player != null)
                 tiles.draw(g2D);
 
-
-            if (player != null)
-                entities.add(player);
-            entities.addAll(npc);
-            entities.addAll(objects);
-
+            addAllLists();
 
             entities.sort(Comparator.comparingDouble(e -> e.worldY));
 
             for (Entity entity : entities) {
-                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
+//                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
                 entity.draw(g2D);
             }
 
