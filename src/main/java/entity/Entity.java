@@ -28,6 +28,7 @@ public abstract class Entity {
     public AnimationState walkUp, walkDown, walkLeft, walkRight;
     /** Lista de animatii */
     public StateMachine movement = new StateMachine();
+    public StateMachine idle = new StateMachine();
 //    // directii diagonale - optional
     public BufferedImage[] upLeft,upRight,downLeft,downRight;
     /** Variabila pentru a declansa animatia corecta in functie de directia de miscare */
@@ -37,7 +38,7 @@ public abstract class Entity {
     public Rectangle solidArea = new Rectangle();
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
-    public int actionLockCounter = 0;
+
     public int timeToChangeFrame = 12;
     public int currentTime = 0;
 //    public ArrayList<String> dialogues = new ArrayList<>();
@@ -47,6 +48,9 @@ public abstract class Entity {
 //    private Iterator<String> dialogueIndex = dialogue.textStack.iterator();
 
     public AnimationState currentAnimation;
+
+    public boolean inMotion = false;
+    public boolean isPlayer = false;
 
     /** Status caracter */
     public int maxLife;
@@ -72,7 +76,7 @@ public abstract class Entity {
         gPanel.collisionDetector.manageObjCollision(this, false);
         gPanel.collisionDetector.checkPlayer(this);
 
-        if (!collisionOn)
+        if (!collisionOn && inMotion)
             this.manageMovement();
 
 //        currentTime++;
@@ -116,21 +120,22 @@ public abstract class Entity {
         camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
 
         camera.playerIsTouchingEdgesOfCamera();
+    }
 
-        BufferedImage sprite;
-        sprite = movement.manageAnimations(this, direction, true);
-
-        // Management Camera
-        camera.drawEntity(g2D, sprite);
-
-//        g2D.setColor(Color.red);
-//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+    public void drawSolidArea(Graphics2D g2D) {
+        g2D.setColor(Color.red);
+        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
     public void setupMovement(String creaturePath) {
         movement = new StateMachine();
         movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement");
         currentAnimation = movement.down;
+    }
+
+    public void setupIdle(String creaturePath) {
+        idle = new StateMachine();
+        idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle");
     }
 
     // incarcarea animatiilor de miscare

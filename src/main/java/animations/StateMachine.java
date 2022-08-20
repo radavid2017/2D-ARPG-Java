@@ -30,35 +30,27 @@ public class StateMachine {
     }
 
     /** Management animatii */
-    public BufferedImage manageAnimations(Entity entity, Direction direction, boolean inMotion) {
+    public BufferedImage manageAnimations(Entity entity, Direction direction) {
         if (!UI.GAME_OVER) {
-            if (inMotion && GamePanel.gameState == GameState.Play) {
                 for (AnimationState state : states) {
                     if (state.direction == direction) {
                         entity.currentAnimation = state;
                         return state.nextFrame();
                     }
                 }
-            } else {
-                for (AnimationState state : states) {
-                    if (state.direction == direction) {
-                        entity.currentAnimation = state;
-                        return state.idle();
-                    }
-                }
-            }
             return null;
         }
-        return idleGameOver();
+        return null;
+//        return idleGameOver();
     }
 
-    private BufferedImage idleGameOver() {
-        for (AnimationState state : states) {
-            if (state.direction == Direction.DOWN)
-                return state.idle();
-        }
-        return null;
-    }
+//    private BufferedImage idleGameOver() {
+//        for (AnimationState state : states) {
+//            if (state.direction == Direction.DOWN)
+//                return state.idle();
+//        }
+//        return null;
+//    }
 
     public void loadCompleteAnimation(GamePanel gp, String animationFolderName) {
         // instantiere

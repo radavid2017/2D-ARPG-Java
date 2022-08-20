@@ -1,15 +1,10 @@
 package features;
 
 import entity.Entity;
-import entity.NPC_OldMan;
-import entity.TypeNPC;
 import game.GamePanel;
-import object.SuperObject;
-import object.TypeObject;
 import tile.Tile;
 
 import java.util.List;
-import java.util.Objects;
 
 public class CollisionDetector {
 
@@ -64,9 +59,15 @@ public class CollisionDetector {
         }
     }
 
+    private void setMotionOff(Entity entity) {
+        if (!entity.isPlayer)
+            entity.inMotion = false;
+    }
+
     private boolean detectTileCollision(Entity entity, int leftTile, int rightTile) {
         for (Tile tile : gPanel.tiles.generalTiles) {
             if ((tile.idTile == leftTile && tile.isColliding) || (tile.idTile == rightTile && tile.isColliding)) {
+                setMotionOff(entity);
                 return true;
             }
         }
@@ -93,6 +94,7 @@ public class CollisionDetector {
                         if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
                             if (gPanel.objects.get(i).collision) {
                                 entity.collisionOn = true;
+                                setMotionOff(entity);
                             }
                             if (player) {
                                 index = i;
@@ -104,6 +106,7 @@ public class CollisionDetector {
                         if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
                             if (gPanel.objects.get(i).collision) {
                                 entity.collisionOn = true;
+                                setMotionOff(entity);
                             }
                             if (player) {
                                 index = i;
@@ -115,6 +118,7 @@ public class CollisionDetector {
                         if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
                             if (gPanel.objects.get(i).collision) {
                                 entity.collisionOn = true;
+                                setMotionOff(entity);
                             }
                             if (player) {
                                 index = i;
@@ -126,6 +130,7 @@ public class CollisionDetector {
                         if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
                             if (gPanel.objects.get(i).collision) {
                                 entity.collisionOn = true;
+                                setMotionOff(entity);
                             }
                             if (player) {
                                 index = i;

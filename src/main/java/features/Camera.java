@@ -1,6 +1,7 @@
 package features;
 
 import animations.AnimationState;
+import animations.StateMachine;
 import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
@@ -10,6 +11,9 @@ import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Camera {
     public double worldX;
@@ -108,12 +112,8 @@ public class Camera {
 
     public static void rescaleNPC() {
         for (Entity npc : gPanel.npc) {
-            for (AnimationState animation : npc.movement.states) {
-                for (int i = 0; i < animation.animationFrames.size(); i++) {
-                    BufferedImage scaledImg = UtilityTool.scaledImage(animation.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
-                    animation.animationFrames.set(i, scaledImg);
-                }
-            }
+            List<StateMachine> allAnimations = Arrays.asList(npc.movement, npc.idle);
+            rescaleAllAnimations(allAnimations);
         }
     }
 
@@ -124,10 +124,17 @@ public class Camera {
     }
 
     public static void rescalePlayer() {
-        for (AnimationState animationState : gPanel.player.movement.states) {
-            for (int i = 0; i < animationState.animationFrames.size(); i++) {
-                BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
-                animationState.animationFrames.set(i, scaledImage);
+        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle);
+        rescaleAllAnimations(allAnimations);
+    }
+
+    private static void rescaleAllAnimations(List<StateMachine> allAnimations) {
+        for (StateMachine stateMachine : allAnimations) {
+            for (AnimationState animationState : stateMachine.states) {
+                for (int i = 0; i < animationState.animationFrames.size(); i++) {
+                    BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
+                    animationState.animationFrames.set(i, scaledImage);
+                }
             }
         }
     }
@@ -173,15 +180,6 @@ public class Camera {
                 gPanel.player.collisionOn = false;
                 break;
             }
-        }
-    }
-
-    private static void switchDirection(Entity entity) {
-        switch (entity.direction) {
-            case UP -> entity.direction = Direction.DOWN;
-            case DOWN -> entity.direction = Direction.UP;
-            case LEFT -> entity.direction = Direction.RIGHT;
-            case RIGHT -> entity.direction = Direction.LEFT;
         }
     }
 

@@ -96,7 +96,7 @@ public class AnimationState {
             if (currentFrame < numFrames) {
                 currentFrame ++;
             } else
-                currentFrame = 1;
+                currentFrame = 0;
             intervalChangingFrames = 0;
         }
     }
@@ -105,9 +105,9 @@ public class AnimationState {
         return this.animationFrames.get(currentFrame);
     }
 
-    public BufferedImage idle() {
-        return this.animationFrames.get(0);
-    }
+//    public BufferedImage idle() {
+//        return this.animationFrames.get(0);
+//    }
 
     public void setDirection(Direction direction) {
         this.direction = direction;

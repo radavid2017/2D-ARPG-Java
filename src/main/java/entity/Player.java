@@ -27,6 +27,8 @@ public class Player extends Entity {
 
         super(gPanel);
 
+        isPlayer = true;
+
         this.keyH = keyH;
         this.worldX = x;
         this.worldY = y;
@@ -64,6 +66,7 @@ public class Player extends Entity {
     public void getPlayerSprites() {
 //        String playerPath = "res/player/"+characterClassPath;
         setupMovement("res/player/" + characterClassPath);
+        setupIdle("res/player/" + characterClassPath);
 //        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
 
@@ -77,12 +80,20 @@ public class Player extends Entity {
         currentAnimation.updateFrames();
     }
 
+    @Override
     public void draw(Graphics2D g2D) {
 
         /** Management animatii */
         BufferedImage sprite = null;
-        boolean inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
-        sprite = movement.manageAnimations(this, direction, inMotion);
+        inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+//        sprite = movement.manageAnimations(this, direction, inMotion);
+
+        if (inMotion) {
+            sprite = movement.manageAnimations(this, direction);
+        }
+        else {
+            sprite = idle.manageAnimations(this, direction);
+        }
 
         int x = screenX;
         int y = screenY;
@@ -103,8 +114,8 @@ public class Player extends Entity {
         }
 
         g2D.drawImage(sprite, x, y, null);
-//        g2D.setColor(Color.red);
-//        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+        g2D.setColor(Color.red);
+        g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
     }
 
     /** inregistrarea animatiilor pentru player */
@@ -214,7 +225,7 @@ public class Player extends Entity {
 
             gPanel.keyH.enterPressed = false;
 
-            if (!collisionOn)
+            if (!collisionOn && inMotion)
                 manageMovement();
         }
     }

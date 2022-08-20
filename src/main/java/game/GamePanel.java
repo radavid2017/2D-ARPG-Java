@@ -1,16 +1,13 @@
 package game;
 
 import entity.Entity;
-import entity.NPC_OldMan;
 import entity.Player;
 import features.*;
 import object.SuperObject;
 import object.SuperStatesObject;
-import tile.Tile;
 import tile.TileManager;
 
 import javax.swing.*;
-import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 import java.util.*;
 import java.util.List;

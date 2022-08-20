@@ -1,8 +1,8 @@
 package features;
 
 import entity.Entity;
-import entity.NPC_OldMan;
-import entity.TypeNPC;
+import npc.NPC_OldMan;
+import npc.TypeNPC;
 import game.GamePanel;
 import object.*;
 

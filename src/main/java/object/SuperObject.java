@@ -13,7 +13,7 @@ import java.io.IOException;
 
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
 public abstract class SuperObject extends Entity {
-    GamePanel gPanel;
+
     public TypeObject typeObject;
     public BufferedImage image;
     public String name;
@@ -22,7 +22,7 @@ public abstract class SuperObject extends Entity {
     public BufferedImage originalObjImage;
 
     public SuperObject(GamePanel gPanel) {
-        this.gPanel = gPanel;
+        super(gPanel);
     }
 
     public void loadObject(GamePanel gp, String imageFilePath) {
@@ -47,17 +47,12 @@ public abstract class SuperObject extends Entity {
         super.update();
     }
 
-    @Override
     public void draw(Graphics2D g2D) {
-        screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
-        screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
-        // Instantiere camera
-        camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
-        // Management Camera
-        camera.playerIsTouchingEdgesOfCamera();
+        super.draw(g2D);
+
         camera.drawEntity(g2D, image);
-//        g2D.setColor(Color.red);
-//        g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+
+        drawSolidArea(g2D);
     }
 
     public void setWidth(int width) {
