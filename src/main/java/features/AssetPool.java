@@ -1,6 +1,9 @@
 package features;
 
 import entity.Entity;
+import monster.MON_GreenSlime;
+import monster.TypeMonster;
+import npc.NPC;
 import npc.NPC_OldMan;
 import npc.TypeNPC;
 import game.GamePanel;
@@ -29,8 +32,9 @@ public class AssetPool {
 ////        loadAsset("res/objects/chest.png", 23, 23, TypeObject.Chest);
 ////        loadAsset("res/objects/door.png", 23, 23, TypeObject.Door);
 //        loadAsset("res/objects/boots.png", 37, 42, TypeObject.Boots);
-        loadSingleStateObject("door.png", 21, 22, TypeObject.Door);
-        loadSingleStateObject("door.png", 23, 25, TypeObject.Door);
+//        loadSingleStateObject("door.png", 21, 22, TypeObject.Door);
+//        loadSingleStateObject("door.png", 23, 25, TypeObject.Door);
+//        loadSingleStateObject("door.png", 38, 22, TypeObject.Door);
     }
 
     public void setStatesObjects() {
@@ -63,10 +67,14 @@ public class AssetPool {
 
     public void setNPC() {
         loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 21);
-        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 11, gPanel.tileSize * 21);
         loadNPC(TypeNPC.OldMan, gPanel.tileSize * 31, gPanel.tileSize * 21);
-        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 11);
-        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 31);
+
+//        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 11, gPanel.tileSize * 21);
+//        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 11);
+//        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 31);
+
+        // debug
+//        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 9, gPanel.tileSize * 10);
     }
 
     public void loadNPC( TypeNPC typeNPC, double worldX, double worldY) {
@@ -75,6 +83,24 @@ public class AssetPool {
             case OldMan -> entity = new NPC_OldMan(gPanel);
         }
         entity.setPosition(worldX, worldY);
-        gPanel.npc.add(entity);
+        gPanel.npcList.add(entity);
+    }
+
+    public void setMonster() {
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*36);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*37);
+
+        // debug
+//        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*10);
+//        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*11);
+    }
+
+    public void loadMonster(TypeMonster typeMonster, double worldX, double worldY) {
+        Entity entity = null;
+        switch (typeMonster) {
+            case GreenSlime -> entity = new MON_GreenSlime(gPanel);
+        }
+        entity.setPosition(worldX, worldY);
+        gPanel.monsterList.add(entity);
     }
 }

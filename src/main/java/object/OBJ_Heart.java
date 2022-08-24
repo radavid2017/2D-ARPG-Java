@@ -11,4 +11,9 @@ public class OBJ_Heart extends SuperStatesObject {
     public void update() {
 
     }
+
+    @Override
+    public void setDefaultSolidArea() {
+
+    }
 }

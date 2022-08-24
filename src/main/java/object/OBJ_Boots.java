@@ -7,4 +7,9 @@ public class OBJ_Boots extends SuperObject {
         super(gPanel);
         this.typeObject = TypeObject.Boots;
     }
+
+    @Override
+    public void setDefaultSolidArea() {
+
+    }
 }

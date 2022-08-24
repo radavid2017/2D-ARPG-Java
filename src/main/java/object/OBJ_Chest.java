@@ -9,4 +9,9 @@ public class OBJ_Chest extends SuperObject{
         this.collision = true;
         this.setSolidArea(14, 8, 74, 62);
     }
+
+    @Override
+    public void setDefaultSolidArea() {
+        this.setSolidArea(14, 8, 74, 62);
+    }
 }

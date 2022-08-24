@@ -75,7 +75,7 @@ public class CollisionDetector {
     }
 
     // returnez index-ul obiectului cu care are loc colizunea
-    public int manageObjCollision(Entity entity, boolean player) {
+    public int manageObjCollision(Entity entity) {
 
         int index=-1;
         for (int i = 0; i < gPanel.objects.size(); i++) {
@@ -89,53 +89,18 @@ public class CollisionDetector {
                 gPanel.objects.get(i).solidArea.y += gPanel.objects.get(i).worldY;
 
                 switch (entity.direction) {
-                    case UP -> {
-                        entity.solidArea.y -= entity.speed;
-                        if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
-                            if (gPanel.objects.get(i).collision) {
-                                entity.collisionOn = true;
-                                setMotionOff(entity);
-                            }
-                            if (player) {
-                                index = i;
-                            }
-                        }
+                    case UP -> entity.solidArea.y -= entity.speed;
+                    case DOWN -> entity.solidArea.y += entity.speed;
+                    case LEFT -> entity.solidArea.x -= entity.speed;
+                    case RIGHT -> entity.solidArea.x += entity.speed;
+                }
+                if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
+                    if (gPanel.objects.get(i).collision) {
+                        entity.collisionOn = true;
+                        setMotionOff(entity);
                     }
-                    case DOWN -> {
-                        entity.solidArea.y += entity.speed;
-                        if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
-                            if (gPanel.objects.get(i).collision) {
-                                entity.collisionOn = true;
-                                setMotionOff(entity);
-                            }
-                            if (player) {
-                                index = i;
-                            }
-                        }
-                    }
-                    case LEFT -> {
-                        entity.solidArea.x -= entity.speed;
-                        if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
-                            if (gPanel.objects.get(i).collision) {
-                                entity.collisionOn = true;
-                                setMotionOff(entity);
-                            }
-                            if (player) {
-                                index = i;
-                            }
-                        }
-                    }
-                    case RIGHT -> {
-                        entity.solidArea.x += entity.speed;
-                        if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
-                            if (gPanel.objects.get(i).collision) {
-                                entity.collisionOn = true;
-                                setMotionOff(entity);
-                            }
-                            if (player) {
-                                index = i;
-                            }
-                        }
+                    if (entity.isPlayer) {
+                        index = i;
                     }
                 }
                 entity.solidArea.x = entity.solidAreaDefaultX;
@@ -162,10 +127,12 @@ public class CollisionDetector {
     }
 
     /** PLAYER */
-    public void checkPlayer(Entity entity) {
+    public boolean checkPlayer(Entity entity) {
         if (collisionOnTarget(entity, gPanel.player)) {
             entity.collisionOn = true;
+            return true;
         }
+        return false;
     }
 
     /** fucntia returneaza true daca exista coliziune intre doua entitati */
@@ -181,29 +148,14 @@ public class CollisionDetector {
             target.solidArea.y += target.worldY;
 
             switch (entity.direction) {
-                case UP -> {
-                    entity.solidArea.y -= entity.speed;
-                    if (entity.solidArea.intersects(target.solidArea)) {
-                        isColliding = true;
-                    }
-                }
-                case DOWN -> {
-                    entity.solidArea.y += entity.speed;
-                    if (entity.solidArea.intersects(target.solidArea)) {
-                        isColliding = true;
-                    }
-                }
-                case LEFT -> {
-                    entity.solidArea.x -= entity.speed;
-                    if (entity.solidArea.intersects(target.solidArea)) {
-                        isColliding = true;
-                    }
-                }
-                case RIGHT -> {
-                    entity.solidArea.x += entity.speed;
-                    if (entity.solidArea.intersects(target.solidArea)) {
-                        isColliding = true;
-                    }
+                case UP -> entity.solidArea.y -= entity.speed;
+                case DOWN -> entity.solidArea.y += entity.speed;
+                case LEFT -> entity.solidArea.x -= entity.speed;
+                case RIGHT -> entity.solidArea.x += entity.speed;
+            }
+            if (entity.solidArea.intersects(target.solidArea)) {
+                if (target != entity) {
+                    isColliding = true;
                 }
             }
             entity.solidArea.x = entity.solidAreaDefaultX;

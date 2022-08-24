@@ -12,6 +12,8 @@ public class NPC_OldMan extends NPC {
 
         super(gPanel);
 
+        setDefaultSolidArea();
+
         direction = Direction.DOWN;
         speed = 1;
 
@@ -36,46 +38,24 @@ public class NPC_OldMan extends NPC {
     /** AI Old Man */
     @Override
     public void AI() {
+        super.AI();
+    }
 
-        actionLockCounterDirection++;
-        actionLockCounterInMotion++;
+    public void update() {
 
-        if (actionLockCounterInMotion == timeToChangeInMotion) {
-
-            Random random = new Random();
-            int randomMotion = random.nextInt(100) + 1;
-
-            inMotion = randomMotion > 20; // 60% sanse de a se afla in miscare
-            actionLockCounterInMotion = 0;
-        }
-        if (actionLockCounterDirection == timeToChangeDirection) {
-
-            Random random = new Random();
-            int randomDirection = random.nextInt(100) + 1; // primeste un nr random intre 1-100
-
-            int wantToChange = random.nextInt(100) + 1;
-
-            if (wantToChange > 10) { // 50 % sanse de a schimba directia
-
-                if (randomDirection <= 25) {
-                    direction = Direction.UP;
-                }
-                if (randomDirection > 25 && randomDirection <= 50) {
-                    direction = Direction.DOWN;
-                }
-                if (randomDirection > 50 && randomDirection <= 75) {
-                    direction = Direction.LEFT;
-                }
-                if (randomDirection > 75) {
-                    direction = Direction.RIGHT;
-                }
-
-                actionLockCounterDirection = 0;
-            }
-        }
+        super.update();
     }
 
     public void speak() {
         super.speak();
+    }
+
+    @Override
+    public void setDefaultSolidArea() {
+        solidAreaDefaultX = getGamePanel().tileSize/8;
+        solidAreaDefaultY = getGamePanel().tileSize/2;
+        solidArea.width = (int) (getGamePanel().tileSize/1.5);
+        solidArea.height = (int) (getGamePanel().tileSize/2.25);
+        getGamePanel().hasZoomed = false;
     }
 }

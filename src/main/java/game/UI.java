@@ -142,30 +142,30 @@ public class UI {
 
         OBJ_Heart heart = getHeart();
 
+        assert heart != null : "Obiectul heart din drawPlayerLife() din clasa ui este null!";
+
         int x = posX;
 
+        // AFISEAZA HP CURENT PLAYER
+        int i;
+        // cat timp am 2 vieti, adaug o inima intreaga
+        for (i = 0; i < gPanel.player.life-1; i+=2) {
+            g2D.drawImage(heart.imgStates.get(0), x, posY, null);
+            x += 100;
+        }
+        // daca mai am o viata de adaugat, adaug jumatate de inima
+        if (gPanel.player.life - i == 1) {
+            g2D.drawImage(heart.imgStates.get(1), x, posY, null);
+            x += 100;
+        }
+
         // AFISEAZA HP MAXIM POSIBIL
-        for (int i = 0; i < gPanel.player.maxLife/2; i++) {
-            assert heart != null;
+        int missingLives = gPanel.player.life > 0 ? gPanel.player.maxLife - gPanel.player.life : gPanel.player.maxLife;
+        for (int k = 0; k < missingLives/2; k++) {
             g2D.drawImage(heart.imgStates.get(2), x, posY, null);
             x += 100;
         }
 
-        // RESETARE
-        x = posX;
-
-        // AFISEAZA HP CURENT PLAYER
-        int i = 0;
-        while (i < gPanel.player.life) {
-            assert heart != null;
-            g2D.drawImage(heart.imgStates.get(1), x, posY, null);
-            i++;
-            if (i < gPanel.player.life) {
-                g2D.drawImage(heart.imgStates.get(0), x, posY, null);
-            }
-            i++;
-            x += 100;
-        }
     }
 
     public void drawTitleScreen() {
@@ -360,15 +360,15 @@ public class UI {
     private void drawDialogueScreen() {
 
         // fereastra de dialog
-        int x = gPanel.tileSize*2;
-        int y = gPanel.tileSize/2;
-        int width = gPanel.screenWidth - (gPanel.tileSize*5);
-        int height = gPanel.tileSize*4;
+        int x = 156;
+        int y = 24;
+        int width = gPanel.screenWidth - (screenWidth-x)/2;
+        int height = gPanel.screenHeight / 4;
 
         drawSubWindow(x, y, width, height);
 
         // textul de afisat in fereastra de dialog
-        g2D.setFont(font.deriveFont(Font.PLAIN, 28f));
+        g2D.setFont(font.deriveFont(Font.PLAIN, gPanel.screenHeight/40f));
         x += gPanel.tileSize;
         y += gPanel.tileSize;
 

@@ -9,10 +9,15 @@ public class OBJ_Door extends SuperObject {
         this.typeObject = TypeObject.Door;
         this.collision = true;
 
+        setDefaultSolidArea();
+    }
+
+    @Override
+    public void setDefaultSolidArea() {
         solidArea.x = 0;
-        solidArea.y = gPanel.tileSize/3;
-        solidArea.width = gPanel.tileSize;
-        solidArea.height = (int) (gPanel.tileSize/1.5);
+        solidArea.y = getGamePanel().tileSize/3;
+        solidArea.width = getGamePanel().tileSize;
+        solidArea.height = (int) (getGamePanel().tileSize/1.5);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
     }

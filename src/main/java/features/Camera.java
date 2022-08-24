@@ -11,7 +11,6 @@ import tile.TileManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -110,11 +109,13 @@ public class Camera {
 //        }
 //    }
 
-    public static void rescaleNPC() {
-        for (Entity npc : gPanel.npc) {
+    public static void rescaleEntities() {
+        gPanel.addAllLists();
+        for (Entity npc : gPanel.entities) {
             List<StateMachine> allAnimations = Arrays.asList(npc.movement, npc.idle);
             rescaleAllAnimations(allAnimations);
         }
+        gPanel.entities.clear();
     }
 
     public static void rescaleTiles() {
@@ -157,12 +158,12 @@ public class Camera {
         rescaleTiles();
         rescalePlayer();
         rescaleObjects();
-        rescaleNPC();
+        rescaleEntities();
         rescaleObjectStates();
     }
 
     public static void fixNPCStuckInTile() {
-        for (Entity npc : gPanel.npc) {
+        for (Entity npc : gPanel.npcList) {
             int tileHoldingEntity = gPanel.tiles.mapTileNum[(int) npc.worldX][(int) npc.worldY];
             for (Tile tile : gPanel.tiles.generalTiles){
                 if (tile.idTile == tileHoldingEntity && tile.isColliding) {
@@ -223,11 +224,9 @@ public class Camera {
         if (gPanel.tileSize * gPanel.maxWorldCol > gPanel.limitZoomOut && gPanel.tileSize * gPanel.maxWorldCol < gPanel.limitZoomIn) gPanel.tileSize += i; // actualizare marime texturi
         else if (gPanel.tileSize * gPanel.maxWorldCol == gPanel.limitZoomOut) {
             gPanel.tileSize++;
-            canScale = false;
         }
         else if (gPanel.tileSize * gPanel.maxWorldCol == gPanel.limitZoomIn) {
             gPanel.tileSize--;
-            canScale = false;
         }
         else {
             System.out.println("zoomInOut a intrat pe return!");return;
@@ -240,61 +239,46 @@ public class Camera {
         gPanel.worldWidth *= mul;
         gPanel.worldHeight *= mul;
 
-//        double newPlayerWorldX = gPanel.player.worldX * mul;
-//        double newPlayerWorldY = gPanel.player.worldY * mul;
-
         // actualizare marime zoom pentru jucator
         gPanel.player.worldX *= mul;
         gPanel.player.worldY *= mul;
 
-        // actualizare marime zoom pentru aria de coliziune a jucatorului
+        // solidArea entitati
         int nr = gPanel.tileSize*gPanel.maxWorldCol;
-        if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
-            gPanel.player.solidAreaDefaultX = gPanel.tileSize/4;
-            gPanel.player.solidAreaDefaultY = gPanel.tileSize/2;
-            gPanel.player.solidArea.width = gPanel.tileSize/2;
-            gPanel.player.solidArea.height = (int) (gPanel.tileSize/2.25);
-        }
-
-        // NPCs
-        for (Entity npcCurrent : gPanel.npc) {
-            // update speed
-            npcCurrent.speed = newWorldWidth / (600f*gPanel.player.speed);
-            // update pozitii
-//            double newNPCWorldX = npcCurrent.worldX * mul;
-//            double newNPCWorldY = npcCurrent.worldY * mul;
-            npcCurrent.worldX *= mul;
-            npcCurrent.worldY *= mul;
-            // update solid area
-            if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
-//                npcCurrent.solidArea.width += i * mul;
-//                npcCurrent.solidArea.height += i * mul;
-                npcCurrent.solidAreaDefaultX = gPanel.tileSize/8;
-                npcCurrent.solidAreaDefaultY = gPanel.tileSize/2;
-                npcCurrent.solidArea.width = (int) (gPanel.tileSize/1.5);
-                npcCurrent.solidArea.height = (int) (gPanel.tileSize/2.25);
+//        if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
+            gPanel.addAllLists();
+            for (Entity entity : gPanel.entities) {
+                entity.setDefaultSolidArea();
             }
-            validatePositions(npcCurrent, gPanel.player);
-            npcCurrent.collisionOn=false;
+            gPanel.entities.clear();
+//        }
+
+        // NPC & Monstrii
+        gPanel.addAllAI();
+        for (Entity entity : gPanel.entities) {
+            // update speed
+            entity.speed = newWorldWidth / (600f*gPanel.player.speed);
+            // update pozitii
+            entity.worldX *= mul;
+            entity.worldY *= mul;
         }
+        gPanel.entities.clear();
 
         // actualizare marime zoom pentru obiecte
-        for (SuperObject object : gPanel.objects) {
-//            double newObjWorldX = object.worldX * mul;
-//            double newObjWorldY = object.worldY * mul;
-            object.worldX *= mul;
-            object.worldY *= mul;
-
-            object.screenX *= mul;
-            object.screenY *= mul;
-
-            if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
-                object.solidAreaDefaultX = 0;
-                object.solidAreaDefaultY = gPanel.tileSize/3;
-                object.solidArea.width = gPanel.tileSize;
-                object.solidArea.height = (int) (gPanel.tileSize/1.5);
-            }
-        }
+//        for (SuperObject object : gPanel.objects) {
+//            object.worldX *= mul;
+//            object.worldY *= mul;
+//
+//            object.screenX *= mul;
+//            object.screenY *= mul;
+//
+////            if (canScale && nr > gPanel.limitZoomOut && nr < gPanel.limitZoomIn) {
+////                object.solidAreaDefaultX = 0;
+////                object.solidAreaDefaultY = gPanel.tileSize/3;
+////                object.solidArea.width = gPanel.tileSize;
+////                object.solidArea.height = (int) (gPanel.tileSize/1.5);
+////            }
+//        }
 
         // actualizare pozitii HUD
     }

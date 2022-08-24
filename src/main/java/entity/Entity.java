@@ -73,7 +73,9 @@ public abstract class Entity {
     public void update() {
         collisionOn = false;
         gPanel.collisionDetector.manageTileCollision(this);
-        gPanel.collisionDetector.manageObjCollision(this, false);
+        gPanel.collisionDetector.manageObjCollision(this);
+        gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
+        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
         gPanel.collisionDetector.checkPlayer(this);
 
         if (!collisionOn && inMotion)
@@ -181,4 +183,5 @@ public abstract class Entity {
         return gPanel;
     }
 
+    public abstract void setDefaultSolidArea();
 }

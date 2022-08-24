@@ -7,4 +7,9 @@ public class OBJ_Key extends SuperObject {
         super(gPanel);
         this.typeObject = TypeObject.Key;
     }
+
+    @Override
+    public void setDefaultSolidArea() {
+
+    }
 }

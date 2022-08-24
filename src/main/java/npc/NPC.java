@@ -1,25 +1,22 @@
 package npc;
 
+import entity.ArtificialIntelligence;
 import entity.Entity;
+import entity.TypeAI;
 import game.GamePanel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.random.RandomGenerator;
 
-public abstract class NPC extends Entity {
+public abstract class NPC extends ArtificialIntelligence {
 
-    public int actionLockCounterDirection = 0;
-    public int actionLockCounterInMotion = 0;
-    public int timeToChangeInMotion;
-    public int timeToChangeDirection;
     TypeNPC typeNPC;
 
     public NPC(GamePanel gp) {
         super(gp);
+        typeAI = TypeAI.NPC;
     }
-
-    public abstract void AI();
 
     public void update() {
         AI();

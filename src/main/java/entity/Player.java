@@ -1,6 +1,5 @@
 package entity;
 
-import animations.AnimationState;
 import features.*;
 import game.GamePanel;
 import game.GameState;
@@ -21,6 +20,8 @@ public class Player extends Entity {
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
 
+    public boolean invincible = false;
+    public int invincibleCounter = 0;
 
     /** Constructor player */
     public Player(GamePanel gPanel, KeyHandler keyH, int x, int y, Direction direction) {
@@ -52,6 +53,9 @@ public class Player extends Entity {
         maxLife = 6;
         life = maxLife;
 
+        // debug
+//        setPosition(gPanel.tileSize * 10, gPanel.tileSize * 13);
+
 //        solidArea.x = 32;
 //        solidArea.y = 32;
 //        solidAreaDefaultX = 32;
@@ -78,6 +82,18 @@ public class Player extends Entity {
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
         currentAnimation.updateFrames();
+
+        manageInvincible();
+    }
+
+    private void manageInvincible() {
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
     }
 
     @Override
@@ -113,9 +129,26 @@ public class Player extends Entity {
             y = (int) (gPanel.screenHeight - (gPanel.worldHeight - worldY));
         }
 
+        // setarea opacitatii
+        if (invincible) {
+            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+        }
+
         g2D.drawImage(sprite, x, y, null);
+
         g2D.setColor(Color.red);
         g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+
+        // resetarea opacitatii
+        g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+    }
+
+    @Override
+    public void setDefaultSolidArea() {
+        gPanel.player.solidAreaDefaultX = gPanel.tileSize / 4;
+        gPanel.player.solidAreaDefaultY = gPanel.tileSize / 2;
+        gPanel.player.solidArea.width = gPanel.tileSize / 2;
+        gPanel.player.solidArea.height = (int) (gPanel.tileSize / 2.25);
     }
 
     /** inregistrarea animatiilor pentru player */
@@ -213,12 +246,16 @@ public class Player extends Entity {
             gPanel.collisionDetector.manageTileCollision(this);
 
             // verifica coliziunea cu obiecte
-            int objIndex = gPanel.collisionDetector.manageObjCollision(this, true);
+            int objIndex = gPanel.collisionDetector.manageObjCollision(this);
             pickUpObj(objIndex);
 
             // verifica coliziunea cu NPC
-            int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npc);
+            int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
             interactNPC(npcIndex);
+
+            // verifica coliziuni cu monstrii
+            int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
+            contactMonster(monsterIndex);
 
             // verifica evenimente
             gPanel.eHandler.checkEvent();
@@ -235,8 +272,18 @@ public class Player extends Entity {
             if (gPanel.keyH.enterPressed) {
                 // interactionari cu npc-uri
                 GamePanel.gameState = GameState.Dialogue;
-                gPanel.npc.get(npcIndex).speak();
+                gPanel.npcList.get(npcIndex).speak();
             }
         }
     }
+
+    private void contactMonster(int monsterIndex) {
+        if (monsterIndex > -1) {
+            if (!invincible) {
+                life -= 1;
+                invincible = true;
+            }
+        }
+    }
+
 }

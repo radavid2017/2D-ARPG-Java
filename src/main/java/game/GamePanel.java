@@ -3,6 +3,7 @@ package game;
 import entity.Entity;
 import entity.Player;
 import features.*;
+import monster.Monster;
 import object.SuperObject;
 import object.SuperStatesObject;
 import tile.TileManager;
@@ -69,13 +70,17 @@ public class GamePanel extends JPanel implements Runnable {
     // player
     public Player player;
     // lista NPC
-    public List<Entity> npc = new ArrayList<>();
+    public List<Entity> npcList = new ArrayList<Entity>();
+    // lista Monster
+    public List<Entity> monsterList = new ArrayList<>();
     // lista obiecte
     public List<SuperObject> objects = new ArrayList<>();
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
 
     public ArrayList<Entity> entities = new ArrayList<>();
+
+    public boolean hasZoomed = false;
 
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.NULL;
@@ -104,6 +109,8 @@ public class GamePanel extends JPanel implements Runnable {
         assetPool.setObjects();
         // adaugarea npc-urilor
         assetPool.setNPC();
+        // adaugarea monstriilor
+        assetPool.setMonster();
         // setup muzica de fundal
         playMusic("BlueBoyAdventure.wav");
         stopMusic();
@@ -170,9 +177,14 @@ public class GamePanel extends JPanel implements Runnable {
                 // PLAYER UPDATE
                 player.update();
                 // NPC UPDATE
-                for (Entity npc : npc) {
+                for (Entity npc : npcList) {
                     if (npc != null) {
                         npc.update();
+                    }
+                }
+                for (Entity monster : monsterList) {
+                    if (monster != null) {
+                        monster.update();
                     }
                 }
             }
@@ -281,9 +293,17 @@ public class GamePanel extends JPanel implements Runnable {
     public void addAllLists() {
         if (player != null)
             entities.add(player);
-        entities.addAll(npc);
+        entities.addAll(npcList);
         for (Entity obj : objects)
             if (obj != null)
                 entities.add(obj);
+        for (Entity monster : monsterList)
+            if (monster != null)
+                entities.add(monster);
+    }
+
+    public void addAllAI() {
+        entities.addAll(npcList);
+        entities.addAll(monsterList);
     }
 }
