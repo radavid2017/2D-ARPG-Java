@@ -1,8 +1,10 @@
 package entity;
 
+import animations.TypeAnimation;
 import features.*;
 import game.GamePanel;
 import game.GameState;
+import monster.Monster;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,17 +13,19 @@ import java.awt.image.BufferedImage;
 // precum pozitia sa si viteza de deplasare
 public class Player extends Entity {
 
-    KeyHandler keyH;
+    Graphics2D g2D = null;
+
+    public KeyHandler keyH;
 
     public final int screenX;
     public final int screenY;
 
-    public String characterClassPath = "mage";
+    public String characterClassPath = "warrior";
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
 
-    public boolean invincible = false;
-    public int invincibleCounter = 0;
+//    public boolean invincible = false;
+//    public int invincibleCounter = 0;
 
     /** Constructor player */
     public Player(GamePanel gPanel, KeyHandler keyH, int x, int y, Direction direction) {
@@ -63,6 +67,8 @@ public class Player extends Entity {
 //        solidArea.width = 38; // 64;
 //        solidArea.height = 62; //48; //62;
 
+        setDefaultAttackArea();
+
         this.getPlayerSprites();
     }
 
@@ -71,13 +77,14 @@ public class Player extends Entity {
 //        String playerPath = "res/player/"+characterClassPath;
         setupMovement("res/player/" + characterClassPath);
         setupIdle("res/player/" + characterClassPath);
+        setupAttack("res/player/" + characterClassPath);
 //        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
 
     @Override
     public void update() {
 
-        // Deplasari jucator
+        // Animatii jucator
         this.managePlayerMovement();
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
@@ -86,25 +93,31 @@ public class Player extends Entity {
         manageInvincible();
     }
 
-    private void manageInvincible() {
-        if (invincible) {
-            invincibleCounter++;
-            if (invincibleCounter > 60) {
-                invincible = false;
-                invincibleCounter = 0;
-            }
-        }
-    }
+//    private void manageInvincible() {
+//        if (invincible) {
+//            invincibleCounter++;
+//            if (invincibleCounter > 60) {
+//                invincible = false;
+//                invincibleCounter = 0;
+//            }
+//        }
+//    }
 
     @Override
     public void draw(Graphics2D g2D) {
 
+        if (this.g2D == null)
+            this.g2D = g2D;
+
         /** Management animatii */
         BufferedImage sprite = null;
-        inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
-//        sprite = movement.manageAnimations(this, direction, inMotion);
 
-        if (inMotion) {
+        inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+        if (isAttacking()) {
+            if(inMotion) inMotion = false;
+            sprite = attack.manageAnimations(this,direction);
+        }
+        else if (inMotion) {
             sprite = movement.manageAnimations(this, direction);
         }
         else {
@@ -134,7 +147,12 @@ public class Player extends Entity {
             g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
         }
 
-        g2D.drawImage(sprite, x, y, null);
+        if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.UP)
+            g2D.drawImage(sprite, x, y-gPanel.tileSize, null);
+        else if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.LEFT)
+            g2D.drawImage(sprite, x-gPanel.tileSize, y, null);
+        else
+            g2D.drawImage(sprite, x, y, null);
 
         g2D.setColor(Color.red);
         g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
@@ -149,6 +167,57 @@ public class Player extends Entity {
         gPanel.player.solidAreaDefaultY = gPanel.tileSize / 2;
         gPanel.player.solidArea.width = gPanel.tileSize / 2;
         gPanel.player.solidArea.height = (int) (gPanel.tileSize / 2.25);
+    }
+
+    public void setDefaultAttackArea() {
+        attackArea.width = 36;
+        attackArea.height = 36;
+    }
+
+    public void attackingMonster() {
+        // salveaza datele curente ale ariei solide
+        int currentWorldX = (int) worldX;
+        int currentWorldY = (int) worldY;
+        int solidAreaWidth = solidArea.width;
+        int solidAreaHeight = solidArea.height;
+
+        // ajusteaza coordonatele jucatorului pentru aria de atac
+        switch (direction) {
+            case UP -> worldY -= attackArea.height;
+            case DOWN -> worldY += attackArea.height;
+            case LEFT -> worldX -= attackArea.width;
+            case RIGHT -> worldX += attackArea.width;
+        }
+
+        // schimbarea dimensiunii ariei solide pentru aria de atac
+        solidArea.width = attackArea.width;
+        solidArea.height = attackArea.height;
+
+        // verifica coliziunea ariei de atac cu monstrii
+        int monsterIndex = gPanel.collisionDetector.
+                checkEntity(this, gPanel.monsterList);
+        doDamage(monsterIndex);
+
+        // dupa verificarea coliziunii, restabileste datele originale
+        worldX = currentWorldX;
+        worldY = currentWorldY;
+        solidArea.width = solidAreaWidth;
+        solidArea.height = solidAreaHeight;
+
+    }
+
+    private void doDamage(int monsterIndex) {
+        if (monsterIndex > -1) {
+            if (!gPanel.monsterList.get(monsterIndex).invincible) {
+                // ofera daune
+                gPanel.monsterList.get(monsterIndex).life -= 1;
+                gPanel.monsterList.get(monsterIndex).invincible = true;
+
+                if (gPanel.monsterList.get(monsterIndex).life <= 0) {
+                    gPanel.monsterList.set(monsterIndex, null);
+                }
+            }
+        }
     }
 
     /** inregistrarea animatiilor pentru player */
@@ -238,20 +307,25 @@ public class Player extends Entity {
         return false;
     }
 
+    public boolean isAttacking() {
+        return keyH.spacePressed;
+    }
+
+
     public void managePlayerMovement() {
+
         if (isMoving()) {
 //            System.out.println("up: " + keyH.upPressed + " down: " + keyH.downPressed + " left: " + keyH.leftPressed + " right: " + keyH.rightPressed);
             // verifica coliziunea cu texturile hartii
             collisionOn = false;
             gPanel.collisionDetector.manageTileCollision(this);
 
+            // verifica coliziunea cu NPC
+            gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
+
             // verifica coliziunea cu obiecte
             int objIndex = gPanel.collisionDetector.manageObjCollision(this);
             pickUpObj(objIndex);
-
-            // verifica coliziunea cu NPC
-            int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
-            interactNPC(npcIndex);
 
             // verifica coliziuni cu monstrii
             int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
@@ -260,10 +334,14 @@ public class Player extends Entity {
             // verifica evenimente
             gPanel.eHandler.checkEvent();
 
-            gPanel.keyH.enterPressed = false;
-
             if (!collisionOn && inMotion)
                 manageMovement();
+        }
+        // interactiune cu npc
+        if (keyH.enterPressed) {
+            int npcIndex = gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
+            interactNPC(npcIndex);
+            gPanel.keyH.enterPressed = false;
         }
     }
 

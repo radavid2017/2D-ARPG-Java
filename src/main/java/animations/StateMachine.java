@@ -52,12 +52,12 @@ public class StateMachine {
 //        return null;
 //    }
 
-    public void loadCompleteAnimation(GamePanel gp, String animationFolderName) {
+    public void loadCompleteAnimation(GamePanel gp, String animationFolderName, TypeAnimation typeAnimation) {
         // instantiere
-        up = new AnimationState(gp, Direction.UP);
-        down = new AnimationState(gp, Direction.DOWN);
-        right = new AnimationState(gp, Direction.RIGHT);
-        left = new AnimationState(gp, Direction.LEFT);
+        up = new AnimationState(gp, Direction.UP, typeAnimation);
+        down = new AnimationState(gp, Direction.DOWN, typeAnimation);
+        right = new AnimationState(gp, Direction.RIGHT, typeAnimation);
+        left = new AnimationState(gp, Direction.LEFT, typeAnimation);
 
         // incarcare resurse
         up.loadDirectionAnimation(animationFolderName);

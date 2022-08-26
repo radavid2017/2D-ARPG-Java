@@ -25,6 +25,8 @@ public class AnimationState {
     public List<BufferedImage> animationFrames = new ArrayList<>();
     public List<BufferedImage> entityOriginalImages = new ArrayList<>();
 
+    public TypeAnimation typeAnimation;
+
     /** variabile pentru rularea animatiilor */
     // interval de cadre pentru schimbare imagine
     public int intervalChangingFrames = 0;
@@ -33,7 +35,7 @@ public class AnimationState {
     public int numFrames = 0;
     public int timeToChangeFrame = 10;
 
-    public AnimationState(GamePanel gp, String title, Direction direction, String filePath) {
+    public AnimationState(GamePanel gp, String title, Direction direction, String filePath, TypeAnimation typeAnimation) {
         try {
             RenameFolderFiles.rename(filePath);
             List<BufferedImage> imgList = new ArrayList<>();
@@ -50,14 +52,16 @@ public class AnimationState {
             this.title = title;
             this.animationFrames = imgList;
             numFrames = directory.list().length-1;
+            this.typeAnimation = typeAnimation;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public AnimationState(GamePanel gp, Direction direction) {
+    public AnimationState(GamePanel gp, Direction direction, TypeAnimation typeAnimation) {
         this.gp = gp;
         this.direction = direction;
+        this.typeAnimation = typeAnimation;
     }
 
     public void loadAnimation(GamePanel gp, String folderPath) {
@@ -69,7 +73,13 @@ public class AnimationState {
                 String spriteName = folderPath + "/" + i + ".png";
                 System.out.println("CADRUL " + spriteName + " incarcat cu succes.");
                 BufferedImage image = ImageIO.read(new FileInputStream(spriteName));
-                image = UtilityTool.scaledImage(image,gp.tileSize, gp.tileSize);
+                if (typeAnimation == TypeAnimation.ATTACK)
+                    switch (direction) {
+                        case UP, DOWN -> image = UtilityTool.scaledImage(image,gp.tileSize, gp.tileSize*2);
+                        case LEFT, RIGHT -> image = UtilityTool.scaledImage(image,gp.tileSize*2, gp.tileSize);
+                    }
+                else
+                    image = UtilityTool.scaledImage(image,gp.tileSize, gp.tileSize);
                 entityOriginalImages.add(image);
                 imgList.add(image);
             }
@@ -91,13 +101,33 @@ public class AnimationState {
 
     public void updateFrames() {
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
-        intervalChangingFrames++;
-        if (intervalChangingFrames > timeToChangeFrame) {
-            if (currentFrame < numFrames) {
-                currentFrame ++;
-            } else
-                currentFrame = 0;
-            intervalChangingFrames = 0;
+        switch (typeAnimation) {
+            case IN_MOTION, IDLE -> {
+                intervalChangingFrames++;
+                if (intervalChangingFrames > timeToChangeFrame) {
+                    if (currentFrame < numFrames) {
+                        currentFrame++;
+                    } else
+                        currentFrame = 0;
+                    intervalChangingFrames = 0;
+                }
+            }
+            case ATTACK -> {
+                intervalChangingFrames++;
+                if (intervalChangingFrames <= 5) {
+                    currentFrame = 0;
+                }
+                if (intervalChangingFrames > 5 && intervalChangingFrames <= 25) {
+                    currentFrame = 1;
+
+                    gp.player.attackingMonster();
+                }
+                if (intervalChangingFrames > 25) {
+                    currentFrame = 0;
+                    intervalChangingFrames = 0;
+//                    gPanel.player.keyH.spacePressed = false;
+                }
+            }
         }
     }
 

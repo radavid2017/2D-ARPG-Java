@@ -2,6 +2,7 @@ package features;
 
 import animations.AnimationState;
 import animations.StateMachine;
+import animations.TypeAnimation;
 import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
@@ -111,8 +112,8 @@ public class Camera {
 
     public static void rescaleEntities() {
         gPanel.addAllLists();
-        for (Entity npc : gPanel.entities) {
-            List<StateMachine> allAnimations = Arrays.asList(npc.movement, npc.idle);
+        for (Entity entity : gPanel.entities) {
+            List<StateMachine> allAnimations = Arrays.asList(entity.movement, entity.idle, entity.attack);
             rescaleAllAnimations(allAnimations);
         }
         gPanel.entities.clear();
@@ -125,15 +126,22 @@ public class Camera {
     }
 
     public static void rescalePlayer() {
-        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle);
+        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attack);
         rescaleAllAnimations(allAnimations);
     }
 
     private static void rescaleAllAnimations(List<StateMachine> allAnimations) {
         for (StateMachine stateMachine : allAnimations) {
             for (AnimationState animationState : stateMachine.states) {
+                int width = gPanel.tileSize, height = gPanel.tileSize;
+                if (animationState.typeAnimation == TypeAnimation.ATTACK) {
+                    switch (animationState.direction) {
+                        case UP, DOWN -> height *= 2;
+                        case LEFT, RIGHT -> width *= 2;
+                    }
+                }
                 for (int i = 0; i < animationState.animationFrames.size(); i++) {
-                    BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(i), gPanel.tileSize, gPanel.tileSize);
+                    BufferedImage scaledImage = UtilityTool.scaledImage(animationState.entityOriginalImages.get(i), width, height);
                     animationState.animationFrames.set(i, scaledImage);
                 }
             }

@@ -15,6 +15,7 @@ public abstract class Monster extends ArtificialIntelligence {
     public Monster(GamePanel gp) {
         super(gp);
         typeAI = TypeAI.Monster;
+        this.invincibleTime = 20;
     }
 
     public void update() {
@@ -47,8 +48,15 @@ public abstract class Monster extends ArtificialIntelligence {
             sprite = idle.manageAnimations(this, direction);
 
         // Management Camera
+
+        if (invincible) {
+            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        }
+
         camera.drawEntity(g2D, sprite);
 
         drawSolidArea(g2D);
+
+        g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 }

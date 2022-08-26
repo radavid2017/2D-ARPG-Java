@@ -2,6 +2,7 @@ package entity;
 
 import animations.AnimationState;
 import animations.StateMachine;
+import animations.TypeAnimation;
 import features.*;
 import game.GamePanel;
 
@@ -29,6 +30,8 @@ public abstract class Entity {
     /** Lista de animatii */
     public StateMachine movement = new StateMachine();
     public StateMachine idle = new StateMachine();
+    public StateMachine attack = new StateMachine();
+    public TypeAnimation typeAnimation;
 //    // directii diagonale - optional
     public BufferedImage[] upLeft,upRight,downLeft,downRight;
     /** Variabila pentru a declansa animatia corecta in functie de directia de miscare */
@@ -38,6 +41,12 @@ public abstract class Entity {
     public Rectangle solidArea = new Rectangle();
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
+
+    /** Suprafata de detectare a loviturilor */
+    public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
+    public int invincibleTime = 60;
+    public int invincibleCounter = 0;
+    public boolean invincible = false;
 
     public int timeToChangeFrame = 12;
     public int currentTime = 0;
@@ -80,6 +89,8 @@ public abstract class Entity {
 
         if (!collisionOn && inMotion)
             this.manageMovement();
+
+        manageInvincible();
 
 //        currentTime++;
 //        if (currentTime >= timeToChangeFrame) {
@@ -131,13 +142,18 @@ public abstract class Entity {
 
     public void setupMovement(String creaturePath) {
         movement = new StateMachine();
-        movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement");
+        movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement", TypeAnimation.IN_MOTION);
         currentAnimation = movement.down;
     }
 
     public void setupIdle(String creaturePath) {
         idle = new StateMachine();
-        idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle");
+        idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE);
+    }
+
+    public void setupAttack(String creaturePath) {
+        attack = new StateMachine();
+        attack.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
     }
 
     // incarcarea animatiilor de miscare
@@ -149,20 +165,20 @@ public abstract class Entity {
 //        RenameFolderFiles.rename("E:\\AplicatiiCV\\2DAdventure\\res\\player\\movement\\north");
 //        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, entityPath + "\\" + characterName + "\\movement\\north");
 
-        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, entityPath + "\\movement\\north");
-        System.out.println("Animatia " + walkUp.title + " incarcata cu succes.");
-        // RIGHT
-//        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,entityPath + "\\" + characterName + "\\movement\\east");
-        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,entityPath + "\\movement\\east");
-        System.out.println("Animatia " + walkRight.title + " incarcata cu succes.");
-        // DOWN
-//        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, entityPath + "\\" + characterName + "\\movement\\south");
-        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, entityPath + "\\movement\\south");
-        System.out.println("Animatia " + walkDown.title + " incarcata cu succes.");
-        // LEFT
-//        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, entityPath + "\\" + characterName + "\\movement\\west");
-        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, entityPath + "\\movement\\west");
-        System.out.println("Animatia " + walkLeft.title + " incarcata cu succes.");
+//        walkUp = new AnimationState(this.gPanel, "walkUp", Direction.UP, entityPath + "\\movement\\north");
+//        System.out.println("Animatia " + walkUp.title + " incarcata cu succes.");
+//        // RIGHT
+////        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,entityPath + "\\" + characterName + "\\movement\\east");
+//        walkRight = new AnimationState(this.gPanel, "walkRight", Direction.RIGHT,entityPath + "\\movement\\east");
+//        System.out.println("Animatia " + walkRight.title + " incarcata cu succes.");
+//        // DOWN
+////        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, entityPath + "\\" + characterName + "\\movement\\south");
+//        walkDown = new AnimationState(this.gPanel, "walkDown", Direction.DOWN, entityPath + "\\movement\\south");
+//        System.out.println("Animatia " + walkDown.title + " incarcata cu succes.");
+//        // LEFT
+////        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, entityPath + "\\" + characterName + "\\movement\\west");
+//        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, entityPath + "\\movement\\west");
+//        System.out.println("Animatia " + walkLeft.title + " incarcata cu succes.");
 
         movement = new StateMachine();
         for (AnimationState animationState : Arrays.asList(this.walkUp, this.walkDown, this.walkRight, this.walkLeft)) {
@@ -173,6 +189,16 @@ public abstract class Entity {
     public void setPosition(double worldX, double worldY) {
         this.worldX = worldX;
         this.worldY = worldY;
+    }
+
+    public void manageInvincible() {
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > invincibleTime) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
     }
 
     public void setCollisionOn(boolean collisionOn) {

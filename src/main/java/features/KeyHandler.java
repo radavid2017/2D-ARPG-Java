@@ -14,6 +14,7 @@ public class KeyHandler implements KeyListener {
     private boolean upWasPressed,downWasPressed,leftWasPressed,rightWasPressed;
     public boolean enterPressed;
     public boolean checkDrawTime = false;
+    public boolean spacePressed;
     GamePanel gPanel;
 
     public KeyHandler(GamePanel gPanel) {
@@ -69,6 +70,8 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_S -> downPressed = true;
                 case KeyEvent.VK_A -> leftPressed = true;
                 case KeyEvent.VK_D -> rightPressed = true;
+                // ATTACKING
+                case KeyEvent.VK_SPACE -> spacePressed = true;
                 // ZOOM IN
                 case KeyEvent.VK_UP -> {
                     Camera.zoomInOut(1);
@@ -119,6 +122,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S -> downPressed = false;
             case KeyEvent.VK_A -> leftPressed = false;
             case KeyEvent.VK_D -> rightPressed = false;
+            // ATTACKING
+            case KeyEvent.VK_SPACE -> spacePressed = false;
         }
     }
 }
