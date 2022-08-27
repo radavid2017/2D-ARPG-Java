@@ -16,6 +16,7 @@ public class Sound {
     public Sound(String folderPath) {
         File directory = new File(folderPath);
         File[] files = directory.listFiles();
+        System.out.println(folderPath + " fisiere: " + files.length);
         for (int i = 0; i < files.length; i++) {
             if (files[i].isFile()) {
                 String filePath = folderPath + "/" + files[i].getName();

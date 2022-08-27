@@ -102,6 +102,8 @@ public class EventHandler {
 
     public void damagePit(int col, int row, GameState gameState) {
         GamePanel.gameState = gameState;
+        gPanel.player.invincible = true;
+        gPanel.playSE("receivedamage.wav");
         gPanel.ui.setCurrentDialogue(new Dialogue("Ai cazut intr-o groapa!"));
         gPanel.player.life--;
 //        eventRect[col][row].eventDone = true;
@@ -111,9 +113,12 @@ public class EventHandler {
     public void healingPool(GameState gameState) {
 
         if (gPanel.keyH.enterPressed) {
-            GamePanel.gameState = gameState;
-            gPanel.ui.setCurrentDialogue(new Dialogue("Bei din apa.\nViata ta este recuperata!"));
-            gPanel.player.life = gPanel.player.maxLife;
+            if (gPanel.player.life < gPanel.player.maxLife) {
+                GamePanel.gameState = gameState;
+                gPanel.playSE("powerup.wav");
+                gPanel.ui.setCurrentDialogue(new Dialogue("Bei din apa.\nViata ta este recuperata!"));
+                gPanel.player.life = gPanel.player.maxLife;
+            }
         }
     }
 }

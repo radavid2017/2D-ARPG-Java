@@ -17,6 +17,8 @@ public class KeyHandler implements KeyListener {
     public boolean spacePressed;
     GamePanel gPanel;
 
+    public boolean hasPlayed = false;
+
     public KeyHandler(GamePanel gPanel) {
         this.gPanel = gPanel;
     }
@@ -71,7 +73,13 @@ public class KeyHandler implements KeyListener {
                 case KeyEvent.VK_A -> leftPressed = true;
                 case KeyEvent.VK_D -> rightPressed = true;
                 // ATTACKING
-                case KeyEvent.VK_SPACE -> spacePressed = true;
+                case KeyEvent.VK_SPACE -> {
+                    if (!hasPlayed) {
+                        gPanel.playSE("swingweapon.wav");
+                        hasPlayed = true;
+                    spacePressed = true;
+                    }
+                }
                 // ZOOM IN
                 case KeyEvent.VK_UP -> {
                     Camera.zoomInOut(1);
@@ -123,7 +131,11 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_A -> leftPressed = false;
             case KeyEvent.VK_D -> rightPressed = false;
             // ATTACKING
-            case KeyEvent.VK_SPACE -> spacePressed = false;
+            case KeyEvent.VK_SPACE -> {
+                hasPlayed = false;
+                spacePressed = false;
+                gPanel.player.currentAnimation.intervalChangingFrames = 0;
+            }
         }
     }
 }

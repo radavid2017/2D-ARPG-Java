@@ -1,7 +1,6 @@
 package monster;
 
 import entity.ArtificialIntelligence;
-import entity.Entity;
 import entity.TypeAI;
 import game.GamePanel;
 
@@ -12,10 +11,21 @@ public abstract class Monster extends ArtificialIntelligence {
 
     TypeMonster typeMonster;
 
+    boolean hpBarOn = false;
+    int hpBarCounter = 0;
+
     public Monster(GamePanel gp) {
         super(gp);
         typeAI = TypeAI.Monster;
         this.invincibleTime = 20;
+    }
+
+    public void damageReaction() {
+
+        actionLockCounterDirection = 0;
+        actionLockCounterInMotion = 0;
+        direction = getGamePanel().player.direction;
+        inMotion = true;
     }
 
     public void update() {
@@ -29,10 +39,29 @@ public abstract class Monster extends ArtificialIntelligence {
     }
 
     private void doDamage() {
-        if (!getGamePanel().player.invincible) {
+        if (!getGamePanel().player.invincible && !dying) {
             // ofera daune
+            getGamePanel().playSE("receivedamage.wav");
             getGamePanel().player.life -= 1;
             getGamePanel().player.invincible = true;
+        }
+    }
+
+    /** Bara de viata a monstrului */
+    public void showHPBar(Graphics2D g2D) {
+
+        double oneScale = (double) getGamePanel().tileSize / maxLife;
+        double hpBarValue = oneScale * life;
+
+        g2D.setColor(new Color(35, 35, 35));
+        g2D.fillRect((int) screenX - 1, (int) screenY - 16, getGamePanel().tileSize, 10);
+        g2D.setColor(new Color(255, 0, 30));
+        g2D.fillRect((int) screenX, (int) screenY - 15, (int) hpBarValue, 10);
+
+        hpBarCounter ++;
+        if (hpBarCounter >= 150) {
+            hpBarCounter = 0;
+            hpBarOn = false;
         }
     }
 
@@ -49,8 +78,19 @@ public abstract class Monster extends ArtificialIntelligence {
 
         // Management Camera
 
+        // Monster HP Bar
+        if (hpBarOn) showHPBar(g2D);
+
         if (invincible) {
+            hpBarOn = true;
+            hpBarCounter = 0;
             g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
+        }
+
+        if (dying) {
+            isSolid = false;
+            hpBarOn = false;
+            dyingEffect(g2D);
         }
 
         camera.drawEntity(g2D, sprite);

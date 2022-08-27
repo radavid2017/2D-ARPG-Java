@@ -41,6 +41,7 @@ public abstract class Entity {
     public Rectangle solidArea = new Rectangle();
     public int solidAreaDefaultX, solidAreaDefaultY;
     public boolean collisionOn = false;
+    public boolean isSolid = true;
 
     /** Suprafata de detectare a loviturilor */
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
@@ -60,6 +61,11 @@ public abstract class Entity {
 
     public boolean inMotion = false;
     public boolean isPlayer = false;
+
+    /** Creature stuff */
+    public boolean alive = true;
+    public boolean dying = false;
+    public int dyingCounter = 0;
 
     /** Status caracter */
     public int maxLife;
@@ -199,6 +205,32 @@ public abstract class Entity {
                 invincibleCounter = 0;
             }
         }
+    }
+
+
+    /** Efect de moarte */
+    public void dyingEffect(Graphics2D g2D) {
+
+        dyingCounter++;
+        blinkingEffect(g2D, dyingCounter);
+        if (dyingCounter > 40) {
+            dying = false;
+            alive = false;
+        }
+    }
+
+    /** Efect de clipire */
+    public void blinkingEffect (Graphics2D g2D, int blinkCounter) {
+        if (blinkCounter % 10 >= 1 && blinkCounter % 10 <= 5) {
+            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0f));
+        }
+        if (blinkCounter % 10 >= 6 || blinkCounter % 10 == 0) {
+            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        }
+    }
+
+    public void damageReaction() {
+
     }
 
     public void setCollisionOn(boolean collisionOn) {

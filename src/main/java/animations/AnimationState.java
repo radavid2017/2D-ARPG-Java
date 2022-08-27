@@ -125,7 +125,7 @@ public class AnimationState {
                 if (intervalChangingFrames > 25) {
                     currentFrame = 0;
                     intervalChangingFrames = 0;
-//                    gPanel.player.keyH.spacePressed = false;
+                    gp.player.keyH.spacePressed = false;
                 }
             }
         }

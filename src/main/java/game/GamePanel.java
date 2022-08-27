@@ -3,7 +3,6 @@ package game;
 import entity.Entity;
 import entity.Player;
 import features.*;
-import monster.Monster;
 import object.SuperObject;
 import object.SuperStatesObject;
 import tile.TileManager;
@@ -52,8 +51,8 @@ public class GamePanel extends JPanel implements Runnable {
     /** Instantierea clasei ce manevreaza tastatura - KeyHandler */
     public KeyHandler keyH = new KeyHandler(this);
     /** Sunete joc */
-    Sound music = new Sound("res/sound/music");
-    Sound soundEfect = new Sound("res/sound/efects");
+    public Sound music = new Sound("res/sound/music");
+    public Sound soundEffect = new Sound("res/sound/effects");
     public boolean hasPlayed = false;
     /** Coliziuni si asset-uri */
     public CollisionDetector collisionDetector = new CollisionDetector(this);
@@ -182,9 +181,14 @@ public class GamePanel extends JPanel implements Runnable {
                         npc.update();
                     }
                 }
-                for (Entity monster : monsterList) {
-                    if (monster != null) {
-                        monster.update();
+                for (int i = 0; i < monsterList.size(); i++) {
+                    if (monsterList.get(i) != null) {
+                        if (monsterList.get(i).alive && !monsterList.get(i).dying) {
+                            monsterList.get(i).update();
+                        }
+                        if (!monsterList.get(i).alive) {
+                            monsterList.set(i, null);
+                        }
                     }
                 }
             }
@@ -281,13 +285,14 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void playSE(String soundName) { // sunet de efect
         if (!hasPlayed) {
-            soundEfect.setFile(soundName);
-            soundEfect.play();
+            soundEffect.setFile(soundName);
+            soundEffect.play();
+//            hasPlayed = true;
         }
     }
 
     public void stopSE() {
-        soundEfect.stop();
+        soundEffect.stop();
     }
 
     public void addAllLists() {
@@ -304,6 +309,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void addAllAI() {
         entities.addAll(npcList);
-        entities.addAll(monsterList);
+        for (Entity monster : monsterList)
+            if (monster != null)
+                entities.add(monster);
     }
 }

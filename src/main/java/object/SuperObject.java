@@ -17,7 +17,7 @@ public abstract class SuperObject extends Entity {
     public TypeObject typeObject;
     public BufferedImage image;
     public String name;
-    public boolean collision = false;
+
 
     public BufferedImage originalObjImage;
 

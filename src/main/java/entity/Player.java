@@ -9,6 +9,8 @@ import monster.Monster;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static features.Camera.gPanel;
+
 // clasa north ce detine informatii despre jucator
 // precum pozitia sa si viteza de deplasare
 public class Player extends Entity {
@@ -21,6 +23,9 @@ public class Player extends Entity {
     public final int screenY;
 
     public String characterClassPath = "warrior";
+
+    public boolean isHitting = false;
+
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
 
@@ -210,11 +215,13 @@ public class Player extends Entity {
         if (monsterIndex > -1) {
             if (!gPanel.monsterList.get(monsterIndex).invincible) {
                 // ofera daune
+                gPanel.playSE("hitmonster.wav");
                 gPanel.monsterList.get(monsterIndex).life -= 1;
                 gPanel.monsterList.get(monsterIndex).invincible = true;
+                gPanel.monsterList.get(monsterIndex).damageReaction();
 
                 if (gPanel.monsterList.get(monsterIndex).life <= 0) {
-                    gPanel.monsterList.set(monsterIndex, null);
+                    gPanel.monsterList.get(monsterIndex).dying = true;
                 }
             }
         }
@@ -314,6 +321,9 @@ public class Player extends Entity {
 
     public void managePlayerMovement() {
 
+        // verifica evenimente
+        gPanel.eHandler.checkEvent();
+
         if (isMoving()) {
 //            System.out.println("up: " + keyH.upPressed + " down: " + keyH.downPressed + " left: " + keyH.leftPressed + " right: " + keyH.rightPressed);
             // verifica coliziunea cu texturile hartii
@@ -330,9 +340,6 @@ public class Player extends Entity {
             // verifica coliziuni cu monstrii
             int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
             contactMonster(monsterIndex);
-
-            // verifica evenimente
-            gPanel.eHandler.checkEvent();
 
             if (!collisionOn && inMotion)
                 manageMovement();
@@ -357,7 +364,8 @@ public class Player extends Entity {
 
     private void contactMonster(int monsterIndex) {
         if (monsterIndex > -1) {
-            if (!invincible) {
+            if (!invincible && !gPanel.monsterList.get(monsterIndex).dying) {
+                gPanel.playSE("receivedamage.wav");
                 life -= 1;
                 invincible = true;
             }

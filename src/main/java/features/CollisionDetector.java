@@ -95,7 +95,7 @@ public class CollisionDetector {
                     case RIGHT -> entity.solidArea.x += entity.speed;
                 }
                 if (entity.solidArea.intersects(gPanel.objects.get(i).solidArea)) {
-                    if (gPanel.objects.get(i).collision) {
+                    if (gPanel.objects.get(i).isSolid) {
                         entity.collisionOn = true;
                         setMotionOff(entity);
                     }
@@ -138,7 +138,7 @@ public class CollisionDetector {
     /** fucntia returneaza true daca exista coliziune intre doua entitati */
     private boolean collisionOnTarget(Entity entity, Entity target) {
         boolean isColliding = false;
-        if (target != null) {
+        if (target != null && target.isSolid && entity.isSolid) {
             // preia pozitia ariei de coliziune a entitatii
             entity.solidArea.x += entity.worldX;
             entity.solidArea.y += entity.worldY;

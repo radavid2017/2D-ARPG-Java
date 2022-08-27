@@ -7,7 +7,7 @@ public class OBJ_Door extends SuperObject {
     public OBJ_Door(GamePanel gPanel) {
         super(gPanel);
         this.typeObject = TypeObject.Door;
-        this.collision = true;
+        this.isSolid = true;
 
         setDefaultSolidArea();
     }
