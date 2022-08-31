@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int worldHeight = tileSize * maxWorldRow;
 
     // Instiantiere limite Zoom in & out
+    public final int defaultTileSize = tileSize;
     public final int defaultZoom = tileSize * maxWorldCol;
     public final int limitZoomIn = defaultZoom + 1000;
     public final int limitZoomOut = defaultZoom - 900;

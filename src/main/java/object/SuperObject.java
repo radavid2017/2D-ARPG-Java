@@ -27,7 +27,7 @@ public abstract class SuperObject extends Entity {
 
     public void loadObject(GamePanel gp, String imageFilePath) {
         name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
-//        name = name.substring(0, name.indexOf("."));
+        name = name.substring(0, name.indexOf("."));
         System.out.println("numele obiectului: " + name);
         try {
             image = ImageIO.read(new FileInputStream(imageFilePath));

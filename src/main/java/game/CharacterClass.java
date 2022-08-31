@@ -5,5 +5,6 @@ public enum CharacterClass {
     ARCHER,
     WARRIOR,
     CAT,
-    BACK
+    BACK,
+    ANY
 }

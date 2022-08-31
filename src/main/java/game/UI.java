@@ -5,6 +5,7 @@ import features.UtilityTool;
 import object.OBJ_Heart;
 import object.SuperStatesObject;
 import object.TypeStatesObject;
+import player.CharacterStatus;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 public class UI {
 
@@ -113,6 +115,10 @@ public class UI {
                 // starea de dialog
                 drawPlayerLife(heartX, heartY);
                 drawDialogueScreen();
+            }
+            case CharacterState -> {
+                // starea de status caracter
+                drawCharacterScreen();
             }
         }
 //        if (!gameOver) {
@@ -377,6 +383,58 @@ public class UI {
             g2D.drawString(line, x, y);
             y += 40;
         }
+    }
+
+    private void drawCharacterScreen() {
+        // date text
+        final int lineHeight = font.getSize() + 3;
+        CharacterStatus characterStatus = new CharacterStatus(gPanel);
+
+        // creare cadru
+        final int frameX = gPanel.screenWidth/22;
+        final int frameY = gPanel.screenHeight/6;
+        final int frameWidth = (int) (gPanel.screenWidth/3.25f);
+        final int frameHeight = characterStatus.parameters.size() * (lineHeight + 3) + characterStatus.numImages();
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        // TEXT
+        g2D.setColor(Color.white);
+        g2D.setFont(font.deriveFont(32F));
+
+        int textX = frameX + 20;
+        int textY = frameY + gPanel.defaultTileSize/2;
+
+        // NUME PARAMETRII
+        for (String param : characterStatus.parameters.keySet()) {
+//            int currentX = textX + getXForCenteredFrame(param, frameX);
+            if (characterStatus.parameters.get(param).getClass() == BufferedImage.class) {
+                textY += 50;
+            }
+            g2D.drawString(param + ":", textX, textY);
+            textY += lineHeight;
+        }
+
+        // VALORI
+        int tailX = (frameX + frameWidth) - 180;
+        // resetare textY
+        textY = frameY + gPanel.defaultTileSize/2;
+        for (Object value : characterStatus.parameters.values()) {
+            if (value.getClass() == String.class) {
+                int currentX = tailX + getXForCenteredFrame((String) value, frameX);
+                g2D.drawString((String) value, currentX, textY);
+                textY += lineHeight;
+            }
+            else {
+                g2D.drawImage((BufferedImage) value, tailX, textY-14, null);
+                textY += gPanel.defaultTileSize;
+            }
+
+        }
+    }
+
+    public int getXForCenteredFrame(String text, int frameX) {
+        int length = (int) g2D.getFontMetrics().getStringBounds(text, g2D).getWidth();
+        return frameX / 2 - length / 2;
     }
 
     private void drawSubWindow(int x, int y, int width, int height) {

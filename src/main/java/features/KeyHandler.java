@@ -46,66 +46,17 @@ public class KeyHandler implements KeyListener {
 
         // TITLE STATE
         if (GamePanel.gameState == GameState.Title) {
-            switch (gPanel.ui.titleScreenState){
-                case MAIN_PAGE -> {
-                    switch (code) {
-                        case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
-                        case KeyEvent.VK_UP -> gPanel.ui.previousItem();
-                        case KeyEvent.VK_ENTER -> gPanel.ui.chooseItem();
-                    }
-                }
-                case CLASS_SELECTION -> {
-                    switch (code) {
-                        case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
-                        case KeyEvent.VK_UP -> gPanel.ui.previousItem();
-                        case KeyEvent.VK_ENTER -> gPanel.ui.chooseClass();
-                    }
-                }
-            }
+            titleState(code);
         }
 
         // PLAY STATE
         if (!UI.GAME_OVER && GamePanel.gameState == GameState.Play) {
-            switch (code) {
-                // MOVEMENT
-                case KeyEvent.VK_W -> upPressed = true;
-                case KeyEvent.VK_S -> downPressed = true;
-                case KeyEvent.VK_A -> leftPressed = true;
-                case KeyEvent.VK_D -> rightPressed = true;
-                // ATTACKING
-                case KeyEvent.VK_SPACE -> {
-                    if (!hasPlayed) {
-                        gPanel.playSE("swingweapon.wav");
-                        hasPlayed = true;
-                    spacePressed = true;
-                    }
-                }
-                // ZOOM IN
-                case KeyEvent.VK_UP -> {
-                    Camera.zoomInOut(1);
-                    Camera.rescaleAll();
-//                    Camera.validatePositions(gPanel.npc, gPanel.player);
-//                    Camera.fixPlayerStuckInTile();
-                }
-                // ZOOM OUT
-                case KeyEvent.VK_DOWN -> {
-                    Camera.zoomInOut(-1);
-                    Camera.rescaleAll();
-//                    Camera.validatePositions(gPanel.npc, gPanel.player);
-//                    Camera.fixPlayerStuckInTile();
-                }
-                // ENTER DIALOGUE
-                case KeyEvent.VK_ENTER -> {
-                    enterPressed = true;
-                }
-            }
+            playState(code);
         }
 
         // DIALOGUE STATE
         else if (GamePanel.gameState == GameState.Dialogue) {
-            if (code == KeyEvent.VK_ENTER) {
-                GamePanel.gameState = GameState.Play;
-            }
+            dialogueState(code);
         }
 
         switch (code) {
@@ -116,8 +67,76 @@ public class KeyHandler implements KeyListener {
             // PAUSE - UNPAUSE
             case KeyEvent.VK_P -> GamePanel.gameState =
                     GamePanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
+            // CHARACTER STATE
+            case KeyEvent.VK_C -> GamePanel.gameState =
+                    GamePanel.gameState == GameState.Play ? GameState.CharacterState : GameState.Play;
         }
 
+    }
+
+    public void titleState(int code) {
+        switch (gPanel.ui.titleScreenState){
+            case MAIN_PAGE -> {
+                switch (code) {
+                    case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
+                    case KeyEvent.VK_UP -> gPanel.ui.previousItem();
+                    case KeyEvent.VK_ENTER -> gPanel.ui.chooseItem();
+                }
+            }
+            case CLASS_SELECTION -> {
+                switch (code) {
+                    case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
+                    case KeyEvent.VK_UP -> gPanel.ui.previousItem();
+                    case KeyEvent.VK_ENTER -> gPanel.ui.chooseClass();
+                }
+            }
+        }
+    }
+
+    public void playState(int code) {
+        switch (code) {
+            // MOVEMENT
+            case KeyEvent.VK_W -> upPressed = true;
+            case KeyEvent.VK_S -> downPressed = true;
+            case KeyEvent.VK_A -> leftPressed = true;
+            case KeyEvent.VK_D -> rightPressed = true;
+            // ATTACKING
+            case KeyEvent.VK_SPACE -> {
+                if (!hasPlayed) {
+                    gPanel.playSE("swingweapon.wav");
+                    hasPlayed = true;
+                    spacePressed = true;
+                }
+            }
+            // ZOOM IN
+            case KeyEvent.VK_UP -> {
+                Camera.zoomInOut(1);
+                Camera.rescaleAll();
+//                    Camera.validatePositions(gPanel.npc, gPanel.player);
+//                    Camera.fixPlayerStuckInTile();
+            }
+            // ZOOM OUT
+            case KeyEvent.VK_DOWN -> {
+                Camera.zoomInOut(-1);
+                Camera.rescaleAll();
+//                    Camera.validatePositions(gPanel.npc, gPanel.player);
+//                    Camera.fixPlayerStuckInTile();
+            }
+            // ENTER DIALOGUE
+            case KeyEvent.VK_ENTER -> {
+                enterPressed = true;
+            }
+            // CHARACTER STATE
+            case KeyEvent.VK_C -> {
+                GamePanel.gameState = GameState.Play;
+            }
+        }
+    }
+
+    public void dialogueState(int code) {
+        if (code == KeyEvent.VK_ENTER) {
+            GamePanel.gameState = GameState.Play;
+        }
     }
 
     @Override

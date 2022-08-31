@@ -4,12 +4,13 @@ import animations.TypeAnimation;
 import features.*;
 import game.GamePanel;
 import game.GameState;
-import monster.Monster;
+import item.Shield;
+import item.Weapon;
+import shield.NormalShield;
+import sword.NormalSword;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import static features.Camera.gPanel;
 
 // clasa north ce detine informatii despre jucator
 // precum pozitia sa si viteza de deplasare
@@ -24,7 +25,20 @@ public class Player extends Entity {
 
     public String characterClassPath = "warrior";
 
-    public boolean isHitting = false;
+    public int level;
+    public int strength;
+    public int dexterity;
+    public int attack = 0;
+    public int defense = 0;
+    public int exp;
+    public int nextLevelExp;
+    public int coin;
+    public Weapon currentWeapon;
+    public Shield currentShield;
+
+    // ATRIBUTE ITEME
+    public int attackValue;
+    public int defenseValue;
 
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
@@ -61,6 +75,17 @@ public class Player extends Entity {
         // INSTANTIERE STATUS JUCATOR
         maxLife = 6;
         life = maxLife;
+        level = 1;
+        strength = 1;
+        dexterity = 1;
+        exp = 0;
+        nextLevelExp = 5;
+        coin = 0;
+        currentWeapon = new NormalSword(gPanel);
+        currentShield = new NormalShield(gPanel);
+
+        updateAttack();
+        updateDefense();
 
         // debug
 //        setPosition(gPanel.tileSize * 10, gPanel.tileSize * 13);
@@ -111,6 +136,9 @@ public class Player extends Entity {
     @Override
     public void draw(Graphics2D g2D) {
 
+        if (gPanel == null)
+            return;
+
         if (this.g2D == null)
             this.g2D = g2D;
 
@@ -120,7 +148,7 @@ public class Player extends Entity {
         inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
         if (isAttacking()) {
             if(inMotion) inMotion = false;
-            sprite = attack.manageAnimations(this,direction);
+            sprite = attacks.manageAnimations(this,direction);
         }
         else if (inMotion) {
             sprite = movement.manageAnimations(this, direction);
@@ -172,6 +200,14 @@ public class Player extends Entity {
         gPanel.player.solidAreaDefaultY = gPanel.tileSize / 2;
         gPanel.player.solidArea.width = gPanel.tileSize / 2;
         gPanel.player.solidArea.height = (int) (gPanel.tileSize / 2.25);
+    }
+
+    void updateAttack() {
+        attack = strength * currentWeapon.damage;
+    }
+
+    void updateDefense() {
+        defense = dexterity * currentShield.defense;
     }
 
     public void setDefaultAttackArea() {
