@@ -1,6 +1,8 @@
 package monster;
 
 import entity.ArtificialIntelligence;
+import entity.AttackStyle;
+import entity.Entity;
 import entity.TypeAI;
 import game.GamePanel;
 
@@ -10,6 +12,7 @@ import java.awt.image.BufferedImage;
 public abstract class Monster extends ArtificialIntelligence {
 
     TypeMonster typeMonster;
+    AttackStyle attackStyle;
 
     boolean hpBarOn = false;
     int hpBarCounter = 0;
@@ -38,11 +41,17 @@ public abstract class Monster extends ArtificialIntelligence {
         }
     }
 
-    private void doDamage() {
+    public void doDamage() {
         if (!getGamePanel().player.invincible && !dying) {
             // ofera daune
             getGamePanel().playSE("receivedamage.wav");
-            getGamePanel().player.life -= 1;
+
+            switch (attackStyle) {
+                case Touching -> {
+                    touchingDamage(getGamePanel().player);
+                }
+            }
+
             getGamePanel().player.invincible = true;
         }
     }
@@ -77,6 +86,8 @@ public abstract class Monster extends ArtificialIntelligence {
             sprite = idle.manageAnimations(this, direction);
 
         // Management Camera
+
+        System.out.println("monster life: " + life);
 
         // Monster HP Bar
         if (hpBarOn) showHPBar(g2D);

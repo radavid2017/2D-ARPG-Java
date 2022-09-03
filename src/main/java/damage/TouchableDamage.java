@@ -3,7 +3,7 @@ package damage;
 import entity.Entity;
 import game.GamePanel;
 
-public class NormalDamage implements IDoDamage {
+public class TouchableDamage implements IDoDamage {
 
     @Override
     public int doDamage(Entity entity, Entity target) {

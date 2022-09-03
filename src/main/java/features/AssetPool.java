@@ -87,8 +87,11 @@ public class AssetPool {
     }
 
     public void setMonster() {
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*36);
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*37);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*21, gPanel.tileSize*38);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*42);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*24, gPanel.tileSize*37);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*34, gPanel.tileSize*42);
+        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*38, gPanel.tileSize*42);
 
         // debug
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*10);

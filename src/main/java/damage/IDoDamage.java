@@ -1,6 +1,9 @@
 package damage;
 
+import entity.Entity;
+import game.GamePanel;
+
 public interface IDoDamage {
 
-    void doDamage(int damage);
+    int doDamage(Entity entity, Entity target);
 }

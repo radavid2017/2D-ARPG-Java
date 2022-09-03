@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 
 public class UI {
 
@@ -29,11 +28,15 @@ public class UI {
     int xKey = 40,yKey=40, keySize;
     int xMsg, yMsg;
     int screenWidth;
-    int messageCounter = 0;
 
+//    int messageCounter = 0;
     public boolean messageOn = false;
-    public String message = "";
+//    public String message = "";
     private Dialogue currentDialogue;
+
+    ArrayList<String> msgs = new ArrayList<>();
+    ArrayList<Integer> msgCounters = new ArrayList<>();
+
     public boolean gameOver = false;
     public static boolean GAME_OVER = false;
 
@@ -105,6 +108,7 @@ public class UI {
             case Play -> {
                 // play staff
                 drawPlayerLife(heartX, heartY);
+                drawMessage();
             }
             case Pause -> {
                 // pause stuff
@@ -172,6 +176,33 @@ public class UI {
             x += 100;
         }
 
+    }
+
+    public void drawMessage() {
+        int msgX = gPanel.defaultTileSize;
+        int msgY = gPanel.defaultTileSize * 4;
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 32F));
+
+        for (int i = 0; i < msgs.size(); i++) {
+            String msg = msgs.get(i);
+            if (msg != null) {
+
+                g2D.setColor(Color.black);
+                g2D.drawString(msg, msgX+2, msgY+2);
+
+                g2D.setColor(Color.white);
+                g2D.drawString(msg, msgX, msgY);
+
+                int counter = msgCounters.get(i) + 1;
+                msgCounters.set(i, counter);
+                msgY += 50;
+
+                if (msgCounters.get(i) > 180) { // 3 secunde
+                    msgs.remove(i);
+                    msgCounters.remove(i);
+                }
+            }
+        }
     }
 
     public void drawTitleScreen() {
@@ -358,10 +389,10 @@ public class UI {
     }
 
     // functie de preluare text si declansare de afisare a textului
-    public void showMessage(String text) {
-        message = text;
-        messageOn = true;
-    }
+//    public void showMessage(String text) {
+//        message = text;
+//        messageOn = true;
+//    }
 
     private void drawDialogueScreen() {
 
@@ -449,28 +480,33 @@ public class UI {
         g2D.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
     }
 
-    // manevrarea afisarii textelor din Game Over si a opririi thread-ului de rulare a jocului dupa un anumit timp
-    private void manageGameOverDisplay(Graphics2D g2D) {
-        displayGameOverLayout(g2D);
-        if (messageCounter > 320) { // textul isi va schimba culorile timp de 5.33 secunde
-            gPanel.gameThread = null;
-        }
-
-        messageCounter++;
+    public void addMessage(String text) {
+        msgs.add(text);
+        msgCounters.add(0);
     }
+
+    // manevrarea afisarii textelor din Game Over si a opririi thread-ului de rulare a jocului dupa un anumit timp
+//    private void manageGameOverDisplay(Graphics2D g2D) {
+//        displayGameOverLayout(g2D);
+//        if (messageCounter > 320) { // textul isi va schimba culorile timp de 5.33 secunde
+//            gPanel.gameThread = null;
+//        }
+//
+//        messageCounter++;
+//    }
 
     // manevrarea afisarii notificarilor
-    private void manageTextDisplays(Graphics2D g2D) {
-        if (messageOn) {
-            displayCenterNotification(g2D, message, null);
-            if (messageCounter > 120) { // textul dispare dupa 2 secunde
-                messageCounter = 0;
-                messageOn = false;
-            }
-
-            messageCounter++;
-        }
-    }
+//    private void manageTextDisplays(Graphics2D g2D) {
+//        if (messageOn) {
+//            displayCenterNotification(g2D, message, null);
+//            if (messageCounter > 120) { // textul dispare dupa 2 secunde
+//                messageCounter = 0;
+//                messageOn = false;
+//            }
+//
+//            messageCounter++;
+//        }
+//    }
 
     // afisarea unui mesaj notificator
     private void displayCenterNotification(Graphics2D g2D, String text, Float sizeFont) {

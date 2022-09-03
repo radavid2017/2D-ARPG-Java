@@ -1,5 +1,6 @@
 package monster;
 
+import entity.AttackStyle;
 import features.Direction;
 import game.GamePanel;
 
@@ -9,6 +10,10 @@ public class MON_GreenSlime extends Monster{
 
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
+
+        name = "Green Slime";
+
+        exp = 2;
 
         direction = Direction.DOWN;
 
@@ -20,9 +25,14 @@ public class MON_GreenSlime extends Monster{
         maxLife = 4;
         life = maxLife;
 
+        attackStyle = AttackStyle.Touching;
+        attack = 5;
+        defense = 0;
+
+
         setDefaultSolidArea();
 
-        // setare aniumatii
+        // setare animatii
         setupMovement("res\\monster\\greenSlime");
         setupIdle("res\\monster\\greenSlime");
     }

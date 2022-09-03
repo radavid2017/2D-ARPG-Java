@@ -28,9 +28,6 @@ public class Player extends Entity {
     public int level;
     public int strength;
     public int dexterity;
-    public int attack = 0;
-    public int defense = 0;
-    public int exp;
     public int nextLevelExp;
     public int coin;
     public Weapon currentWeapon;
@@ -252,14 +249,39 @@ public class Player extends Entity {
             if (!gPanel.monsterList.get(monsterIndex).invincible) {
                 // ofera daune
                 gPanel.playSE("hitmonster.wav");
-                gPanel.monsterList.get(monsterIndex).life -= 1;
+
+                int damageValue = currentWeapon.tryDoAttack(this, gPanel.monsterList.get(monsterIndex));
+                gPanel.ui.addMessage(damageValue + " dauna!");
+
+//                gPanel.monsterList.get(monsterIndex).life -= 1;
                 gPanel.monsterList.get(monsterIndex).invincible = true;
                 gPanel.monsterList.get(monsterIndex).damageReaction();
 
                 if (gPanel.monsterList.get(monsterIndex).life <= 0) {
                     gPanel.monsterList.get(monsterIndex).dying = true;
+                    gPanel.ui.addMessage("Ai ucis un " + gPanel.monsterList.get(monsterIndex).name + "!");
+                    gPanel.ui.addMessage("Exp: " + gPanel.monsterList.get(monsterIndex).exp);
+                    exp += gPanel.monsterList.get(monsterIndex).exp;
+                    checkLevelUp();
                 }
             }
+        }
+    }
+
+    public void checkLevelUp() {
+        if (exp >= nextLevelExp) {
+
+            level++;
+            nextLevelExp = nextLevelExp * 2;
+            maxLife += 2;
+            strength++;
+            dexterity++;
+            updateAttack();
+            updateDefense();
+
+            gPanel.playSE("levelup.wav");
+            GamePanel.gameState = GameState.Dialogue;
+            gPanel.ui.setCurrentDialogue(new Dialogue("Esti la nivelul " + level + " acum!"));
         }
     }
 
@@ -402,7 +424,9 @@ public class Player extends Entity {
         if (monsterIndex > -1) {
             if (!invincible && !gPanel.monsterList.get(monsterIndex).dying) {
                 gPanel.playSE("receivedamage.wav");
-                life -= 1;
+
+                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
+
                 invincible = true;
             }
         }

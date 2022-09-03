@@ -20,11 +20,12 @@ public abstract class Weapon extends Item {
         super(gPanel, typeItem, playerClass);
     }
 
-    public void tryDoAttack() {
+    public Integer tryDoAttack(Entity entity, Entity target) {
         for (IDoDamage damage : damageTypes) {
             if (damage != null)
-                damage.doDamage(this.damage);
+                return damage.doDamage(entity, target);
         }
+        return null;
     }
 
     public void addDamageType(IDoDamage damageType) {

@@ -118,6 +118,7 @@ public class EventHandler {
                 gPanel.playSE("powerup.wav");
                 gPanel.ui.setCurrentDialogue(new Dialogue("Bei din apa.\nViata ta este recuperata!"));
                 gPanel.player.life = gPanel.player.maxLife;
+                gPanel.assetPool.setMonster();
             }
         }
     }

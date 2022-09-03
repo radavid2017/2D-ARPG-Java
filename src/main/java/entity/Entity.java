@@ -43,6 +43,8 @@ public abstract class Entity {
     public boolean collisionOn = false;
     public boolean isSolid = true;
 
+    public String name;
+
     /** Suprafata de detectare a loviturilor */
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     public int invincibleTime = 60;
@@ -70,6 +72,9 @@ public abstract class Entity {
     /** Status caracter */
     public int maxLife;
     public int life;
+    public int attack = 0;
+    public int defense = 0;
+    public int exp;
 
     /** Constrcutor entitate */
     public Entity(GamePanel gPanel) {
@@ -231,6 +236,15 @@ public abstract class Entity {
 
     public void damageReaction() {
 
+    }
+
+    public int touchingDamage(Entity target) {
+        int totalDamage = attack - target.defense;
+        if (totalDamage < 0) {
+            totalDamage = 0;
+        }
+        target.life -= totalDamage;
+        return totalDamage;
     }
 
     public void setCollisionOn(boolean collisionOn) {

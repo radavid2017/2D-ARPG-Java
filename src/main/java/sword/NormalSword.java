@@ -8,7 +8,7 @@ public class NormalSword extends Sword {
 
     public NormalSword(GamePanel gp) {
 
-        super(10, new NormalDamage(), gp);
+        super(1, new NormalDamage(), gp);
         loadObject(gp, swordPath + "sword_normal.png");
     }
 
