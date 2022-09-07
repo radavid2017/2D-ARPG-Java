@@ -87,7 +87,7 @@ public abstract class Monster extends ArtificialIntelligence {
 
         // Management Camera
 
-        System.out.println("monster life: " + life);
+//        System.out.println("monster life: " + life);
 
         // Monster HP Bar
         if (hpBarOn) showHPBar(g2D);

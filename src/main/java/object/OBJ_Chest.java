@@ -8,6 +8,7 @@ public class OBJ_Chest extends SuperObject{
         this.typeObject = TypeObject.Chest;
         this.isSolid = true;
         this.setSolidArea(14, 8, 74, 62);
+        setImage("chest.png");
     }
 
     @Override

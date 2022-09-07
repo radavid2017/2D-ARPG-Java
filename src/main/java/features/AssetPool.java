@@ -50,7 +50,7 @@ public class AssetPool {
             case Chest -> object = new OBJ_Chest(gPanel);
             case Boots -> object = new OBJ_Boots(gPanel);
         }
-        object.loadObject(gPanel, "res/objects/" + objectImgName);
+//        object.loadObject(gPanel, "res/objects/" + objectImgName);
         object.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
         gPanel.objects.add(object);
     }

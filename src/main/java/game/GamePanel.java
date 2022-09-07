@@ -207,7 +207,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         long drawStart = 0;
         // DEBUG
-        if (keyH.checkDrawTime) {
+        if (keyH.showDebugText) {
             drawStart = System.nanoTime();
         }
 
@@ -261,11 +261,26 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         // DEBUG
-        if (keyH.checkDrawTime) {
+        if (keyH.showDebugText) {
             long drawEnd = System.nanoTime();
             long passed = drawEnd - drawStart;
+
+            g2D.setFont(ui.font.deriveFont(20f));
             g2D.setColor(Color.white);
-            g2D.drawString("Timp randare: " + passed, 10, 400);
+            int x = 10;
+            int y = 400;
+            int lineHeight = 20;
+
+            g2D.drawString("WorldX: " + (int) player.worldX, x, y);
+            y += lineHeight;
+            g2D.drawString("WorldY: " + (int) player.worldY, x, y);
+            y += lineHeight;
+            g2D.drawString("Col: " + (int) (player.worldX + player.solidArea.x)/tileSize, x, y);
+            y += lineHeight;
+            g2D.drawString("Row: " + (int) (player.worldY + player.solidArea.y)/tileSize, x, y);
+            y += lineHeight;
+
+            g2D.drawString("Timp randare: " + passed, x, y);
             System.out.println("Timp acordat randarii: " + passed);
         }
 

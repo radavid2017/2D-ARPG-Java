@@ -21,6 +21,8 @@ public class TileManager {
     public int[][] mapTileNum;
     private int idTiles = 9;
 
+    public String mapPath = null;
+
     public TileManager(GamePanel gPanel) {
         this.gPanel = gPanel;
         mapTileNum = new int[gPanel.maxWorldCol][gPanel.maxWorldRow];
@@ -32,7 +34,8 @@ public class TileManager {
         generalTiles.addAll(loadTiles("res/tiles/tree", true));
 
         System.out.println("Texturi generale: " + this.generalTiles.size());
-        loadMap("res/maps/worldV2.txt");
+        mapPath = "res/maps/worldV2.txt";
+        loadMap(mapPath);
     }
 
     public List<Tile> loadTiles(String filePath, boolean isSolid) {

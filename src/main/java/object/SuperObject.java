@@ -17,17 +17,19 @@ public abstract class SuperObject extends Entity {
     public TypeObject typeObject;
     public BufferedImage image;
     public String name;
-
+    public String objPath = "res/objects/";
 
     public BufferedImage originalObjImage;
+
+    public String description = "";
 
     public SuperObject(GamePanel gPanel) {
         super(gPanel);
     }
 
     public void loadObject(GamePanel gp, String imageFilePath) {
-        name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
-        name = name.substring(0, name.indexOf("."));
+//        name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
+//        name = name.substring(0, name.indexOf("."));
         System.out.println("numele obiectului: " + name);
         try {
             image = ImageIO.read(new FileInputStream(imageFilePath));
@@ -78,12 +80,13 @@ public abstract class SuperObject extends Entity {
         this.setHeight(height);
     }
 
-    public static BufferedImage setImage(String imagePath) {
+    public void setImage(String imageName) {
         try {
-            return ImageIO.read(new FileInputStream(imagePath));
+            image = ImageIO.read(new FileInputStream(objPath + imageName));
+            originalObjImage = image;
+            image = UtilityTool.scaledImage(image, getGamePanel().tileSize, getGamePanel().tileSize);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 }

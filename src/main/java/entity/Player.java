@@ -6,11 +6,14 @@ import game.GamePanel;
 import game.GameState;
 import item.Shield;
 import item.Weapon;
+import object.OBJ_Key;
+import object.SuperObject;
 import shield.NormalShield;
 import sword.NormalSword;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 // clasa north ce detine informatii despre jucator
 // precum pozitia sa si viteza de deplasare
@@ -36,6 +39,10 @@ public class Player extends Entity {
     // ATRIBUTE ITEME
     public int attackValue;
     public int defenseValue;
+
+    // INVENTAR JUCATOR
+    public ArrayList<SuperObject> inventory = new ArrayList<>();
+    public final int maxInventorySize = 30;
 
     // numarul de chei pe care jucatorul le detine in timp real
 //    public int numKeys = 0;
@@ -97,6 +104,7 @@ public class Player extends Entity {
         setDefaultAttackArea();
 
         this.getPlayerSprites();
+        setItems();
     }
 
     /** incarcarea animatiilor pentru player */
@@ -197,6 +205,21 @@ public class Player extends Entity {
         gPanel.player.solidAreaDefaultY = gPanel.tileSize / 2;
         gPanel.player.solidArea.width = gPanel.tileSize / 2;
         gPanel.player.solidArea.height = (int) (gPanel.tileSize / 2.25);
+    }
+
+    public void setItems() {
+        int slots = 0;
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        slots += 2;
+        for (int i = 0; i < 2; i++) {
+            if (slots < maxInventorySize) {
+                inventory.add(new OBJ_Key(gPanel));
+                slots++;
+            }
+            else
+                return;
+        }
     }
 
     void updateAttack() {

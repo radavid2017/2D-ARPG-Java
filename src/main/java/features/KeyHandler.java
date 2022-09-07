@@ -13,7 +13,7 @@ public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     private boolean upWasPressed,downWasPressed,leftWasPressed,rightWasPressed;
     public boolean enterPressed;
-    public boolean checkDrawTime = false;
+    public boolean showDebugText = false;
     public boolean spacePressed;
     GamePanel gPanel;
 
@@ -44,26 +44,20 @@ public class KeyHandler implements KeyListener {
         /** getKeyCode - returneaza valoarea din codul ascii asociat butonului */
         int code = e.getKeyCode();
 
-        // TITLE STATE
-        if (GamePanel.gameState == GameState.Title) {
-            titleState(code);
-        }
-
-        // PLAY STATE
-        if (!UI.GAME_OVER && GamePanel.gameState == GameState.Play) {
-            playState(code);
-        }
-
-        // DIALOGUE STATE
-        else if (GamePanel.gameState == GameState.Dialogue) {
-            dialogueState(code);
+        switch (GamePanel.gameState) {
+            case Title -> titleState(code);
+            case Play -> playState(code);
+            case Dialogue -> dialogueState(code);
+            case CharacterState -> characterState(code);
         }
 
         switch (code) {
             // EXIT GAME
             case KeyEvent.VK_ESCAPE -> System.exit(0);
             // DEBUG
-            case KeyEvent.VK_T -> checkDrawTime = !checkDrawTime;
+            case KeyEvent.VK_T -> showDebugText = !showDebugText;
+            // REIMPROSPATARE HARTA
+            case KeyEvent.VK_R -> gPanel.tiles.loadMap(gPanel.tiles.mapPath);
             // PAUSE - UNPAUSE
             case KeyEvent.VK_P -> GamePanel.gameState =
                     GamePanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
@@ -136,6 +130,35 @@ public class KeyHandler implements KeyListener {
     public void dialogueState(int code) {
         if (code == KeyEvent.VK_ENTER) {
             GamePanel.gameState = GameState.Play;
+        }
+    }
+
+    public void characterState(int code) {
+        switch (code) {
+            case KeyEvent.VK_W -> {
+                if (gPanel.ui.slotRow > 0) {
+                    gPanel.ui.slotRow--;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_A -> {
+                if (gPanel.ui.slotCol > 0) {
+                    gPanel.ui.slotCol--;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_S -> {
+                if (gPanel.ui.slotRow < gPanel.ui.maxSlotRow) {
+                    gPanel.ui.slotRow++;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_D -> {
+                if (gPanel.ui.slotCol < gPanel.ui.maxSlotCol) {
+                    gPanel.ui.slotCol++;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
         }
     }
 

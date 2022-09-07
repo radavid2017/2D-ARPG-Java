@@ -10,6 +10,8 @@ public class NormalSword extends Sword {
 
         super(1, new NormalDamage(), gp);
         loadObject(gp, swordPath + "sword_normal.png");
+        name = "Sabie Normala";
+        description = "[" + name + "]\nO sabie veche.";
     }
 
     @Override

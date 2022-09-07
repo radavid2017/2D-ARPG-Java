@@ -10,6 +10,7 @@ public class OBJ_Door extends SuperObject {
         this.isSolid = true;
 
         setDefaultSolidArea();
+        setImage("door.png");
     }
 
     @Override
