@@ -113,7 +113,7 @@ public class Camera {
     public static void rescaleEntities() {
         gPanel.addAllLists();
         for (Entity entity : gPanel.entities) {
-            List<StateMachine> allAnimations = Arrays.asList(entity.movement, entity.idle, entity.attacks);
+            List<StateMachine> allAnimations = Arrays.asList(entity.movement, entity.idle, entity.attackSword);
             rescaleAllAnimations(allAnimations);
         }
         gPanel.entities.clear();
@@ -126,7 +126,7 @@ public class Camera {
     }
 
     public static void rescalePlayer() {
-        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attacks);
+        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attackSword);
         rescaleAllAnimations(allAnimations);
     }
 

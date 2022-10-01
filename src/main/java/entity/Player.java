@@ -2,12 +2,17 @@ package entity;
 
 import animations.TypeAnimation;
 import features.*;
+import game.CharacterClass;
 import game.GamePanel;
 import game.GameState;
-import item.Shield;
-import item.Weapon;
-import object.OBJ_Key;
-import object.SuperObject;
+import item.Consumable;
+import item.Equipable;
+import item.Item;
+import item.TypeItem;
+import item.consumable.key.KeyGold;
+import item.equipable.Shield;
+import item.equipable.Weapon;
+import item.consumable.key.OBJ_Key;
 import shield.NormalShield;
 import sword.NormalSword;
 
@@ -27,6 +32,7 @@ public class Player extends Entity {
     public final int screenY;
 
     public String characterClassPath = "warrior";
+    public CharacterClass characterClass = CharacterClass.WARRIOR;
 
     public int level;
     public int strength;
@@ -41,7 +47,7 @@ public class Player extends Entity {
     public int defenseValue;
 
     // INVENTAR JUCATOR
-    public ArrayList<SuperObject> inventory = new ArrayList<>();
+    public ArrayList<Item> inventory = new ArrayList<>();
     public final int maxInventorySize = 30;
 
     // numarul de chei pe care jucatorul le detine in timp real
@@ -101,10 +107,17 @@ public class Player extends Entity {
 //        solidArea.width = 38; // 64;
 //        solidArea.height = 62; //48; //62;
 
-        setDefaultAttackArea();
+//        setDefaultAttackArea();
 
         this.getPlayerSprites();
         setItems();
+
+        switch (characterClassPath) {
+            case "warrior" -> characterClass = CharacterClass.WARRIOR;
+            case "mage" -> characterClass = CharacterClass.MAGE;
+            case "archer" -> characterClass = CharacterClass.ARCHER;
+            case "cat" -> characterClass = CharacterClass.CAT;
+        }
     }
 
     /** incarcarea animatiilor pentru player */
@@ -153,7 +166,7 @@ public class Player extends Entity {
         inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
         if (isAttacking()) {
             if(inMotion) inMotion = false;
-            sprite = attacks.manageAnimations(this,direction);
+            sprite = attackState.manageAnimations(this,direction);
         }
         else if (inMotion) {
             sprite = movement.manageAnimations(this, direction);
@@ -214,7 +227,7 @@ public class Player extends Entity {
         slots += 2;
         for (int i = 0; i < 2; i++) {
             if (slots < maxInventorySize) {
-                inventory.add(new OBJ_Key(gPanel));
+                inventory.add(new KeyGold(gPanel));
                 slots++;
             }
             else
@@ -223,17 +236,22 @@ public class Player extends Entity {
     }
 
     void updateAttack() {
+        attackArea = currentWeapon.attackArea;
         attack = strength * currentWeapon.damage;
+        switch (currentWeapon.typeWeapon) {
+            case Sword -> attackState = attackSword;
+            case Axe -> attackState = attackAxe;
+        }
     }
 
     void updateDefense() {
         defense = dexterity * currentShield.defense;
     }
 
-    public void setDefaultAttackArea() {
-        attackArea.width = 36;
-        attackArea.height = 36;
-    }
+//    public void setDefaultAttackArea() {
+//        attackArea.width = 36;
+//        attackArea.height = 36;
+//    }
 
     public void attackingMonster() {
         // salveaza datele curente ale ariei solide
@@ -308,6 +326,38 @@ public class Player extends Entity {
         }
     }
 
+    public void selectItem() {
+
+        int itemIndex = gPanel.ui.inventoryWindow.getItemIndexOnSlot();
+
+        if (itemIndex < inventory.size()) {
+            Item selectedItem = inventory.get(itemIndex);
+
+            switch (selectedItem.typeItem) {
+                case Equipable -> {
+                    Equipable selectedEquipable = (Equipable) selectedItem;
+                    if (selectedEquipable.playerClass == characterClass || selectedEquipable.playerClass == CharacterClass.ANY) {
+                        switch (selectedEquipable.typeEquipable) {
+                            case Weapon -> {
+                                currentWeapon = (Weapon) selectedEquipable;
+                                updateAttack();
+                            }
+                            case Shield -> {
+                                currentShield = (Shield) selectedEquipable;
+                                updateDefense();
+                            }
+                        }
+                    }
+                }
+                case Consumable -> {
+                    Consumable selectedConsumable = (Consumable) selectedItem;
+                    selectedConsumable.use(this);
+                    inventory.remove(itemIndex);
+                }
+            }
+        }
+    }
+
     /** inregistrarea animatiilor pentru player */
 //    @Override
 //    public void loadMovementAnimations() {
@@ -335,7 +385,23 @@ public class Player extends Entity {
 //    }
 
     public void pickUpObj(int objIndex) {
+
+        String textMsg;
+
         if (objIndex > -1) {
+            if (inventory.size() < maxInventorySize) {
+                inventory.add((Item) gPanel.objects.get(objIndex));
+                gPanel.playSE("coin.wav");
+//                switch (gPanel.objects.get(objIndex).typeObject) {
+//                    case Key -> gPanel.playSE("coin.wav");
+//                }
+                textMsg = "Ai primit " + gPanel.objects.get(objIndex).name + "!";
+            }
+            else {
+                textMsg = "Nu mai ai spatiu in inventar!";
+            }
+            gPanel.ui.addMessage(textMsg);
+            gPanel.objects.set(objIndex, null);
 
 //            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
 //            switch (typeObject) {

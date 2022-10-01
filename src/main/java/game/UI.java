@@ -1,10 +1,9 @@
 package game;
 
-import entity.Entity;
 import features.Dialogue;
 import features.UtilityTool;
+import hud.window.InventoryWindow;
 import object.OBJ_Heart;
-import object.SuperObject;
 import object.SuperStatesObject;
 import object.TypeStatesObject;
 import player.CharacterStatus;
@@ -25,7 +24,7 @@ public class UI {
 
     GamePanel gPanel;
     Graphics2D g2D;
-    Font font;
+    public Font font;
 //    BufferedImage keyImage;
     int xKey = 40,yKey=40, keySize;
     int xMsg, yMsg;
@@ -50,11 +49,8 @@ public class UI {
     public TitleScreenState titleScreenState = TitleScreenState.MAIN_PAGE;
     public CharacterClass characterClass = CharacterClass.MAGE;
 
-    /** Variabile INVENTAR */
-    public int slotCol = 0;
-    public int slotRow = 0;
-    public int maxSlotCol = 4;
-    public int maxSlotRow = 5;
+    /** INVENTAR */
+    public InventoryWindow inventoryWindow;
 
     /** UI HUD */
     public ArrayList<SuperStatesObject> hudList = new ArrayList<>();
@@ -78,7 +74,7 @@ public class UI {
             e.printStackTrace();
         }
         xMsg = gPanel.tileSize*6 + 20;
-        yMsg = gPanel.tileSize*5;
+        yMsg = gPanel.tileSize * 5;
         screenWidth = gPanel.tileSize*10;
 
         // IMAGINE BACKGROUND TITLU
@@ -95,6 +91,14 @@ public class UI {
         heartX = 15;
         heartY = 15;
         hudList.add(heart);
+
+        // INSTANTIERE COORDONATE CADRU INVENTAR
+        inventoryWindow = new InventoryWindow(
+                (int) ((gPanel.screenWidth/22) * 13.75),
+                gPanel.screenHeight/10,
+                gPanel.defaultTileSize * 5 + 80,
+                gPanel.defaultTileSize * 6 + 90
+        );
     }
 
     /** Director general UI
@@ -473,69 +477,7 @@ public class UI {
     }
 
     private void drawInventory() {
-
-        // CADRU FEREASTRA
-        int frameX = (int) ((gPanel.screenWidth/22) * 13.75);
-        int frameY = gPanel.screenHeight/6;
-        int frameWidth = gPanel.defaultTileSize * 5 + 40;
-        int frameHeight = gPanel.defaultTileSize * 6 + 40;
-        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
-
-        // SLOT
-        final int slotXstart = frameX + 20;
-        final int slotYstart = frameY + 20;
-        int slotX = slotXstart;
-        int slotY = slotYstart;
-        int slotSize = gPanel.defaultTileSize;
-
-        // DESENAREA ITEMELOR JUCATORULUI
-        for (int i = 0; i < gPanel.player.inventory.size(); i++) {
-            g2D.drawImage(gPanel.player.inventory.get(i).image, slotX, slotY, null);
-//            System.out.println("i: " + i);
-            slotX += slotSize;
-            if (i % 10 == 4 || i % 10 == 9) {
-                slotX = slotXstart;
-                slotY += slotSize;
-            }
-        }
-
-        // CURSOR
-        int cursorX = slotXstart + (slotSize * slotCol);
-        int cursorY = slotYstart + (slotSize * slotRow);
-        int cursorWidth = gPanel.defaultTileSize;
-        int cursorHeight = gPanel.defaultTileSize;
-
-        // DESENARE CURSOR
-        g2D.setColor(Color.white);
-        g2D.setStroke(new BasicStroke(3));
-        g2D.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
-
-        // CADRU DESCRIERE ITEM/OBIECT
-        int dFrameX = frameX;
-        int dFrameY = frameY + frameHeight;
-        int dFrameWidth = frameWidth;
-        int dFrameHeight = gPanel.defaultTileSize * 2;
-        drawSubWindow(dFrameX, dFrameY, dFrameWidth, dFrameHeight);
-
-        // TEXT DESCRIERE
-        int textX = dFrameX + 20;
-        int textY = dFrameY + gPanel.defaultTileSize/2;
-        g2D.setFont(font.deriveFont(28F));
-
-        int itemIndex = getItemIndexOnSlot();
-
-        if (itemIndex < gPanel.player.inventory.size()) {
-
-            for (String line : gPanel.player.inventory.get(itemIndex).description.split("\n")) {
-                g2D.drawString(line, textX, textY);
-                textY += 32;
-            }
-        }
-    }
-
-    public int getItemIndexOnSlot() {
-        int itemIndex = slotCol + (slotRow * maxSlotRow);
-        return itemIndex;
+        inventoryWindow.draw(gPanel, g2D);
     }
 
     public int getXForCenteredFrame(String text, int frameX) {

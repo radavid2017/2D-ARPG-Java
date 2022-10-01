@@ -1,23 +1,31 @@
-package item;
+package item.equipable;
 
 import damage.IDoDamage;
 import entity.Entity;
 import game.CharacterClass;
 import game.GamePanel;
+import item.Equipable;
+import item.Item;
+import item.TypeItem;
+import item.equipable.weapon.TypeWeapon;
 import object.SuperObject;
+import object.TypeObject;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Weapon extends Item {
+public abstract class Weapon extends Equipable {
 
     public int damage = 0;
     public List<IDoDamage> damageTypes = new ArrayList<>();
-    public String weaponPath = "res/item/weapon/";
+    public String weaponPath = "res/item/equipable/weapon/";
+    public TypeWeapon typeWeapon;
 
-    public Weapon(GamePanel gPanel, TypeItem typeItem, CharacterClass playerClass) {
-        super(gPanel, typeItem, playerClass);
+    public Weapon(GamePanel gPanel, TypeWeapon typeWeapon,CharacterClass playerClass) {
+        super(gPanel, TypeEquipable.Weapon, playerClass);
+        this.typeWeapon = typeWeapon;
+        typeObject = TypeObject.Item;
     }
 
     public Integer tryDoAttack(Entity entity, Entity target) {
@@ -40,5 +48,7 @@ public abstract class Weapon extends Item {
                     damageTypes.set(index, damageType);
         }
     }
+
+    public abstract void setAttackAreaValues();
 
 }

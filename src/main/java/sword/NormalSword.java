@@ -12,10 +12,19 @@ public class NormalSword extends Sword {
         loadObject(gp, swordPath + "sword_normal.png");
         name = "Sabie Normala";
         description = "[" + name + "]\nO sabie veche.";
+        modelSword = ModelSword.NormalSword;
+        setAttackAreaValues();
+
     }
 
     @Override
     public void setDefaultSolidArea() {
 
+    }
+
+    @Override
+    public void setAttackAreaValues() {
+        attackArea.width = 36;
+        attackArea.height = 36;
     }
 }

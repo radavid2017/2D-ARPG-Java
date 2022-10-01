@@ -6,12 +6,11 @@ import object.SuperObject;
 
 public abstract class Item  extends SuperObject {
 
-    TypeItem typeItem;
-    CharacterClass playerClass;
+    public TypeItem typeItem;
 
-    public Item(GamePanel gPanel, TypeItem typeItem, CharacterClass playerClass) {
+    public Item(GamePanel gPanel, TypeItem typeItem) {
         super(gPanel);
         this.typeItem = typeItem;
-        this.playerClass = playerClass;
     }
+
 }

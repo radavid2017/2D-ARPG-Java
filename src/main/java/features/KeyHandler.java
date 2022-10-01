@@ -136,28 +136,36 @@ public class KeyHandler implements KeyListener {
     public void characterState(int code) {
         switch (code) {
             case KeyEvent.VK_W -> {
-                if (gPanel.ui.slotRow > 0) {
-                    gPanel.ui.slotRow--;
+                if (gPanel.ui.inventoryWindow.slotRow > 0) {
+                    gPanel.ui.inventoryWindow.slotRow--;
+//                    gPanel.ui.slotRow--;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_A -> {
-                if (gPanel.ui.slotCol > 0) {
-                    gPanel.ui.slotCol--;
+                if (gPanel.ui.inventoryWindow.slotCol > 0) {
+                    gPanel.ui.inventoryWindow.slotCol--;
+//                    gPanel.ui.slotCol--;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_S -> {
-                if (gPanel.ui.slotRow < gPanel.ui.maxSlotRow) {
-                    gPanel.ui.slotRow++;
+                if (gPanel.ui.inventoryWindow.slotRow < gPanel.ui.inventoryWindow.maxSlotRow) {
+                    gPanel.ui.inventoryWindow.slotRow++;
+//                    gPanel.ui.slotRow++;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_D -> {
-                if (gPanel.ui.slotCol < gPanel.ui.maxSlotCol) {
-                    gPanel.ui.slotCol++;
+                if (gPanel.ui.inventoryWindow.slotCol < gPanel.ui.inventoryWindow.maxSlotCol) {
+                    gPanel.ui.inventoryWindow.slotCol++;
+//                    gPanel.ui.slotCol++;
                     gPanel.playSE("cursor.wav");
                 }
+            }
+            case KeyEvent.VK_ENTER -> {
+                // ALEGEREA UNUI ITEM
+                gPanel.player.selectItem();
             }
         }
     }

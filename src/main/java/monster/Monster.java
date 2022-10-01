@@ -62,10 +62,16 @@ public abstract class Monster extends ArtificialIntelligence {
         double oneScale = (double) getGamePanel().tileSize / maxLife;
         double hpBarValue = oneScale * life;
 
+        int hpBarX = (int) screenX;
+        int hpBarY = (int) screenY;
+
         g2D.setColor(new Color(35, 35, 35));
-        g2D.fillRect((int) screenX - 1, (int) screenY - 16, getGamePanel().tileSize, 10);
+        g2D.fillRect((int) hpBarX - 1, (int) hpBarY - 16, getGamePanel().tileSize, 10);
         g2D.setColor(new Color(255, 0, 30));
-        g2D.fillRect((int) screenX, (int) screenY - 15, (int) hpBarValue, 10);
+        g2D.fillRect((int) hpBarX, (int) hpBarY - 15, (int) hpBarValue, 10);
+
+        System.out.println("screenX: " + screenX + " screenY: " + screenY);
+        System.out.println("worldX: " + worldX + " worldY: " + worldY);
 
         hpBarCounter ++;
         if (hpBarCounter >= 150) {

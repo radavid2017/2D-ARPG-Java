@@ -80,9 +80,9 @@ public abstract class SuperObject extends Entity {
         this.setHeight(height);
     }
 
-    public void setImage(String imageName) {
+    public void setImage(String objPath) {
         try {
-            image = ImageIO.read(new FileInputStream(objPath + imageName));
+            image = ImageIO.read(new FileInputStream(objPath));
             originalObjImage = image;
             image = UtilityTool.scaledImage(image, getGamePanel().tileSize, getGamePanel().tileSize);
         } catch (IOException e) {

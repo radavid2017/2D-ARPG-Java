@@ -30,7 +30,10 @@ public abstract class Entity {
     /** Lista de animatii */
     public StateMachine movement = new StateMachine();
     public StateMachine idle = new StateMachine();
-    public StateMachine attacks = new StateMachine();
+    public StateMachine attackState = new StateMachine();
+    /** Lista animatii arme */
+    public StateMachine attackSword = new StateMachine();
+    public StateMachine attackAxe = new StateMachine();
     public TypeAnimation typeAnimation;
 //    // directii diagonale - optional
     public BufferedImage[] upLeft,upRight,downLeft,downRight;
@@ -163,8 +166,11 @@ public abstract class Entity {
     }
 
     public void setupAttack(String creaturePath) {
-        attacks = new StateMachine();
-        attacks.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
+        attackSword = new StateMachine();
+        attackSword.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
+        attackAxe = new StateMachine();
+        attackAxe.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\axe", TypeAnimation.ATTACK);
+        attackState = attackSword;
     }
 
     // incarcarea animatiilor de miscare

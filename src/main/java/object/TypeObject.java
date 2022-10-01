@@ -4,5 +4,7 @@ public enum TypeObject {
     Key,
     Door,
     Chest,
-    Boots
+    Boots,
+    Item,
+    Consumable
 }
