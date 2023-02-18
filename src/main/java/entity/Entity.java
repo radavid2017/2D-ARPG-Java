@@ -31,6 +31,7 @@ public abstract class Entity {
     public StateMachine movement = new StateMachine();
     public StateMachine idle = new StateMachine();
     public StateMachine attackState = new StateMachine();
+    public StateMachine objAnimation = new StateMachine();
     /** Lista animatii arme */
     public StateMachine attackSword = new StateMachine();
     public StateMachine attackAxe = new StateMachine();
@@ -75,6 +76,8 @@ public abstract class Entity {
     /** Status caracter */
     public int maxLife;
     public int life;
+    public int maxMana;
+    public int mana;
     public int attack = 0;
     public int defense = 0;
     public int exp;
@@ -152,6 +155,11 @@ public abstract class Entity {
     public void drawSolidArea(Graphics2D g2D) {
         g2D.setColor(Color.red);
         g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
+    }
+
+    public void setupObjectAnimation(String objFolderPath) {
+        objAnimation = new StateMachine();
+        objAnimation.loadCompleteAnimation(gPanel, objFolderPath, TypeAnimation.OBJECT);
     }
 
     public void setupMovement(String creaturePath) {

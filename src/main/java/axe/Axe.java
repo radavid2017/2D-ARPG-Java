@@ -3,8 +3,7 @@ package axe;
 import damage.IDoDamage;
 import game.CharacterClass;
 import game.GamePanel;
-import item.TypeItem;
-import item.equipable.Weapon;
+import item.equipable.weapon.Weapon;
 import item.equipable.weapon.TypeWeapon;
 
 public abstract class Axe extends Weapon {
@@ -16,5 +15,10 @@ public abstract class Axe extends Weapon {
         super(gp, TypeWeapon.Axe, CharacterClass.ANY);
         this.damage = damage;
         addDamageType(damageType);
+    }
+
+    @Override
+    public void playSound() {
+        getGamePanel().playSE("swingweapon.wav");
     }
 }

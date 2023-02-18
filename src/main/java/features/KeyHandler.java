@@ -81,7 +81,7 @@ public class KeyHandler implements KeyListener {
                 switch (code) {
                     case KeyEvent.VK_DOWN -> gPanel.ui.nextItem();
                     case KeyEvent.VK_UP -> gPanel.ui.previousItem();
-                    case KeyEvent.VK_ENTER -> gPanel.ui.chooseClass();
+                    case KeyEvent.VK_ENTER -> gPanel.ui.chooseClass(gPanel);
                 }
             }
         }
@@ -97,9 +97,16 @@ public class KeyHandler implements KeyListener {
             // ATTACKING
             case KeyEvent.VK_SPACE -> {
                 if (!hasPlayed) {
-                    gPanel.playSE("swingweapon.wav");
-                    hasPlayed = true;
-                    spacePressed = true;
+                    switch (gPanel.player.characterClass) {
+                        case WARRIOR -> gPanel.player.currentWeapon.playSound(); //gPanel.playSE("swingweapon.wav");
+                        case MAGE -> {
+                            if (!gPanel.player.currentWeapon.alive) {
+                                gPanel.player.currentWeapon.playSound();
+                            }
+                        }
+                    }
+                        hasPlayed = true;
+                        spacePressed = true;
                 }
             }
             // ZOOM IN

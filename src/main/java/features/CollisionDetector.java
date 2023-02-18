@@ -114,16 +114,16 @@ public class CollisionDetector {
 
     /** NPC SAU MONSTRII */
     public int checkEntity(Entity entity, List<Entity> target) {
-        int index=-1;
+//        int index=-1;
         for (int i = 0; i < target.size(); i++) {
             if (target.get(i) != null) {
                 if (collisionOnTarget(entity, target.get(i))) {
                     entity.collisionOn = true;
-                    index = i;
+                    return i;
                 }
             }
         }
-        return index;
+        return -1;
     }
 
     /** PLAYER */

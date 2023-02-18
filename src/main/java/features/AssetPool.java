@@ -4,26 +4,25 @@ import axe.Axe;
 import axe.Baltag;
 import axe.ModelAxe;
 import entity.Entity;
-import item.TypeItem;
 import item.consumable.key.KeyGold;
 import item.consumable.key.KeyModel;
 import item.consumable.key.OBJ_Key;
 import item.consumable.potion.OBJ_Potion;
 import item.consumable.potion.PotionModel;
 import item.consumable.potion.PotionRed;
-import item.equipable.Shield;
+import item.equipable.shield.Shield;
 import monster.MON_GreenSlime;
 import monster.TypeMonster;
 import npc.NPC_OldMan;
 import npc.TypeNPC;
 import game.GamePanel;
 import object.*;
-import shield.BlueShield;
-import shield.ModelShield;
-import shield.NormalShield;
-import sword.ModelSword;
-import sword.NormalSword;
-import sword.Sword;
+import item.equipable.shield.BlueShield;
+import item.equipable.shield.ModelShield;
+import item.equipable.shield.NormalShield;
+import item.equipable.weapon.sword.ModelSword;
+import item.equipable.weapon.sword.NormalSword;
+import item.equipable.weapon.sword.Sword;
 
 public class AssetPool {
 

@@ -1,6 +1,8 @@
 package game;
 
+import entity.Player;
 import features.Dialogue;
+import features.Direction;
 import features.UtilityTool;
 import hud.window.InventoryWindow;
 import object.OBJ_Heart;
@@ -362,19 +364,20 @@ public class UI {
         }
     }
 
-    public void chooseClass() {
+    public void chooseClass(GamePanel gp) {
         switch (characterClass) {
-            case MAGE -> gPanel.player.characterClassPath = "mage";
-            case ARCHER -> gPanel.player.characterClassPath = "archer";
-            case WARRIOR -> gPanel.player.characterClassPath = "warrior";
-            case CAT -> gPanel.player.characterClassPath = "cat";
+            case MAGE -> gPanel.characterClassPath = "mage";
+            case ARCHER -> gPanel.characterClassPath = "archer";
+            case WARRIOR -> gPanel.characterClassPath = "warrior";
+            case CAT -> gPanel.characterClassPath = "cat";
             case BACK -> {
                 titleScreenState = TitleScreenState.MAIN_PAGE;
                 return;
             }
         }
+        gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
         GamePanel.gameState = GameState.Play;
-        gPanel.player.getPlayerSprites();
+        gp.player.getPlayerSprites();
 //        gPanel.playMusic("BlueBoyAdventure.wav");
     }
 

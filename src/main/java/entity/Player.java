@@ -8,13 +8,13 @@ import game.GameState;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
-import item.TypeItem;
 import item.consumable.key.KeyGold;
-import item.equipable.Shield;
-import item.equipable.Weapon;
-import item.consumable.key.OBJ_Key;
-import shield.NormalShield;
-import sword.NormalSword;
+import item.equipable.shield.Shield;
+import item.equipable.weapon.Weapon;
+import rangeattack.Projectile;
+import rangeattack.spell.Fireball;
+import item.equipable.shield.NormalShield;
+import item.equipable.weapon.sword.NormalSword;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,8 +31,8 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
 
-    public String characterClassPath = "warrior";
-    public CharacterClass characterClass = CharacterClass.WARRIOR;
+    public String characterClassPath = "";
+    public CharacterClass characterClass;
 
     public int level;
     public int strength;
@@ -41,6 +41,7 @@ public class Player extends Entity {
     public int coin;
     public Weapon currentWeapon;
     public Shield currentShield;
+//    public Projectile currentProjectile;
 
     // ATRIBUTE ITEME
     public int attackValue;
@@ -57,11 +58,12 @@ public class Player extends Entity {
 //    public int invincibleCounter = 0;
 
     /** Constructor player */
-    public Player(GamePanel gPanel, KeyHandler keyH, int x, int y, Direction direction) {
+    public Player(GamePanel gPanel, KeyHandler keyH, int x, int y, Direction direction, String characterClassPath) {
 
         super(gPanel);
 
         isPlayer = true;
+        this.characterClassPath = characterClassPath;
 
         this.keyH = keyH;
         this.worldX = x;
@@ -94,8 +96,7 @@ public class Player extends Entity {
         currentWeapon = new NormalSword(gPanel);
         currentShield = new NormalShield(gPanel);
 
-        updateAttack();
-        updateDefense();
+
 
         // debug
 //        setPosition(gPanel.tileSize * 10, gPanel.tileSize * 13);
@@ -110,11 +111,23 @@ public class Player extends Entity {
 //        setDefaultAttackArea();
 
         this.getPlayerSprites();
-        setItems();
 
+
+        setUpClassChooser();
+
+        updateAttack();
+        updateDefense();
+
+        setItems();
+    }
+
+    public void setUpClassChooser() {
         switch (characterClassPath) {
             case "warrior" -> characterClass = CharacterClass.WARRIOR;
-            case "mage" -> characterClass = CharacterClass.MAGE;
+            case "mage" -> {
+                characterClass = CharacterClass.MAGE;
+                currentWeapon = new Fireball(gPanel);
+            }
             case "archer" -> characterClass = CharacterClass.ARCHER;
             case "cat" -> characterClass = CharacterClass.CAT;
         }
@@ -164,9 +177,26 @@ public class Player extends Entity {
         BufferedImage sprite = null;
 
         inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+        /** Animatiile de atac */
         if (isAttacking()) {
             if(inMotion) inMotion = false;
-            sprite = attackState.manageAnimations(this,direction);
+            switch (characterClass) {
+                case WARRIOR -> {
+                    System.out.println("aici");
+                    sprite = attackState.manageAnimations(this, direction);
+                }
+                case MAGE -> {
+                    sprite = idle.manageAnimations(this, direction);
+                    // SETAREA COORDONATELOR, DIRECTIEI SI A UTILIZATORULUI DE PROIECTIL
+                    if (!currentWeapon.alive) {
+                        Projectile playerProjectile = (Projectile) currentWeapon;
+                        playerProjectile.set(worldX, worldY, direction, true, this);
+
+                        // ADAUGAREA PROIECTILULUI IN LISTA
+                        gPanel.projectileList.add(playerProjectile);
+                    }
+                }
+            }
         }
         else if (inMotion) {
             sprite = movement.manageAnimations(this, direction);
@@ -238,6 +268,7 @@ public class Player extends Entity {
     void updateAttack() {
         attackArea = currentWeapon.attackArea;
         attack = strength * currentWeapon.damage;
+
         switch (currentWeapon.typeWeapon) {
             case Sword -> attackState = attackSword;
             case Axe -> attackState = attackAxe;
@@ -285,7 +316,7 @@ public class Player extends Entity {
 
     }
 
-    private void doDamage(int monsterIndex) {
+    public void doDamage(int monsterIndex) {
         if (monsterIndex > -1) {
             if (!gPanel.monsterList.get(monsterIndex).invincible) {
                 // ofera daune

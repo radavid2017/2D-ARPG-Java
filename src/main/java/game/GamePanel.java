@@ -5,6 +5,7 @@ import entity.Player;
 import features.*;
 import object.SuperObject;
 import object.SuperStatesObject;
+import rangeattack.Projectile;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -69,6 +70,7 @@ public class GamePanel extends JPanel implements Runnable {
     // Setarea pozitiei implicite a jucatorului
     // player
     public Player player;
+    public String characterClassPath;
     // lista NPC
     public List<Entity> npcList = new ArrayList<Entity>();
     // lista Monster
@@ -78,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable {
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
 
+    public ArrayList<Projectile> projectileList = new ArrayList<>();
     public ArrayList<Entity> entities = new ArrayList<>();
 
     public boolean hasZoomed = false;
@@ -103,8 +106,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     /** instantieri joc */
     public void setupGame() {
-        player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN);
-
         // adaugarea obiectelor in joc
         assetPool.setObjects();
         // adaugarea npc-urilor
@@ -182,6 +183,8 @@ public class GamePanel extends JPanel implements Runnable {
                         npc.update();
                     }
                 }
+
+                // ACTUALIZARI MONSTRII
                 for (int i = 0; i < monsterList.size(); i++) {
                     if (monsterList.get(i) != null) {
                         if (monsterList.get(i).alive && !monsterList.get(i).dying) {
@@ -189,6 +192,18 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         if (!monsterList.get(i).alive) {
                             monsterList.set(i, null);
+                        }
+                    }
+                }
+
+                // ACTUALIZARI PROIECTILE
+                for (int i = 0; i < projectileList.size(); i++) {
+                    if (projectileList.get(i) != null) {
+                        if (projectileList.get(i).alive) {
+                            projectileList.get(i).update();
+                        }
+                        if (!projectileList.get(i).alive) {
+                            projectileList.remove(i);
                         }
                     }
                 }
@@ -228,7 +243,8 @@ public class GamePanel extends JPanel implements Runnable {
 
             for (Entity entity : entities) {
 //                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
-                entity.draw(g2D);
+                if (entity != null)
+                    entity.draw(g2D);
             }
 
             entities.clear();
@@ -321,6 +337,10 @@ public class GamePanel extends JPanel implements Runnable {
         for (Entity monster : monsterList)
             if (monster != null)
                 entities.add(monster);
+        for (Entity projectile : projectileList) {
+            if (projectile != null)
+                entities.add(projectile);
+        }
     }
 
     public void addAllAI() {

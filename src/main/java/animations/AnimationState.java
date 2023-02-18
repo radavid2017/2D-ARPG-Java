@@ -128,6 +128,15 @@ public class AnimationState {
                     gp.player.keyH.spacePressed = false;
                 }
             }
+            case OBJECT -> {
+                intervalChangingFrames++;
+                if (intervalChangingFrames > 12) {
+                    if (currentFrame < numFrames)
+                        currentFrame++;
+                    else currentFrame = 0;
+                    intervalChangingFrames = 0;
+                }
+            }
         }
     }
 

@@ -50,11 +50,13 @@ public abstract class SuperObject extends Entity {
     }
 
     public void draw(Graphics2D g2D) {
-        super.draw(g2D);
+        if (getGamePanel().player!=null) {
+            super.draw(g2D);
 
-        camera.drawEntity(g2D, image);
+            camera.drawEntity(g2D, image);
 
-        drawSolidArea(g2D);
+            drawSolidArea(g2D);
+        }
     }
 
     public void setWidth(int width) {

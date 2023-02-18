@@ -7,6 +7,8 @@ public class RenameFolderFiles {
         File myfolder = new File(folderPath);
 
         File[] file_array = myfolder.listFiles();
+        if (file_array == null)
+            System.out.println("path: " + folderPath);
         System.out.println("Numar cadre animatie: " + file_array.length);
         for (int i = 0; i < file_array.length; i++)
         {
