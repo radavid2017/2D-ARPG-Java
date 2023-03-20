@@ -30,29 +30,29 @@ public class CollisionDetector {
         switch (entity.direction) {
             case UP -> {
                 entityTopRow = (int) ((entityTopWorldY - entity.speed) / gPanel.tileSize);
-                leftTile = gPanel.tiles.mapTileNum[entityLeftCol][entityTopRow];
-                rightTile = gPanel.tiles.mapTileNum[entityRightCol][entityTopRow];
+                leftTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityLeftCol][entityTopRow];
+                rightTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityRightCol][entityTopRow];
 //                System.out.println("left tile: " + leftTile + " right tile: " + rightTile);
                 entity.collisionOn = detectTileCollision(entity, leftTile, rightTile);
             }
             case DOWN -> {
                 entityBottomRow = (int) ((entityBottomWorldY + entity.speed) / gPanel.tileSize);
-                leftTile = gPanel.tiles.mapTileNum[entityLeftCol][entityBottomRow];
-                rightTile = gPanel.tiles.mapTileNum[entityRightCol][entityBottomRow];
+                leftTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityLeftCol][entityBottomRow];
+                rightTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityRightCol][entityBottomRow];
 //                System.out.println("left tile: " + leftTile + " right tile: " + rightTile);
                 entity.collisionOn = detectTileCollision(entity, leftTile, rightTile);
             }
             case LEFT -> {
                 entityLeftCol = (int) ((entityLeftWorldX - entity.speed) / gPanel.tileSize);
-                leftTile = gPanel.tiles.mapTileNum[entityLeftCol][entityTopRow];
-                rightTile = gPanel.tiles.mapTileNum[entityLeftCol][entityBottomRow];
+                leftTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityLeftCol][entityTopRow];
+                rightTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityLeftCol][entityBottomRow];
 //                System.out.println("left tile: " + leftTile + " right tile: " + rightTile);
                 entity.collisionOn = detectTileCollision(entity, leftTile, rightTile);
             }
             case RIGHT -> {
                 entityRightCol = (int) ((entityRightWorldX + entity.speed) / gPanel.tileSize);
-                leftTile = gPanel.tiles.mapTileNum[entityRightCol][entityTopRow];
-                rightTile = gPanel.tiles.mapTileNum[entityRightCol][entityBottomRow];
+                leftTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityRightCol][entityTopRow];
+                rightTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityRightCol][entityBottomRow];
 //                System.out.println("left tile: " + leftTile + " right tile: " + rightTile);
                 entity.collisionOn = detectTileCollision(entity, leftTile, rightTile);
             }

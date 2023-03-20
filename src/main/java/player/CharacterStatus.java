@@ -12,6 +12,7 @@ public class CharacterStatus {
     public CharacterStatus(GamePanel gp) {
         parameters.put("Nivel", String.valueOf(gp.player.level));
         parameters.put("Vieti", gp.player.life + "/" + gp.player.maxLife);
+        parameters.put("Mana", gp.player.mana + "/" + gp.player.maxMana);
         parameters.put("Putere", String.valueOf(gp.player.strength));
         parameters.put("Dexteritate", String.valueOf(gp.player.dexterity));
         parameters.put("Atac", String.valueOf(gp.player.attack));

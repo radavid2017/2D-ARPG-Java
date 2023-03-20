@@ -1,8 +1,10 @@
 package features;
 
-import axe.Axe;
-import axe.Baltag;
-import axe.ModelAxe;
+import interactive_tile.*;
+import item.consumable.coin.OBJ_Coin;
+import item.equipable.weapon.axe.Axe;
+import item.equipable.weapon.axe.Baltag;
+import item.equipable.weapon.axe.ModelAxe;
 import entity.Entity;
 import item.consumable.key.KeyGold;
 import item.consumable.key.KeyModel;
@@ -34,6 +36,7 @@ public class AssetPool {
 
     // setarea obiectelor in lumea jocului
     public void setObjects() {
+        gPanel.objects.clear();
 //        loadAsset("res/objects/key.png",23 , 7, TypeObject.Key);
 //        loadAsset("res/objects/key.png", 23, 40, TypeObject.Key);
 //        loadAsset("res/objects/key.png", 38, 8, TypeObject.Key);
@@ -56,11 +59,17 @@ public class AssetPool {
         loadAxe("axe.png", 33, 21, ModelAxe.Baltag);
         loadShield("shield_blue.png", 35, 21, ModelShield.BlueShield);
         loadPotion("potion_red.png", 22, 27, PotionModel.PotionRed);
+        loadCoin(23, 30);
+    }
 
+    public void loadCoin(int worldX, int worldY) {
+        OBJ_Coin coin = new OBJ_Coin(gPanel);
+        coin.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        gPanel.objects.add(coin);
     }
 
     public void setStatesObjects() {
-
+        gPanel.statesObjectList.clear();
     }
 
     // chei
@@ -72,7 +81,9 @@ public class AssetPool {
             case Boots -> object = new OBJ_Boots(gPanel);
         }
 //        object.loadObject(gPanel, "res/objects/" + objectImgName);
-        object.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+        if (object != null) {
+            object.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        }
         gPanel.objects.add(object);
     }
 
@@ -81,7 +92,7 @@ public class AssetPool {
         switch (keyModel) {
             case KeyGold -> {
                 key = new KeyGold(gPanel);
-                key.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+                key.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
                 gPanel.objects.add(key);
             }
         }
@@ -92,8 +103,11 @@ public class AssetPool {
         switch (typeStatesObject) {
             case HEART -> statesObject = new OBJ_Heart();
         }
-        statesObject.loadObject(gPanel, "res/objectsWithStates/" + folderName);
-        statesObject.setPosition(worldX*gPanel.tileSize, worldY*gPanel.tileSize);
+        if (statesObject != null) {
+            statesObject.loadObject(gPanel);
+            statesObject.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        }
+
         gPanel.statesObjectList.add(statesObject);
     }
 
@@ -110,7 +124,7 @@ public class AssetPool {
             case NormalShield -> shield = new NormalShield(gPanel);
             case BlueShield -> shield = new BlueShield(gPanel);
         }
-        shield.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+        shield.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
         gPanel.objects.add(shield);
     }
 
@@ -119,7 +133,9 @@ public class AssetPool {
         switch (modelSword) {
             case NormalSword -> sword = new NormalSword(gPanel);
         }
-        sword.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+        if (sword != null) {
+            sword.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        }
         gPanel.objects.add(sword);
     }
 
@@ -128,7 +144,9 @@ public class AssetPool {
         switch (modelAxe) {
             case Baltag -> axe = new Baltag(gPanel);
         }
-        axe.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+        if (axe != null) {
+            axe.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        }
         gPanel.objects.add(axe);
     }
 
@@ -137,13 +155,16 @@ public class AssetPool {
         switch (potionModel) {
             case PotionRed -> potion = new PotionRed(gPanel);
         }
-        potion.setPosition(worldX * gPanel.tileSize, worldY * gPanel.tileSize);
+        if (potion != null) {
+            potion.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        }
         gPanel.objects.add(potion);
     }
 
     public void setNPC() {
-        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 21);
-        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 31, gPanel.tileSize * 21);
+        gPanel.npcList.clear();
+        loadNPC(TypeNPC.OldMan, 21, 21);
+        loadNPC(TypeNPC.OldMan, 31, 21);
 
 //        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 11, gPanel.tileSize * 21);
 //        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 11);
@@ -158,16 +179,19 @@ public class AssetPool {
         switch (typeNPC) {
             case OldMan -> entity = new NPC_OldMan(gPanel);
         }
-        entity.setPosition(worldX, worldY);
-        gPanel.npcList.add(entity);
+        if (entity != null) {
+            entity.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+            gPanel.npcList.add(entity);
+        }
     }
 
     public void setMonster() {
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*21, gPanel.tileSize*38);
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*23, gPanel.tileSize*42);
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*24, gPanel.tileSize*37);
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*34, gPanel.tileSize*42);
-        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*38, gPanel.tileSize*42);
+        gPanel.monsterList.clear();
+        loadMonster(TypeMonster.GreenSlime, 21, 38);
+        loadMonster(TypeMonster.GreenSlime, 23, 42);
+        loadMonster(TypeMonster.GreenSlime, 24, 37);
+        loadMonster(TypeMonster.GreenSlime, 34, 42);
+        loadMonster(TypeMonster.GreenSlime, 38, 42);
 
         // debug
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*10);
@@ -179,7 +203,41 @@ public class AssetPool {
         switch (typeMonster) {
             case GreenSlime -> entity = new MON_GreenSlime(gPanel);
         }
-        entity.setPosition(worldX, worldY);
-        gPanel.monsterList.add(entity);
+        if (entity != null) {
+            entity.setPosition(gPanel.tileSize * worldX, gPanel.tileSize *  worldY);
+            gPanel.monsterList.add(entity);
+        }
+    }
+
+    public void setInteractiveTiles() {
+        gPanel.interactiveTiles.clear();
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 27, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 28, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 29, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 30, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 31, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 32, 12);
+        loadDestructibleTile(TypeDestructibleTile.DryTree, 33, 12);
+
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 30, 20);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 30, 21);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 30, 22);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 20, 20);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 20, 21);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 20, 22);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 22, 24);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 23, 24);
+//        loadDestructibleTile(TypeDestructibleTile.DryTree, 24, 24);
+    }
+
+    public void loadDestructibleTile(TypeDestructibleTile typeDestructibleTile, double worldX, double worldY) {
+        DestructibleTile destructibleTile = null;
+        switch (typeDestructibleTile) {
+            case DryTree -> destructibleTile = new IT_DryTree(gPanel);
+        }
+        if (destructibleTile != null) {
+            destructibleTile.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+            gPanel.interactiveTiles.add(destructibleTile);
+        }
     }
 }

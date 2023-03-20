@@ -1,22 +1,17 @@
 package animations;
 
-import entity.Entity;
 import features.Direction;
 import features.RenameFolderFiles;
 import features.UtilityTool;
 import game.GamePanel;
-import tile.Tile;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static features.Camera.gPanel;
 
 public class AnimationState {
     GamePanel gp;
@@ -120,7 +115,7 @@ public class AnimationState {
                 if (intervalChangingFrames > 5 && intervalChangingFrames <= 25) {
                     currentFrame = 1;
 
-                    gp.player.attackingMonster();
+                    gp.player.attacking();
                 }
                 if (intervalChangingFrames > 25) {
                     currentFrame = 0;

@@ -7,4 +7,6 @@ public enum GameState {
     Dialogue,
     Title,
     CharacterState,
+    OptionsState,
+    GameOverState
 }

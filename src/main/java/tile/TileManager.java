@@ -17,15 +17,16 @@ public class TileManager {
     public GamePanel gPanel;
     public List<Tile> generalTiles;
     public List<Tile> specialTiles;
+    public List<Tile> interiorTiles;
     public static List<BufferedImage> originalTilesImage = new ArrayList<>();
-    public int[][] mapTileNum;
+    public int[][][] mapTileNum;
     private int idTiles = 9;
 
-    public String mapPath = null;
+    public List<String> mapPath;
 
     public TileManager(GamePanel gPanel) {
         this.gPanel = gPanel;
-        mapTileNum = new int[gPanel.maxWorldCol][gPanel.maxWorldRow];
+        mapTileNum = new int[gPanel.maxMap][gPanel.maxWorldCol][gPanel.maxWorldRow];
         generalTiles = loadTiles("res/tiles/grass", false);
         generalTiles.addAll(loadTiles("res/tiles/water", true));
         generalTiles.addAll(loadTiles("res/tiles/road", false));
@@ -33,9 +34,16 @@ public class TileManager {
         generalTiles.addAll(loadTiles("res/tiles/wall", true));
         generalTiles.addAll(loadTiles("res/tiles/tree", true));
 
+        generalTiles.addAll(loadTiles("res/tiles/interior/hut", false));
+        generalTiles.addAll(loadTiles("res/tiles/interior/floor", false));
+        generalTiles.addAll(loadTiles("res/tiles/interior/table", true));
+
         System.out.println("Texturi generale: " + this.generalTiles.size());
-        mapPath = "res/maps/worldV2.txt";
-        loadMap(mapPath);
+        mapPath = new ArrayList<>();
+        mapPath.add("res/maps/worldV3.txt");
+        loadMap(mapPath.get(0), 0);
+        mapPath.add("res/maps/interior01.txt");
+        loadMap(mapPath.get(1), 1);
     }
 
     public List<Tile> loadTiles(String filePath, boolean isSolid) {
@@ -87,7 +95,7 @@ public class TileManager {
 //        return null;
 //    }
 
-    public void loadMap(String filePath) {
+    public void loadMap(String filePath, int map) {
         try {
             FileInputStream is = new FileInputStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -99,7 +107,7 @@ public class TileManager {
                  while (col < gPanel.maxWorldCol) {
                      String[] numbers = line.split(" ");
                      int num = Integer.parseInt(numbers[col]);
-                     mapTileNum[col][row] = num;
+                     mapTileNum[map][col][row] = num;
                      col++;
                  }
                  if (col == gPanel.maxWorldCol) {
@@ -118,7 +126,7 @@ public class TileManager {
         int worldRow = 0;
 
         while (worldCol < gPanel.maxWorldCol && worldRow < gPanel.maxWorldRow) {
-            int idTileMap = mapTileNum[worldCol][worldRow];
+            int idTileMap = mapTileNum[gPanel.currentMap][worldCol][worldRow];
 
             /** IMPLEMENTARE CAMERA */
             // instantierea coordonatelor

@@ -5,10 +5,11 @@ import animations.StateMachine;
 import animations.TypeAnimation;
 import features.*;
 import game.GamePanel;
+import particles.Particle;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 /** Super clasa - Entitate
  *  Aceasta contine variabile care pot fi folosite
@@ -25,16 +26,6 @@ public abstract class Entity {
     public double screenX;
     public double screenY;
 
-    /** Liste de imagini pentru realizarea animatiilor de miscare */
-    public AnimationState walkUp, walkDown, walkLeft, walkRight;
-    /** Lista de animatii */
-    public StateMachine movement = new StateMachine();
-    public StateMachine idle = new StateMachine();
-    public StateMachine attackState = new StateMachine();
-    public StateMachine objAnimation = new StateMachine();
-    /** Lista animatii arme */
-    public StateMachine attackSword = new StateMachine();
-    public StateMachine attackAxe = new StateMachine();
     public TypeAnimation typeAnimation;
 //    // directii diagonale - optional
     public BufferedImage[] upLeft,upRight,downLeft,downRight;
@@ -51,7 +42,7 @@ public abstract class Entity {
 
     /** Suprafata de detectare a loviturilor */
     public Rectangle attackArea = new Rectangle(0, 0, 0, 0);
-    public int invincibleTime = 60;
+    public int invincibleTime = 40;
     public int invincibleCounter = 0;
     public boolean invincible = false;
 
@@ -97,23 +88,7 @@ public abstract class Entity {
     /** Metodele de actualizare si scriere a informatiilor asupra entitatii */
     // actualizare
     public void update() {
-        collisionOn = false;
-        gPanel.collisionDetector.manageTileCollision(this);
-        gPanel.collisionDetector.manageObjCollision(this);
-        gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
-        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
-        gPanel.collisionDetector.checkPlayer(this);
 
-        if (!collisionOn && inMotion)
-            this.manageMovement();
-
-        manageInvincible();
-
-//        currentTime++;
-//        if (currentTime >= timeToChangeFrame) {
-        currentAnimation.updateFrames();
-//            currentTime = 0;
-//        }
     }
 
     public void speak() {
@@ -157,29 +132,7 @@ public abstract class Entity {
         g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
-    public void setupObjectAnimation(String objFolderPath) {
-        objAnimation = new StateMachine();
-        objAnimation.loadCompleteAnimation(gPanel, objFolderPath, TypeAnimation.OBJECT);
-    }
 
-    public void setupMovement(String creaturePath) {
-        movement = new StateMachine();
-        movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement", TypeAnimation.IN_MOTION);
-        currentAnimation = movement.down;
-    }
-
-    public void setupIdle(String creaturePath) {
-        idle = new StateMachine();
-        idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE);
-    }
-
-    public void setupAttack(String creaturePath) {
-        attackSword = new StateMachine();
-        attackSword.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
-        attackAxe = new StateMachine();
-        attackAxe.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\axe", TypeAnimation.ATTACK);
-        attackState = attackSword;
-    }
 
     // incarcarea animatiilor de miscare
         /** ANIMATII MOVEMENT */
@@ -205,10 +158,10 @@ public abstract class Entity {
 //        walkLeft = new AnimationState(this.gPanel, "walkLeft", Direction.LEFT, entityPath + "\\movement\\west");
 //        System.out.println("Animatia " + walkLeft.title + " incarcata cu succes.");
 
-        movement = new StateMachine();
-        for (AnimationState animationState : Arrays.asList(this.walkUp, this.walkDown, this.walkRight, this.walkLeft)) {
-            this.movement.add(animationState);
-        }
+//        movement = new StateMachine();
+//        for (AnimationState animationState : Arrays.asList(this.walkUp, this.walkDown, this.walkRight, this.walkLeft)) {
+//            this.movement.add(animationState);
+//        }
     }
 
     public void setPosition(double worldX, double worldY) {
@@ -255,7 +208,7 @@ public abstract class Entity {
     public int touchingDamage(Entity target) {
         int totalDamage = attack - target.defense;
         if (totalDamage < 0) {
-            totalDamage = 0;
+            totalDamage = 1;
         }
         target.life -= totalDamage;
         return totalDamage;
@@ -270,4 +223,11 @@ public abstract class Entity {
     }
 
     public abstract void setDefaultSolidArea();
+
+    public void generateParticle(Entity target, Color color, int size, int speed, int maxLife) {
+        getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,-2, -1));
+        getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, -1));
+        getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,-2, 1));
+        getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, 1));
+    }
 }

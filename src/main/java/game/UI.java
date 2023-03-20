@@ -6,8 +6,8 @@ import features.Direction;
 import features.UtilityTool;
 import hud.window.InventoryWindow;
 import object.OBJ_Heart;
+import object.OBJ_ManaCrystal;
 import object.SuperStatesObject;
-import object.TypeStatesObject;
 import player.CharacterStatus;
 
 import javax.imageio.ImageIO;
@@ -51,13 +51,19 @@ public class UI {
     public TitleScreenState titleScreenState = TitleScreenState.MAIN_PAGE;
     public CharacterClass characterClass = CharacterClass.MAGE;
 
+    /** OPTIONS MENU */
+    int subState = 0;
+    int commandNum = 0;
+
     /** INVENTAR */
     public InventoryWindow inventoryWindow;
 
     /** UI HUD */
-    public ArrayList<SuperStatesObject> hudList = new ArrayList<>();
+//    public ArrayList<SuperStatesObject> hudList = new ArrayList<>();
+    SuperStatesObject heart;
+    SuperStatesObject manaCrystal;
     // pozitii viata jcuator
-    public int heartX, heartY;
+//    public int heartX, heartY;
 
     /** Constrcutor UI */
     public UI(GamePanel gPanel) {
@@ -87,12 +93,17 @@ public class UI {
             throw new RuntimeException(e);
         }
 
-        // CREARE HUD HP JUCATOR
-        SuperStatesObject heart = new OBJ_Heart();
-        heart.loadObject(gPanel, "res/objectsWithStates/heart");
-        heartX = 15;
-        heartY = 15;
-        hudList.add(heart);
+        // INSTANTIERE HUD HP JUCATOR
+        heart = new OBJ_Heart();
+        heart.screenX = 15;
+        heart.screenY = 15;
+        heart.loadObject(gPanel);
+//        hudList.add(heart);
+        // INSTANTIERE MANA CRYSTAL
+        manaCrystal = new OBJ_ManaCrystal();
+        manaCrystal.screenX = heart.screenX - 15;
+        manaCrystal.screenY = heart.screenY * 7;
+        manaCrystal.loadObject(gPanel);
 
         // INSTANTIERE COORDONATE CADRU INVENTAR
         inventoryWindow = new InventoryWindow(
@@ -121,23 +132,30 @@ public class UI {
             }
             case Play -> {
                 // play staff
-                drawPlayerLife(heartX, heartY);
+                drawLifeManaPlayer();
                 drawMessage();
             }
             case Pause -> {
                 // pause stuff
-                drawPlayerLife(heartX, heartY);
+                drawLifeManaPlayer();
                 drawPauseScreen();
             }
             case Dialogue -> {
                 // starea de dialog
-                drawPlayerLife(heartX, heartY);
+                drawLifeManaPlayer();
                 drawDialogueScreen();
             }
             case CharacterState -> {
                 // starea de status caracter
                 drawCharacterScreen();
                 drawInventory();
+            }
+            case OptionsState -> {
+                drawOptionsScreen();
+            }
+            case GameOverState -> {
+                // final de joc
+                drawGameOverScreen();
             }
         }
 //        if (!gameOver) {
@@ -155,21 +173,324 @@ public class UI {
 //        }
     }
 
-    private OBJ_Heart getHeart() {
-        for (int i = 0; i < hudList.size(); i++) {
-            if (hudList.get(i).typeStatesObject == TypeStatesObject.HEART)
-                return (OBJ_Heart) hudList.get(i);
-        }
-        return null;
+    public void setCommandNum(int commandNum) {
+        this.commandNum = commandNum;
     }
 
-    public void drawPlayerLife(int posX, int posY) {
+    private void drawGameOverScreen() {
+        g2D.setColor(new Color(0,0,0, 150));
+        g2D.fillRect(0, 0, gPanel.screenWidth, gPanel.screenHeight);
 
-        OBJ_Heart heart = getHeart();
+        int x;
+        int y;
+        String text;
+        g2D.setFont(g2D.getFont().deriveFont(Font.BOLD, 110f));
+
+        text = "Sfarsit joc";
+        // Umbra
+        g2D.setColor(Color.black);
+        x = getXForCenteredText(text);
+        y = gPanel.screenHeight/4;
+        g2D.drawString(text, x, y);
+        // Main
+        g2D.setColor(Color.white);
+        g2D.drawString(text, x-4, y-4);
+
+        // Retry
+        g2D.setFont(g2D.getFont().deriveFont(50f));
+        displayText("Reincepe", getXForCenteredText("Reincepe"), y += 200);
+        if (commandNum == 0) {
+            g2D.drawString(">", x-40, y);
+        }
+
+        // Inapoi la meniul principal
+        displayText("Paraseste", getXForCenteredText("Paraseste"), y += 100);
+        if (commandNum == 1) {
+            g2D.drawString(">", x-40, y);
+        }
+    }
+
+    public void changeCmdGameOver() {
+        if (commandNum == 0) {
+            commandNum = 1;
+        }
+        else {
+            commandNum = 0;
+        }
+        gPanel.playSE("cursor.wav");
+    }
+
+    public void displayText(String text, int x, int y) {
+        g2D.drawString(text, x, y);
+    }
+
+    private void drawOptionsScreen() {
+        g2D.setColor(Color.white);
+        g2D.setFont(g2D.getFont().deriveFont(32F));
+
+        // SUB WINDOW
+        int frameX = gPanel.tileSize*6;
+        int frameY = gPanel.tileSize;
+        int frameWidth = gPanel.tileSize*8;
+        int frameHeight = (int) (gPanel.screenHeight/1.5f);
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        switch (subState) {
+            case 0 -> {
+                showOptions(frameX, frameY, frameWidth, frameHeight);
+                actionOptions();
+            }
+            case 1 -> {
+                options_fullscreenNotification(frameX, frameY);
+            }
+            case 2 -> {
+                options_controls(frameX, frameY);
+            }
+            case 3 -> {
+                options_endGameConfirmation(frameX, frameY);
+            }
+        }
+
+        gPanel.keyH.enterPressed = false;
+    }
+
+    private void options_endGameConfirmation(int frameX, int frameY) {
+        int textX = frameX + 50;
+        int textY = screenWidth/3;
+
+        currentDialogue = new Dialogue("Iesi din joc si te \nintorci la meniul principal?");
+
+        for (String line : currentDialogue.peekText().split("\n")) {
+            g2D.drawString(line, getXForCenteredText(line), textY);
+            textY += 40;
+        }
+
+        // YES
+        String text = "Da";
+        textX = getXForCenteredText(text);
+        textY += 50;
+        g2D.drawString(text, textX, textY);
+        if (commandNum == 0) {
+            g2D.drawString(">", textX-30, textY);
+            if (gPanel.keyH.enterPressed) {
+                subState = 0;
+                GamePanel.gameState = GameState.Title;
+                gPanel.stopMusic();
+            }
+        }
+
+        // NO
+        text = "Nu";
+        textX = getXForCenteredText(text);
+        textY += 50;
+        g2D.drawString(text, textX, textY);
+        if (commandNum == 1) {
+            g2D.drawString(">", textX-30, textY);
+            if (gPanel.keyH.enterPressed) {
+                subState = 0;
+                commandNum = 4;
+            }
+        }
+    }
+
+    public void showOptions(int frameX, int frameY, int frameWidth, int frameHeight) {
+        int textX;
+        int textY;
+
+        // TITLE
+        String text = "Optiuni";
+        textX = getXForCenteredText(text);
+        textY = frameY + 50;
+
+        g2D.drawString(text, textX, textY);
+
+        /** STANGA */
+        textX = frameX + 50;
+        textY += 100;
+        // FULL SCREEN ON/OFF
+        textY += drawItemOptionSelection("Ecran complet", textX, textY, 0);
+
+        // MUSIC
+        textY += drawItemOptionSelection("Muzica", textX, textY, 1);
+
+        // SE
+        textY += drawItemOptionSelection("Sunet Efecte", textX, textY, 2);
+
+        // CONTROL
+        textY += drawItemOptionSelection("Controale", textX, textY, 3);
+
+        // END GAME
+        textY += drawItemOptionSelection("Sfarseste joc", textX, textY, 4) * 1.35f;
+
+        // BACK
+        drawItemOptionSelection("Inapoi", textX, textY, 5);
+
+        /** DREAPTA */
+        // FULL SCREEN CHECKBOX
+        textX = (int) (frameX + gPanel.screenWidth/4f);
+        textY = frameY + 115;
+        g2D.setStroke(new BasicStroke(3));
+        g2D.drawRect(textX, textY, gPanel.tileSize/2, gPanel.tileSize/2);
+        if (gPanel.fullScreenOn) {
+            g2D.fillRect(textX+6, textY+6, gPanel.tileSize/2-11, gPanel.tileSize/2-11);
+        }
+
+        // MUSIC VOLUME
+        textY += 100;
+        g2D.drawRect(textX, textY, frameWidth/3, gPanel.tileSize/2);
+        int volumeWidth = gPanel.tileSize/2 * gPanel.music.getVolumeScale();
+        g2D.fillRect(textX, textY, volumeWidth, gPanel.tileSize/2);
+
+        // SE VOLUME
+        textY += 100;
+        g2D.drawRect(textX, textY, frameWidth/3, gPanel.tileSize/2);
+        volumeWidth = gPanel.tileSize/2 * gPanel.soundEffect.getVolumeScale();
+        g2D.fillRect(textX, textY, volumeWidth, gPanel.tileSize/2);
+
+        gPanel.config.saveConfig();
+    }
+
+    public int drawItemOptionSelection(String itemName, int textX, int textY, int cmd) {
+        g2D.drawString(itemName, textX, textY);
+        if (commandNum == cmd) {
+            g2D.drawString(">", textX-30, textY);
+        }
+        return 100; // text Level Distance Between Items
+    }
+
+    public void actionOptions() {
+        switch (commandNum) {
+            case 0 -> {
+                if (gPanel.keyH.enterPressed) {
+                    gPanel.fullScreenOn = !gPanel.fullScreenOn;
+                    subState = 1;
+                }
+            }
+            case 3 -> {
+                if (gPanel.keyH.enterPressed) {
+                    subState = 2;
+                    commandNum = 0;
+                }
+            }
+            case 4 -> {
+                if (gPanel.keyH.enterPressed) {
+                    subState = 3;
+                    commandNum = 0;
+                }
+            }
+            case 5 -> {
+                if (gPanel.keyH.enterPressed) {
+                    GamePanel.gameState = GameState.Play;
+                    commandNum = 0;
+                }
+            }
+        }
+    }
+
+    public void changeYesNoCursor() {
+        commandNum = commandNum == 1 ? 0 : 1;
+        gPanel.playSE("cursor.wav");
+    }
+
+    public void increaseCommandOptionsLine() {
+        if (commandNum < 5 && subState == 0) {
+            commandNum++;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    public void decreaseCommandOptionsLine() {
+        if (commandNum > 0 && subState == 0) {
+            commandNum--;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    public void options_fullscreenNotification(int frameX, int frameY) {
+        int textX = (int) (frameX + screenWidth/7.5f);
+        int textY = frameY + gPanel.screenHeight/4;
+
+        currentDialogue = new Dialogue("Schimbarea va avea \nefect dupa reinceperea \njocului.");
+        for (String line: currentDialogue.peekText().split("\n")) {
+            g2D.drawString(line, textX, textY);
+            textY += 40;
+        }
+
+        // INAPOI
+        textY += 150;
+        g2D.drawString("Inapoi", textX, textY);
+            g2D.drawString(">", textX-30,textY);
+            if (gPanel.keyH.enterPressed) {
+                subState = 0;
+            }
+    }
+
+    public void options_controls(int frameX, int frameY) {
+        int textX;
+        int textY;
+
+        // TITLE
+        String text = "Controale";
+        textX = getXForCenteredText(text);
+        textY = frameY + 50;
+        g2D.drawString(text, textX, textY);
+
+        textX = frameX + 50;
+        textY += 75;
+        textY += writeControl("Miscari jucator", textX, textY);
+        textY += writeControl("Ataca", textX, textY);
+        textY += writeControl("Trage", textX, textY);
+        textY += writeControl("Ecran caracter", textX, textY);
+        textY += writeControl("Pauza", textX, textY);
+        writeControl("Optiuni", textX, textY);
+
+        textX = (int) ((frameX + 50) * 1.75f);
+        textY = frameY + 50 + 75;
+        textY += writeControl("W,A,S,D", textX, textY);
+        textY += writeControl("ENTER", textX, textY);
+        textY += writeControl("K", textX, textY);
+        textY += writeControl("C", textX, textY);
+        textY += writeControl("P", textX, textY);
+        textY += writeControl("ESC", textX, textY);
+
+        // BACK
+        textX = frameX + 50;
+        g2D.drawString("Inapoi", textX, textY);
+        g2D.drawString(">", textX-30, textY);
+        g2D.drawString(">", textX-30, textY);
+        if (gPanel.keyH.enterPressed) {
+            subState = 0;
+            commandNum = 3;
+        }
+    }
+
+    private int writeControl(String text, int textX, int textY) {
+        g2D.drawString(text, textX, textY);
+        return 100;
+    }
+
+    public int getSubState() {
+        return subState;
+    }
+
+    public int getCommandNum() {
+        return commandNum;
+    }
+
+//    private OBJ_Heart getHeart() {
+//        for (int i = 0; i < hudList.size(); i++) {
+//            if (hudList.get(i).typeStatesObject == TypeStatesObject.HEART)
+//                return (OBJ_Heart) hudList.get(i);
+//        }
+//        return null;
+//    }
+
+    public void drawLifeManaPlayer() {
 
         assert heart != null : "Obiectul heart din drawPlayerLife() din clasa ui este null!";
 
-        int x = posX;
+        int x = (int) heart.screenX;
+        int posY = (int) heart.screenY;
 
         // AFISEAZA HP CURENT PLAYER
         int i;
@@ -191,6 +512,18 @@ public class UI {
             x += 100;
         }
 
+        int xMana = (int) manaCrystal.screenX;
+        // CURRENT MANA
+        for(i=0; i<gPanel.player.mana; i++) {
+            g2D.drawImage(manaCrystal.imgStates.get(1), xMana, (int) manaCrystal.screenY, null);
+            xMana += 78;
+        }
+
+        // MAX MANA
+        for (i=gPanel.player.mana; i<gPanel.player.maxMana; i++) {
+            g2D.drawImage(manaCrystal.imgStates.get(0), xMana, (int) manaCrystal.screenY, null);
+            xMana += 78;
+        }
     }
 
     public void drawMessage() {
@@ -377,8 +710,9 @@ public class UI {
         }
         gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
         GamePanel.gameState = GameState.Play;
+        titleScreenState = TitleScreenState.MAIN_PAGE;
         gp.player.getPlayerSprites();
-//        gPanel.playMusic("BlueBoyAdventure.wav");
+        gPanel.playMusic("BlueBoyAdventure.wav");
     }
 
     public int getXForCenteredText(String text) {

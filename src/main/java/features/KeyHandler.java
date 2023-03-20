@@ -2,7 +2,6 @@ package features;
 
 import game.GamePanel;
 import game.GameState;
-import game.UI;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -49,15 +48,22 @@ public class KeyHandler implements KeyListener {
             case Play -> playState(code);
             case Dialogue -> dialogueState(code);
             case CharacterState -> characterState(code);
+            case OptionsState -> optionsState(code);
+            case GameOverState -> gameOverState(code);
         }
 
         switch (code) {
             // EXIT GAME
-            case KeyEvent.VK_ESCAPE -> System.exit(0);
+//            case KeyEvent.VK_ESCAPE -> System.exit(0);
             // DEBUG
             case KeyEvent.VK_T -> showDebugText = !showDebugText;
             // REIMPROSPATARE HARTA
-            case KeyEvent.VK_R -> gPanel.tiles.loadMap(gPanel.tiles.mapPath);
+            case KeyEvent.VK_R -> {
+                switch (gPanel.currentMap) {
+                    case 0 -> gPanel.tiles.loadMap(gPanel.tiles.mapPath.get(0), gPanel.currentMap);
+                    case 1 -> gPanel.tiles.loadMap(gPanel.tiles.mapPath.get(1), gPanel.currentMap);
+                }
+            }
             // PAUSE - UNPAUSE
             case KeyEvent.VK_P -> GamePanel.gameState =
                     GamePanel.gameState == GameState.Play ? GameState.Pause : GameState.Play;
@@ -66,6 +72,104 @@ public class KeyHandler implements KeyListener {
                     GamePanel.gameState == GameState.Play ? GameState.CharacterState : GameState.Play;
         }
 
+    }
+
+    private void gameOverState(int code) {
+        switch (code) {
+            case KeyEvent.VK_UP, KeyEvent.VK_DOWN -> {
+                gPanel.ui.changeCmdGameOver();
+            }
+            case KeyEvent.VK_ENTER -> {
+                if (gPanel.ui.getCommandNum() == 0) {
+                    GamePanel.gameState = GameState.Play;
+                    gPanel.retry();
+                }
+                else {
+                    if (gPanel.ui.getCommandNum() == 1) {
+                        GamePanel.gameState = GameState.Title;
+                        gPanel.restart();
+                    }
+                }
+            }
+        }
+    }
+
+    public void optionsState(int code) {
+        switch (code) {
+            case KeyEvent.VK_ESCAPE -> {
+                GamePanel.gameState = GameState.Play;
+            }
+
+            case KeyEvent.VK_ENTER -> {
+                enterPressed = true;
+            }
+
+            case KeyEvent.VK_UP -> {
+                switch (gPanel.ui.getSubState()) {
+                    case 0 -> gPanel.ui.decreaseCommandOptionsLine();
+                    case 3 -> gPanel.ui.changeYesNoCursor();
+                }
+            }
+
+            case KeyEvent.VK_DOWN -> {
+                switch (gPanel.ui.getSubState()) {
+                    case 0 -> gPanel.ui.increaseCommandOptionsLine();
+                    case 3 -> gPanel.ui.changeYesNoCursor();
+                }
+            }
+
+            case KeyEvent.VK_LEFT -> {
+                if (gPanel.ui.getSubState() == 0) {
+                    if (gPanel.ui.getCommandNum() == 1) {
+                        decreaseMusicVolume();
+                    }
+                    if (gPanel.ui.getCommandNum() == 2) {
+                        decreaseSoundEffectVolume();
+                    }
+                }
+            }
+
+            case KeyEvent.VK_RIGHT -> {
+                if (gPanel.ui.getSubState() == 0) {
+                    if (gPanel.ui.getCommandNum() == 1) {
+                        increaseMusicVolume();
+                    }
+                    if (gPanel.ui.getCommandNum() == 2) {
+                        increaseSoundEffectVolume();
+                    }
+                }
+            }
+        }
+    }
+
+    private  void decreaseSoundEffectVolume() {
+        if (gPanel.soundEffect.volumeScale > 0) {
+            gPanel.soundEffect.volumeScale--;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    private void increaseSoundEffectVolume() {
+        if (gPanel.soundEffect.volumeScale < 5) {
+            gPanel.soundEffect.volumeScale++;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    private void decreaseMusicVolume() {
+        if (gPanel.music.volumeScale > 0) {
+            gPanel.music.volumeScale--;
+            gPanel.music.checkVolume();
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    private void increaseMusicVolume() {
+        if (gPanel.music.volumeScale < 5) {
+            gPanel.music.volumeScale++;
+            gPanel.music.checkVolume();
+            gPanel.playSE("cursor.wav");
+        }
     }
 
     public void titleState(int code) {
@@ -111,15 +215,15 @@ public class KeyHandler implements KeyListener {
             }
             // ZOOM IN
             case KeyEvent.VK_UP -> {
-                Camera.zoomInOut(1);
-                Camera.rescaleAll();
+//                Camera.zoomInOut(1);
+//                Camera.rescaleAll();
 //                    Camera.validatePositions(gPanel.npc, gPanel.player);
 //                    Camera.fixPlayerStuckInTile();
             }
             // ZOOM OUT
             case KeyEvent.VK_DOWN -> {
-                Camera.zoomInOut(-1);
-                Camera.rescaleAll();
+//                Camera.zoomInOut(-1);
+//                Camera.rescaleAll();
 //                    Camera.validatePositions(gPanel.npc, gPanel.player);
 //                    Camera.fixPlayerStuckInTile();
             }
@@ -130,6 +234,10 @@ public class KeyHandler implements KeyListener {
             // CHARACTER STATE
             case KeyEvent.VK_C -> {
                 GamePanel.gameState = GameState.Play;
+            }
+            // OPTIONS MENU
+            case KeyEvent.VK_ESCAPE -> {
+                GamePanel.gameState = GameState.OptionsState;
             }
         }
     }

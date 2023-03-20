@@ -3,13 +3,16 @@ package game;
 import entity.Entity;
 import entity.Player;
 import features.*;
+import interactive_tile.InteractiveTile;
+import monster.Monster;
 import object.SuperObject;
 import object.SuperStatesObject;
-import rangeattack.Projectile;
+import item.equipable.weapon.rangeattack.Projectile;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
@@ -26,8 +29,8 @@ public class GamePanel extends JPanel implements Runnable {
     // original scale * scaleValue --> tileSize
     public int tileSize = originalTileSize*scale; // valoarea dimensiunii finale a obiectului de joc
     // realizarea aspectului ratio - 4:3
-    public int maxScreenCol = Toolkit.getDefaultToolkit().getScreenSize().width/tileSize + 1;//20; // 16 tiles horizontal
-    public int maxSCreenRow = Toolkit.getDefaultToolkit().getScreenSize().height/tileSize + 1;//12; // 12 tiles vertical
+    public int maxScreenCol = 20;//Toolkit.getDefaultToolkit().getScreenSize().width/tileSize + 1;//20; // 16 tiles horizontal
+    public int maxSCreenRow = 12;//Toolkit.getDefaultToolkit().getScreenSize().height/tileSize + 1;//12; // 12 tiles vertical
     // realizarea dimensiunii jocului
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixeli
     public final int screenHeight = tileSize * maxSCreenRow; // 576 pixeli
@@ -35,6 +38,8 @@ public class GamePanel extends JPanel implements Runnable {
     // WORLD SETTINGS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
+    public final int maxMap = 10;
+    public int currentMap = 1;
     public int worldWidth = tileSize * maxWorldCol;
     public int worldHeight = tileSize * maxWorldRow;
 
@@ -43,6 +48,15 @@ public class GamePanel extends JPanel implements Runnable {
     public final int defaultZoom = tileSize * maxWorldCol;
     public final int limitZoomIn = defaultZoom + 1000;
     public final int limitZoomOut = defaultZoom - 900;
+    // FOR FULL SCREEN
+    public boolean fullScreenOn = true;
+//    int screenWidth2 = screenWidth;
+//    int screenHeight2 = screenHeight;
+//    BufferedImage tempScreen;
+//    Graphics2D g2D;
+
+    // Config file
+    Config config = new Config(this);
 
     // FPS - limitarea cadrelor pe secunda
     float FPS = 60.0f;
@@ -79,8 +93,11 @@ public class GamePanel extends JPanel implements Runnable {
     public List<SuperObject> objects = new ArrayList<>();
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
+    // lista tiles interactive
+    public List<Entity> interactiveTiles = new ArrayList<>();
 
     public ArrayList<Projectile> projectileList = new ArrayList<>();
+    public ArrayList<Entity> particleList = new ArrayList<>();
     public ArrayList<Entity> entities = new ArrayList<>();
 
     public boolean hasZoomed = false;
@@ -112,10 +129,27 @@ public class GamePanel extends JPanel implements Runnable {
         assetPool.setNPC();
         // adaugarea monstriilor
         assetPool.setMonster();
+        // interactive tiles
+        assetPool.setInteractiveTiles();
         // setup muzica de fundal
-        playMusic("BlueBoyAdventure.wav");
-        stopMusic();
+//        playMusic("BlueBoyAdventure.wav");
+//        stopMusic();
         gameState = GameState.Title;
+    }
+
+    public void retry() {
+        player.setDefaultPositions();
+        player.restoreLifeMana();
+        assetPool.setNPC();
+        assetPool.setMonster();
+        this.playMusic("BlueBoyAdventure.wav");
+    }
+
+    public void restart() {
+        retry();
+        player.setItems();
+        assetPool.setObjects();
+        assetPool.setInteractiveTiles();
     }
 
     /** startGameThread - instantierea la inceperea rularii jocului */
@@ -175,8 +209,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         switch (gameState) {
             case Play -> {
+
                 // PLAYER UPDATE
                 player.update();
+
                 // NPC UPDATE
                 for (Entity npc : npcList) {
                     if (npc != null) {
@@ -191,8 +227,12 @@ public class GamePanel extends JPanel implements Runnable {
                             monsterList.get(i).update();
                         }
                         if (!monsterList.get(i).alive) {
-                            monsterList.set(i, null);
+                            ((Monster) monsterList.get(i)).checkDrop();
+                            monsterList.remove(i);
                         }
+                    }
+                    else {
+                        monsterList.remove(i);
                     }
                 }
 
@@ -205,6 +245,34 @@ public class GamePanel extends JPanel implements Runnable {
                         if (!projectileList.get(i).alive) {
                             projectileList.remove(i);
                         }
+                    }
+                    else {
+                        projectileList.remove(i);
+                    }
+                }
+
+                // PARTICULE
+                for (int i = 0; i < particleList.size(); i++) {
+                    if (particleList.get(i) != null) {
+                        if (particleList.get(i).alive) {
+                            particleList.get(i).update();
+                        }
+                        if (!particleList.get(i).alive) {
+                            particleList.remove(i);
+                        }
+                    }
+                    else {
+                        particleList.remove(i);
+                    }
+                }
+
+                // INTERACTIVE TILES
+                for (int i = 0; i < interactiveTiles.size(); i++) {
+                    if (interactiveTiles.get(i) != null) {
+                        interactiveTiles.get(i).update();
+                    }
+                    else {
+                        interactiveTiles.remove(i);
                     }
                 }
             }
@@ -236,6 +304,13 @@ public class GamePanel extends JPanel implements Runnable {
             // harta
             if (player != null)
                 tiles.draw(g2D);
+
+            // tiles interactive
+            for (int i = 0; i < interactiveTiles.size(); i++) {
+                if(interactiveTiles.get(i) != null) {
+                    interactiveTiles.get(i).draw(g2D);
+                }
+            }
 
             addAllLists();
 
@@ -340,6 +415,10 @@ public class GamePanel extends JPanel implements Runnable {
         for (Entity projectile : projectileList) {
             if (projectile != null)
                 entities.add(projectile);
+        }
+        for (Entity particle : particleList) {
+            if (particle != null)
+                entities.add(particle);
         }
     }
 

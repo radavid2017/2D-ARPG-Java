@@ -13,5 +13,6 @@ public abstract class Equipable extends Item {
         super(gPanel, TypeItem.Equipable);
         this.playerClass = playerClass;
         this.typeEquipable = typeEquipable;
+        objPath += "equipable/";
     }
 }

@@ -10,14 +10,13 @@ import item.consumable.TypeConsumable;
 import item.consumable.key.KeyModel;
 
 public abstract class OBJ_Potion extends Consumable {
-
-    String potionPath = "res/item/consumable/potions/";
     PotionModel potionModel;
     int healingValue;
 
     public OBJ_Potion(GamePanel gPanel) {
         super(gPanel, TypeConsumable.Potion);
         setHealingValue();
+        objPath += "potions/";
     }
 
     @Override
@@ -27,12 +26,14 @@ public abstract class OBJ_Potion extends Consumable {
 
     public abstract void setHealingValue();
 
-    public void use(Entity entity) {
+    public void use() {
         GamePanel.gameState = GameState.Dialogue;
         getGamePanel().ui.setCurrentDialogue(new Dialogue("Ai consumat " + name + "!\n" +
                 "Incepi sa te vindeci..."));
 
-        entity.life += healingValue;
+
+        getGamePanel().player.life += healingValue;
+
         if (getGamePanel().player.life > getGamePanel().player.maxLife) {
             getGamePanel().player.life = getGamePanel().player.maxLife;
         }

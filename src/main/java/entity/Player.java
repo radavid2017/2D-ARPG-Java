@@ -1,20 +1,25 @@
 package entity;
 
+import animations.StateMachine;
 import animations.TypeAnimation;
 import features.*;
 import game.CharacterClass;
 import game.GamePanel;
 import game.GameState;
+import interactive_tile.DestructibleTile;
+import interactive_tile.InteractiveTile;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
+import item.consumable.coin.OBJ_Coin;
 import item.consumable.key.KeyGold;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
-import rangeattack.Projectile;
-import rangeattack.spell.Fireball;
+import item.equipable.weapon.rangeattack.Projectile;
+import item.equipable.weapon.rangeattack.spell.Fireball;
 import item.equipable.shield.NormalShield;
 import item.equipable.weapon.sword.NormalSword;
+import monster.Monster;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,7 +27,7 @@ import java.util.ArrayList;
 
 // clasa north ce detine informatii despre jucator
 // precum pozitia sa si viteza de deplasare
-public class Player extends Entity {
+public class Player extends Creature {
 
     Graphics2D g2D = null;
 
@@ -41,6 +46,10 @@ public class Player extends Entity {
     public int coin;
     public Weapon currentWeapon;
     public Shield currentShield;
+
+    /** Lista animatii arme */
+    public StateMachine attackWeapon = null;
+    public StateMachine attackAxe = null;
 //    public Projectile currentProjectile;
 
     // ATRIBUTE ITEME
@@ -87,6 +96,8 @@ public class Player extends Entity {
         // INSTANTIERE STATUS JUCATOR
         maxLife = 6;
         life = maxLife;
+        maxMana = 4;
+        mana = maxMana;
         level = 1;
         strength = 1;
         dexterity = 1;
@@ -117,8 +128,23 @@ public class Player extends Entity {
 
         updateAttack();
         updateDefense();
-
+ 
         setItems();
+        setDefaultPositions();
+    }
+
+    public void setDefaultPositions() {
+//        worldX = gPanel.tileSize * 23;
+//        worldY = gPanel.tileSize * 21;
+        worldX = gPanel.tileSize * 12;
+        worldY = gPanel.tileSize * 13;
+        direction = Direction.DOWN;
+    }
+
+    public void restoreLifeMana() {
+        life = maxLife;
+        mana = maxMana;
+        invincible = false;
     }
 
     public void setUpClassChooser() {
@@ -133,18 +159,24 @@ public class Player extends Entity {
         }
     }
 
+    public void setupAttackAnimationPlayer(String creaturePath) {
+        attackAxe = new StateMachine();
+        attackAxe.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\axe", TypeAnimation.ATTACK);
+        attackWeapon = new StateMachine();
+        attackWeapon.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
+        attackState = attackWeapon;
+    }
+
     /** incarcarea animatiilor pentru player */
     public void getPlayerSprites() {
 //        String playerPath = "res/player/"+characterClassPath;
         setupMovement("res/player/" + characterClassPath);
         setupIdle("res/player/" + characterClassPath);
-        setupAttack("res/player/" + characterClassPath);
+        setupAttackAnimationPlayer("res/player/" + characterClassPath);
 //        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
 
-    @Override
     public void update() {
-
         // Animatii jucator
         this.managePlayerMovement();
 
@@ -152,6 +184,12 @@ public class Player extends Entity {
         currentAnimation.updateFrames();
 
         manageInvincible();
+        if (life <= 0) {
+            GamePanel.gameState = GameState.GameOverState;
+            gPanel.ui.setCommandNum(0);
+            gPanel.stopMusic();
+            gPanel.playSE("gameover.wav");
+        }
     }
 
 //    private void manageInvincible() {
@@ -182,7 +220,6 @@ public class Player extends Entity {
             if(inMotion) inMotion = false;
             switch (characterClass) {
                 case WARRIOR -> {
-                    System.out.println("aici");
                     sprite = attackState.manageAnimations(this, direction);
                 }
                 case MAGE -> {
@@ -251,6 +288,7 @@ public class Player extends Entity {
     }
 
     public void setItems() {
+        inventory.clear();
         int slots = 0;
         inventory.add(currentWeapon);
         inventory.add(currentShield);
@@ -270,7 +308,7 @@ public class Player extends Entity {
         attack = strength * currentWeapon.damage;
 
         switch (currentWeapon.typeWeapon) {
-            case Sword -> attackState = attackSword;
+            case Sword -> attackState = attackWeapon;
             case Axe -> attackState = attackAxe;
         }
     }
@@ -284,7 +322,7 @@ public class Player extends Entity {
 //        attackArea.height = 36;
 //    }
 
-    public void attackingMonster() {
+    public void attacking() {
         // salveaza datele curente ale ariei solide
         int currentWorldX = (int) worldX;
         int currentWorldY = (int) worldY;
@@ -306,7 +344,12 @@ public class Player extends Entity {
         // verifica coliziunea ariei de atac cu monstrii
         int monsterIndex = gPanel.collisionDetector.
                 checkEntity(this, gPanel.monsterList);
-        doDamage(monsterIndex);
+        doDamageToMonster(monsterIndex);
+
+        // coliziunea cu tiles interactive
+        int iTileIndex = gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles);
+        doDamageToITile(iTileIndex);
+
 
         // dupa verificarea coliziunii, restabileste datele originale
         worldX = currentWorldX;
@@ -316,7 +359,7 @@ public class Player extends Entity {
 
     }
 
-    public void doDamage(int monsterIndex) {
+    public void doDamageToMonster(int monsterIndex) {
         if (monsterIndex > -1) {
             if (!gPanel.monsterList.get(monsterIndex).invincible) {
                 // ofera daune
@@ -336,6 +379,20 @@ public class Player extends Entity {
                     exp += gPanel.monsterList.get(monsterIndex).exp;
                     checkLevelUp();
                 }
+            }
+        }
+    }
+
+    public void doDamageToITile(int iTileIndex) {
+        if (iTileIndex > -1 && gPanel.interactiveTiles.get(iTileIndex) instanceof DestructibleTile destructibleTile
+                && destructibleTile.isCorrectItem(this) && !destructibleTile.invincible) {
+            destructibleTile.playSE();
+            destructibleTile.life--;
+            destructibleTile.invincible = true;
+            destructibleTile.generateParticle(destructibleTile);
+            if (destructibleTile.life == 0) {
+                gPanel.interactiveTiles.remove(iTileIndex);
+                gPanel.interactiveTiles.add(destructibleTile.getDestroyedForm());
             }
         }
     }
@@ -382,7 +439,7 @@ public class Player extends Entity {
                 }
                 case Consumable -> {
                     Consumable selectedConsumable = (Consumable) selectedItem;
-                    selectedConsumable.use(this);
+                    selectedConsumable.use();
                     inventory.remove(itemIndex);
                 }
             }
@@ -420,20 +477,31 @@ public class Player extends Entity {
         String textMsg;
 
         if (objIndex > -1) {
-            if (inventory.size() < maxInventorySize) {
-                inventory.add((Item) gPanel.objects.get(objIndex));
-                gPanel.playSE("coin.wav");
+            // PICKUP COIN
+
+            if (gPanel.objects.get(objIndex).getClass().isAssignableFrom(OBJ_Coin.class)) {
+                OBJ_Coin coin = (OBJ_Coin) gPanel.objects.get(objIndex);
+                coin.use();
+                gPanel.objects.remove(objIndex);
+            }
+
+            else {
+                // PICKUP ITEME INVENTAR
+                if (inventory.size() < maxInventorySize) {
+                    inventory.add((Item) gPanel.objects.get(objIndex));
+                    gPanel.playSE("coin.wav");
 //                switch (gPanel.objects.get(objIndex).typeObject) {
 //                    case Key -> gPanel.playSE("coin.wav");
 //                }
-                textMsg = "Ai primit " + gPanel.objects.get(objIndex).name + "!";
+                    textMsg = "Ai primit " + gPanel.objects.get(objIndex).name + "!";
+                }
+                else {
+                    textMsg = "Nu mai ai spatiu in inventar!";
+                }
+                gPanel.ui.addMessage(textMsg);
+//                gPanel.objects.set(objIndex, null);
+                gPanel.objects.remove(objIndex);
             }
-            else {
-                textMsg = "Nu mai ai spatiu in inventar!";
-            }
-            gPanel.ui.addMessage(textMsg);
-            gPanel.objects.set(objIndex, null);
-
 //            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
 //            switch (typeObject) {
 //                case Key -> {
@@ -519,6 +587,9 @@ public class Player extends Entity {
             int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
             contactMonster(monsterIndex);
 
+            // verifica coliziuni cu iTiles
+            gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles);
+
             if (!collisionOn && inMotion)
                 manageMovement();
         }
@@ -545,11 +616,19 @@ public class Player extends Entity {
             if (!invincible && !gPanel.monsterList.get(monsterIndex).dying) {
                 gPanel.playSE("receivedamage.wav");
 
-                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
+//                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
+                Monster monster = (Monster) gPanel.monsterList.get(monsterIndex);
+                monster.doDamage();
+
 
                 invincible = true;
             }
         }
+    }
+
+    public void contactProjectile() {
+        invincible = true;
+        gPanel.playSE("receivedamage.wav");
     }
 
 }

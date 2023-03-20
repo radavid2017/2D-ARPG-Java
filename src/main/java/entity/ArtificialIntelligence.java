@@ -5,7 +5,7 @@ import game.GamePanel;
 
 import java.util.Random;
 
-public abstract class ArtificialIntelligence extends Entity {
+public abstract class ArtificialIntelligence extends Creature {
 
     public TypeAI typeAI;
     public int actionLockCounterDirection = 0;

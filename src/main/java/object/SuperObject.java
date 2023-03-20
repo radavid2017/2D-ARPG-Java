@@ -1,7 +1,8 @@
 package object;
 
+import animations.StateMachine;
+import animations.TypeAnimation;
 import entity.Entity;
-import features.Camera;
 import features.UtilityTool;
 import game.GamePanel;
 
@@ -14,6 +15,7 @@ import java.io.IOException;
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
 public abstract class SuperObject extends Entity {
 
+    public StateMachine animation;
     public TypeObject typeObject;
     public BufferedImage image;
     public String name;
@@ -30,7 +32,7 @@ public abstract class SuperObject extends Entity {
     public void loadObject(GamePanel gp, String imageFilePath) {
 //        name = imageFilePath.substring(imageFilePath.lastIndexOf("/")+1);
 //        name = name.substring(0, name.indexOf("."));
-        System.out.println("numele obiectului: " + name);
+//        System.out.println("numele obiectului: " + this.getClass().getName());
         try {
             image = ImageIO.read(new FileInputStream(imageFilePath));
             originalObjImage = image;
@@ -40,9 +42,9 @@ public abstract class SuperObject extends Entity {
         }
     }
 
-    public void setPosition(int x, int y) {
-        worldX = x;
-        worldY = y;
+    public void setupAnimation(String objFolderPath) {
+        animation = new StateMachine();
+        animation.loadCompleteAnimation(getGamePanel(), objFolderPath, TypeAnimation.OBJECT);
     }
 
     public void update() {
@@ -52,9 +54,7 @@ public abstract class SuperObject extends Entity {
     public void draw(Graphics2D g2D) {
         if (getGamePanel().player!=null) {
             super.draw(g2D);
-
             camera.drawEntity(g2D, image);
-
             drawSolidArea(g2D);
         }
     }
@@ -82,9 +82,9 @@ public abstract class SuperObject extends Entity {
         this.setHeight(height);
     }
 
-    public void setImage(String objPath) {
+    public void setImage(String imgName) {
         try {
-            image = ImageIO.read(new FileInputStream(objPath));
+            image = ImageIO.read(new FileInputStream(objPath + imgName));
             originalObjImage = image;
             image = UtilityTool.scaledImage(image, getGamePanel().tileSize, getGamePanel().tileSize);
         } catch (IOException e) {

@@ -8,7 +8,8 @@ public class NormalSword extends Sword {
     public NormalSword(GamePanel gp) {
 
         super(1, new NormalDamage(), gp);
-        loadObject(gp, swordPath + "sword_normal.png");
+//        loadObject(gp, swordPath + "sword_normal.png");
+        setImage("sword_normal.png");
         name = "Sabie Normala";
         description = "[" + name + "]\nO sabie veche.";
         modelSword = ModelSword.NormalSword;

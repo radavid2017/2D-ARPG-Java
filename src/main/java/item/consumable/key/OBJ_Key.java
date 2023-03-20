@@ -9,13 +9,12 @@ import object.SuperObject;
 import object.TypeObject;
 
 public abstract class OBJ_Key extends Consumable {
-
-    String keyPath = "res/item/consumable/keys/";
     KeyModel keyModel;
 
     public OBJ_Key(GamePanel gPanel) {
         super(gPanel, TypeConsumable.Key);
         this.typeObject = TypeObject.Key;
+        objPath += "keys/";
     }
 
     @Override

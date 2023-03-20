@@ -23,6 +23,7 @@ public abstract class SuperStatesObject extends Entity {
     public Rectangle solidArea = new Rectangle(0, 0, 74, 62);
     public int solidAreaDefaultX = 0;
     public int solidAreaDefaultY = 0;
+    String folderPath;
 
     public ArrayList<BufferedImage> originalObjStatesImages = new ArrayList<>();
 
@@ -30,7 +31,12 @@ public abstract class SuperStatesObject extends Entity {
 
     }
 
-    public void loadObject(GamePanel gp, String folderPath) {
+    public SuperStatesObject(String folderName, TypeStatesObject typeStatesObject) {
+        this.folderPath = "res/objectsWithStates/" + folderName;
+        this.typeStatesObject = typeStatesObject;
+    }
+
+    public void loadObject(GamePanel gp) {
         RenameFolderFiles.rename(folderPath);
         File directory = new File(folderPath);
         for (int i = 0; i < directory.list().length; i++) {

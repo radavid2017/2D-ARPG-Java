@@ -3,7 +3,13 @@ package monster;
 import entity.AttackStyle;
 import features.Direction;
 import game.GamePanel;
+import item.consumable.coin.OBJ_Coin;
+import item.consumable.potion.PotionRed;
+import item.equipable.shield.BlueShield;
+import item.equipable.weapon.rangeattack.Projectile;
+import item.equipable.weapon.rangeattack.Rock;
 
+import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public class MON_GreenSlime extends Monster{
@@ -28,7 +34,7 @@ public class MON_GreenSlime extends Monster{
         attackStyle = AttackStyle.Touching;
         attack = 5;
         defense = 0;
-
+        this.weapon = new Rock(gp);
 
         setDefaultSolidArea();
 
@@ -37,14 +43,45 @@ public class MON_GreenSlime extends Monster{
         setupIdle("res\\monster\\greenSlime");
     }
 
+    public void offensiveBehaviour() {
+        int i = new Random().nextInt(100)+1;
+        if (i > 99 && !weapon.alive && shotAvailableCounter == 30) {
+            weapon.set(worldX, worldY, direction, true, this);
+            getGamePanel().projectileList.add((Projectile) weapon);
+            shotAvailableCounter = 0;
+        }
+    }
+
     public void AI() {
 
         super.AI();
+        offensiveBehaviour();
+
     }
 
     public void update() {
         super.update();
+        if (shotAvailableCounter < 30) {
+            shotAvailableCounter++;
+        }
+    }
 
+    @Override
+    public void checkDrop() {
+        int i = new Random().nextInt(100) + 1;
+
+        // 50% sanse de a arunca un banut
+        if (i < 50) {
+            dropItem(new OBJ_Coin(getGamePanel()));
+        }
+        // 25% sanse de a arunca potiune rosie
+        if (i >= 50 && i < 75) {
+            dropItem(new PotionRed(getGamePanel()));
+        }
+        // 25% sanse de a arunca un scut albstru
+        if (i >= 75 && i < 100) {
+            dropItem(new BlueShield(getGamePanel()));
+        }
     }
 
     @Override

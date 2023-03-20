@@ -11,6 +11,7 @@ public abstract class Item  extends SuperObject {
     public Item(GamePanel gPanel, TypeItem typeItem) {
         super(gPanel);
         this.typeItem = typeItem;
+        objPath = "res/item/";
     }
 
 }

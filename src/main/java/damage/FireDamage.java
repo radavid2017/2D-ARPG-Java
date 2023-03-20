@@ -9,7 +9,12 @@ public class FireDamage implements IDoDamage {
         if (totalDamage < 0) {
             totalDamage = 0;
         }
-        target.life -= totalDamage;
+        if (target.life > 0) {
+            target.life -= totalDamage;
+        }
+        if (target.life < 0) {
+            target.life = 0;
+        }
         return totalDamage;
     }
 }

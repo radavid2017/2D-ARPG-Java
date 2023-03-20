@@ -5,17 +5,26 @@ import entity.AttackStyle;
 import entity.Entity;
 import entity.TypeAI;
 import game.GamePanel;
+import item.Item;
+import item.consumable.coin.OBJ_Coin;
+import item.consumable.potion.PotionRed;
+import item.equipable.shield.BlueShield;
+import item.equipable.weapon.Weapon;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public abstract class Monster extends ArtificialIntelligence {
 
     TypeMonster typeMonster;
     AttackStyle attackStyle;
+    Weapon weapon;
 
     boolean hpBarOn = false;
     int hpBarCounter = 0;
+
+    int shotAvailableCounter = 0;
 
     public Monster(GamePanel gp) {
         super(gp);
@@ -46,11 +55,13 @@ public abstract class Monster extends ArtificialIntelligence {
             // ofera daune
             getGamePanel().playSE("receivedamage.wav");
 
-            switch (attackStyle) {
-                case Touching -> {
-                    touchingDamage(getGamePanel().player);
-                }
-            }
+            weapon.tryDoAttack(this, getGamePanel().player);
+
+//            switch (attackStyle) {
+//                case Touching -> {
+//                    touchingDamage(getGamePanel().player);
+//                }
+//            }
 
             getGamePanel().player.invincible = true;
         }
@@ -70,14 +81,21 @@ public abstract class Monster extends ArtificialIntelligence {
         g2D.setColor(new Color(255, 0, 30));
         g2D.fillRect((int) hpBarX, (int) hpBarY - 15, (int) hpBarValue, 10);
 
-        System.out.println("screenX: " + screenX + " screenY: " + screenY);
-        System.out.println("worldX: " + worldX + " worldY: " + worldY);
+//        System.out.println("screenX: " + screenX + " screenY: " + screenY);
+//        System.out.println("worldX: " + worldX + " worldY: " + worldY);
 
         hpBarCounter ++;
         if (hpBarCounter >= 150) {
             hpBarCounter = 0;
             hpBarOn = false;
         }
+    }
+
+    public abstract void checkDrop();
+
+    public void dropItem(Item item) {
+        item.setPosition(worldX, worldY); // atribuim pozitia obiectului distrus (monstrul mort)
+        getGamePanel().objects.add(item);
     }
 
     public void draw(Graphics2D g2D) {

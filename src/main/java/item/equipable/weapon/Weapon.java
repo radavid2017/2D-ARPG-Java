@@ -2,6 +2,7 @@ package item.equipable.weapon;
 
 import damage.IDoDamage;
 import entity.Entity;
+import features.Direction;
 import game.CharacterClass;
 import game.GamePanel;
 import item.Equipable;
@@ -20,13 +21,13 @@ public abstract class Weapon extends Equipable {
 
     public int damage = 0;
     public List<IDoDamage> damageTypes = new ArrayList<>();
-    public String weaponPath = "res/item/equipable/weapon/";
     public TypeWeapon typeWeapon;
 
     public Weapon(GamePanel gPanel, TypeWeapon typeWeapon,CharacterClass playerClass) {
         super(gPanel, TypeEquipable.Weapon, playerClass);
         this.typeWeapon = typeWeapon;
         typeObject = TypeObject.Item;
+        objPath += "weapon/";
     }
 
     public Integer tryDoAttack(Entity entity, Entity target) {
@@ -48,6 +49,10 @@ public abstract class Weapon extends Equipable {
                 if (damageTypes.get(i) != null)
                     damageTypes.set(index, damageType);
         }
+    }
+
+    public void set(double worldX, double worldY, Direction direction, boolean alive, Entity user) {
+
     }
 
     public abstract void setAttackAreaValues();

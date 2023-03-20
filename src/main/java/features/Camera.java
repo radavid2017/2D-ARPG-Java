@@ -3,6 +3,7 @@ package features;
 import animations.AnimationState;
 import animations.StateMachine;
 import animations.TypeAnimation;
+import entity.Creature;
 import entity.Entity;
 import game.GamePanel;
 import object.SuperObject;
@@ -113,8 +114,10 @@ public class Camera {
     public static void rescaleEntities() {
         gPanel.addAllLists();
         for (Entity entity : gPanel.entities) {
-            List<StateMachine> allAnimations = Arrays.asList(entity.movement, entity.idle, entity.attackSword);
-            rescaleAllAnimations(allAnimations);
+            if (entity instanceof Creature creature) {
+                List<StateMachine> allAnimations = Arrays.asList(creature.movement, creature.idle, creature.attackState);
+                rescaleAllAnimations(allAnimations);
+            }
         }
         gPanel.entities.clear();
     }
@@ -126,7 +129,7 @@ public class Camera {
     }
 
     public static void rescalePlayer() {
-        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attackSword);
+        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attackWeapon);
         rescaleAllAnimations(allAnimations);
     }
 
@@ -172,7 +175,7 @@ public class Camera {
 
     public static void fixNPCStuckInTile() {
         for (Entity npc : gPanel.npcList) {
-            int tileHoldingEntity = gPanel.tiles.mapTileNum[(int) npc.worldX][(int) npc.worldY];
+            int tileHoldingEntity = gPanel.tiles.mapTileNum[gPanel.currentMap][(int) npc.worldX][(int) npc.worldY];
             for (Tile tile : gPanel.tiles.generalTiles){
                 if (tile.idTile == tileHoldingEntity && tile.isColliding) {
                     npc.collisionOn = false;
@@ -183,7 +186,7 @@ public class Camera {
     }
 
     public static void fixPlayerStuckInTile() {
-        int tileHoldingEntity = gPanel.tiles.mapTileNum[(int) gPanel.player.worldX/gPanel.tileSize][(int) gPanel.player.worldY/gPanel.tileSize];
+        int tileHoldingEntity = gPanel.tiles.mapTileNum[gPanel.currentMap][(int) gPanel.player.worldX/gPanel.tileSize][(int) gPanel.player.worldY/gPanel.tileSize];
         for (Tile tile : gPanel.tiles.generalTiles){
             if (tile.idTile == tileHoldingEntity && tile.isColliding) {
                 gPanel.player.collisionOn = false;

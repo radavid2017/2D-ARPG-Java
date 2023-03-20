@@ -9,12 +9,12 @@ public class KeyGold extends OBJ_Key {
         super(gPanel);
         name = "Cheie de aur";
         description = "[" + name + "]\nDeschide o usa.";
-        this.setImage(keyPath + "key.png");
+        this.setImage("key.png");
         keyModel = KeyModel.KeyGold;
     }
 
     @Override
-    public void use(Entity entity) {
+    public void use() {
 
     }
 }

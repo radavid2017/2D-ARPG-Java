@@ -12,7 +12,7 @@ public class PotionRed extends OBJ_Potion {
         name = "Licoare rosie";
         description = "[" + name + "]\nPotiune vindecatoare:\n+" + healingValue + " viata.";
         potionModel = PotionModel.PotionRed;
-        setImage(potionPath + "potion_red.png");
+        setImage("potion_red.png");
     }
 
     @Override

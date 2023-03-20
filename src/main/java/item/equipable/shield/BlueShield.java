@@ -11,7 +11,7 @@ public class BlueShield extends Shield {
         loadObject(gp, shieldPath + "shield_blue.png");
         modelShield = ModelShield.BlueShield;
         name = "Scut Albastru";
-        description = "[" + name + "]\nUn scut albastru stralucitor.";
+        description = "[" + name + "]\nScut albastru stralucitor.";
     }
 
     @Override
