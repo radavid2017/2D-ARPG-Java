@@ -134,10 +134,10 @@ public class Player extends Creature {
     }
 
     public void setDefaultPositions() {
-//        worldX = gPanel.tileSize * 23;
-//        worldY = gPanel.tileSize * 21;
-        worldX = gPanel.tileSize * 12;
-        worldY = gPanel.tileSize * 13;
+        worldX = gPanel.tileSize * 23;
+        worldY = gPanel.tileSize * 21;
+//        worldX = gPanel.tileSize * 12;
+//        worldY = gPanel.tileSize * 13;
         direction = Direction.DOWN;
     }
 
@@ -361,22 +361,22 @@ public class Player extends Creature {
 
     public void doDamageToMonster(int monsterIndex) {
         if (monsterIndex > -1) {
-            if (!gPanel.monsterList.get(monsterIndex).invincible) {
+            if (!gPanel.monsterList[gPanel.currentMap][monsterIndex].invincible) { // FIXED
                 // ofera daune
                 gPanel.playSE("hitmonster.wav");
 
-                int damageValue = currentWeapon.tryDoAttack(this, gPanel.monsterList.get(monsterIndex));
+                int damageValue = currentWeapon.tryDoAttack(this, gPanel.monsterList[gPanel.currentMap][monsterIndex]);
                 gPanel.ui.addMessage(damageValue + " dauna!");
 
 //                gPanel.monsterList.get(monsterIndex).life -= 1;
-                gPanel.monsterList.get(monsterIndex).invincible = true;
-                gPanel.monsterList.get(monsterIndex).damageReaction();
+                gPanel.monsterList[gPanel.currentMap][monsterIndex].invincible = true; // FIXED
+                gPanel.monsterList[gPanel.currentMap][monsterIndex].damageReaction(); // FIXED
 
-                if (gPanel.monsterList.get(monsterIndex).life <= 0) {
-                    gPanel.monsterList.get(monsterIndex).dying = true;
-                    gPanel.ui.addMessage("Ai ucis un " + gPanel.monsterList.get(monsterIndex).name + "!");
-                    gPanel.ui.addMessage("Exp: " + gPanel.monsterList.get(monsterIndex).exp);
-                    exp += gPanel.monsterList.get(monsterIndex).exp;
+                if (gPanel.monsterList[gPanel.currentMap][monsterIndex].life <= 0) { // FIXED
+                    gPanel.monsterList[gPanel.currentMap][monsterIndex].dying = true; // FIXED
+                    gPanel.ui.addMessage("Ai ucis un " + gPanel.monsterList[gPanel.currentMap][monsterIndex].name + "!"); // FIXED
+                    gPanel.ui.addMessage("Exp: " + gPanel.monsterList[gPanel.currentMap][monsterIndex].exp); // FIXED
+                    exp += gPanel.monsterList[gPanel.currentMap][monsterIndex].exp; // FIXED
                     checkLevelUp();
                 }
             }
@@ -384,15 +384,16 @@ public class Player extends Creature {
     }
 
     public void doDamageToITile(int iTileIndex) {
-        if (iTileIndex > -1 && gPanel.interactiveTiles.get(iTileIndex) instanceof DestructibleTile destructibleTile
+        if (iTileIndex > -1 && gPanel.interactiveTiles[gPanel.currentMap][iTileIndex] instanceof DestructibleTile destructibleTile // FIXED
                 && destructibleTile.isCorrectItem(this) && !destructibleTile.invincible) {
             destructibleTile.playSE();
             destructibleTile.life--;
             destructibleTile.invincible = true;
             destructibleTile.generateParticle(destructibleTile);
             if (destructibleTile.life == 0) {
-                gPanel.interactiveTiles.remove(iTileIndex);
-                gPanel.interactiveTiles.add(destructibleTile.getDestroyedForm());
+                gPanel.interactiveTiles[gPanel.currentMap][iTileIndex] = destructibleTile.getDestroyedForm(); // FIXED
+//                gPanel.interactiveTiles.remove(iTileIndex);
+//                gPanel.interactiveTiles.add(destructibleTile.getDestroyedForm());
             }
         }
     }
@@ -478,29 +479,30 @@ public class Player extends Creature {
 
         if (objIndex > -1) {
             // PICKUP COIN
-
-            if (gPanel.objects.get(objIndex).getClass().isAssignableFrom(OBJ_Coin.class)) {
-                OBJ_Coin coin = (OBJ_Coin) gPanel.objects.get(objIndex);
+            if (gPanel.objects[gPanel.currentMap][objIndex].getClass().isAssignableFrom(OBJ_Coin.class)) {  // FIXED
+                OBJ_Coin coin = (OBJ_Coin) gPanel.objects[gPanel.currentMap][objIndex];  // FIXED
                 coin.use();
-                gPanel.objects.remove(objIndex);
+                gPanel.objects[gPanel.currentMap][objIndex] = null;  // FIXED
+//                gPanel.objects.remove(objIndex);
             }
 
             else {
                 // PICKUP ITEME INVENTAR
                 if (inventory.size() < maxInventorySize) {
-                    inventory.add((Item) gPanel.objects.get(objIndex));
+                    inventory.add((Item) gPanel.objects[gPanel.currentMap][objIndex]); // FIXED
                     gPanel.playSE("coin.wav");
 //                switch (gPanel.objects.get(objIndex).typeObject) {
 //                    case Key -> gPanel.playSE("coin.wav");
 //                }
-                    textMsg = "Ai primit " + gPanel.objects.get(objIndex).name + "!";
+                    textMsg = "Ai primit " + gPanel.objects[gPanel.currentMap][objIndex].name + "!"; // FIXED
                 }
                 else {
                     textMsg = "Nu mai ai spatiu in inventar!";
                 }
                 gPanel.ui.addMessage(textMsg);
 //                gPanel.objects.set(objIndex, null);
-                gPanel.objects.remove(objIndex);
+                gPanel.objects[gPanel.currentMap][objIndex] = null; // FIXED
+//                gPanel.objects.remove(objIndex);
             }
 //            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
 //            switch (typeObject) {
@@ -606,18 +608,18 @@ public class Player extends Creature {
             if (gPanel.keyH.enterPressed) {
                 // interactionari cu npc-uri
                 GamePanel.gameState = GameState.Dialogue;
-                gPanel.npcList.get(npcIndex).speak();
+                gPanel.npcList[gPanel.currentMap][npcIndex].speak(); // FIXED
             }
         }
     }
 
     private void contactMonster(int monsterIndex) {
         if (monsterIndex > -1) {
-            if (!invincible && !gPanel.monsterList.get(monsterIndex).dying) {
+            if (!invincible && !gPanel.monsterList[gPanel.currentMap][monsterIndex].dying) { // FIXED
                 gPanel.playSE("receivedamage.wav");
 
 //                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
-                Monster monster = (Monster) gPanel.monsterList.get(monsterIndex);
+                Monster monster = (Monster) gPanel.monsterList[gPanel.currentMap][monsterIndex]; // FIXED
                 monster.doDamage();
 
 

@@ -94,8 +94,16 @@ public abstract class Monster extends ArtificialIntelligence {
     public abstract void checkDrop();
 
     public void dropItem(Item item) {
+
         item.setPosition(worldX, worldY); // atribuim pozitia obiectului distrus (monstrul mort)
-        getGamePanel().objects.add(item);
+
+        for (int i = 0; i < getGamePanel().objects[1].length; i++) {
+            if(getGamePanel().objects[getGamePanel().currentMap][i] == null) {
+                getGamePanel().objects[getGamePanel().currentMap][i] = item;
+                break;
+            }
+        }
+//        getGamePanel().objects.add(item);
     }
 
     public void draw(Graphics2D g2D) {

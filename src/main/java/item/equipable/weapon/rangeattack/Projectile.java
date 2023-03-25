@@ -45,7 +45,7 @@ public abstract class Projectile extends Weapon implements Atomic {
             int monsterIndex = getGamePanel().collisionDetector.checkEntity(this, getGamePanel().monsterList);
             if (monsterIndex > -1) {
                 getGamePanel().player.doDamageToMonster(monsterIndex);
-                this.generateParticle(getGamePanel().monsterList.get(monsterIndex));
+                this.generateParticle(getGamePanel().monsterList[getGamePanel().currentMap][monsterIndex]);
                 alive = false;
             }
         }

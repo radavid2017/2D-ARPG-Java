@@ -86,15 +86,15 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player;
     public String characterClassPath;
     // lista NPC
-    public List<Entity> npcList = new ArrayList<Entity>();
+    public Entity[][] npcList = new Entity[maxMap][20];
     // lista Monster
-    public List<Entity> monsterList = new ArrayList<>();
+    public Entity[][] monsterList = new Entity[maxMap][10];
     // lista obiecte
-    public List<SuperObject> objects = new ArrayList<>();
+    public SuperObject[][] objects = new SuperObject[maxMap][20];
     // lista obiecte cu ipostaze
     public List<SuperStatesObject> statesObjectList = new ArrayList<>();
     // lista tiles interactive
-    public List<Entity> interactiveTiles = new ArrayList<>();
+    public Entity[][] interactiveTiles = new Entity[maxMap][50];
 
     public ArrayList<Projectile> projectileList = new ArrayList<>();
     public ArrayList<Entity> particleList = new ArrayList<>();
@@ -215,25 +215,22 @@ public class GamePanel extends JPanel implements Runnable {
                 player.update();
 
                 // NPC UPDATE
-                for (Entity npc : npcList) {
-                    if (npc != null) {
-                        npc.update();
+                for (int i = 0; i < npcList[1].length; i++) {
+                    if (npcList[currentMap][i] != null) {
+                        npcList[currentMap][i].update();
                     }
                 }
 
                 // ACTUALIZARI MONSTRII
-                for (int i = 0; i < monsterList.size(); i++) {
-                    if (monsterList.get(i) != null) {
-                        if (monsterList.get(i).alive && !monsterList.get(i).dying) {
-                            monsterList.get(i).update();
+                for (int i = 0; i < monsterList[1].length; i++) {
+                    if (monsterList[currentMap][i] != null) {
+                        if (monsterList[currentMap][i].alive && !monsterList[currentMap][i].dying) {
+                            monsterList[currentMap][i].update();
                         }
-                        if (!monsterList.get(i).alive) {
-                            ((Monster) monsterList.get(i)).checkDrop();
-                            monsterList.remove(i);
+                        if (!monsterList[currentMap][i].alive) {
+                            ((Monster) monsterList[currentMap][i]).checkDrop();
+                            monsterList[currentMap][i] = null;
                         }
-                    }
-                    else {
-                        monsterList.remove(i);
                     }
                 }
 
@@ -268,12 +265,9 @@ public class GamePanel extends JPanel implements Runnable {
                 }
 
                 // INTERACTIVE TILES
-                for (int i = 0; i < interactiveTiles.size(); i++) {
-                    if (interactiveTiles.get(i) != null) {
-                        interactiveTiles.get(i).update();
-                    }
-                    else {
-                        interactiveTiles.remove(i);
+                for (int i = 0; i < interactiveTiles[1].length; i++) {
+                    if (interactiveTiles[currentMap][i] != null) {
+                        interactiveTiles[currentMap][i].update();
                     }
                 }
             }
@@ -307,9 +301,9 @@ public class GamePanel extends JPanel implements Runnable {
                 tiles.draw(g2D);
 
             // tiles interactive
-            for (int i = 0; i < interactiveTiles.size(); i++) {
-                if(interactiveTiles.get(i) != null) {
-                    interactiveTiles.get(i).draw(g2D);
+            for (int i = 0; i < interactiveTiles[1].length; i++) {
+                if(interactiveTiles[currentMap][i] != null) {
+                    interactiveTiles[currentMap][i].draw(g2D);
                 }
             }
 
@@ -406,13 +400,21 @@ public class GamePanel extends JPanel implements Runnable {
     public void addAllLists() {
         if (player != null)
             entities.add(player);
-        entities.addAll(npcList);
-        for (Entity obj : objects)
-            if (obj != null)
-                entities.add(obj);
-        for (Entity monster : monsterList)
-            if (monster != null)
-                entities.add(monster);
+        for (int i = 0; i < npcList[1].length; i++) {
+            if (npcList[currentMap][i] != null) {
+                entities.add(npcList[currentMap][i]);
+            }
+        }
+        for (int i = 0; i < objects[1].length; i++) {
+            if (objects[currentMap][i] != null) {
+                entities.add(objects[currentMap][i]);
+            }
+        }
+        for (int i = 0; i < monsterList[1].length; i++) {
+            if (monsterList[currentMap][i] != null) {
+                entities.add(monsterList[currentMap][i]);
+            }
+        }
         for (Entity projectile : projectileList) {
             if (projectile != null)
                 entities.add(projectile);
@@ -424,9 +426,15 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void addAllAI() {
-        entities.addAll(npcList);
-        for (Entity monster : monsterList)
-            if (monster != null)
-                entities.add(monster);
+        for (int i = 0; i < npcList[1].length; i++) {
+            if (npcList[currentMap][i] != null) {
+                entities.add(npcList[currentMap][i]);
+            }
+        }
+        for (int i = 0; i < monsterList[1].length; i++) {
+            if (monsterList[currentMap][i] != null) {
+                entities.add(monsterList[currentMap][i]);
+            }
+        }
     }
 }
