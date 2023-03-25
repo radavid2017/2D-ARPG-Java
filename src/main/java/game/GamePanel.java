@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
     public final int maxMap = 10;
-    public int currentMap = 1;
+    public int currentMap = 0;
     public int worldWidth = tileSize * maxWorldCol;
     public int worldHeight = tileSize * maxWorldRow;
 
@@ -150,6 +150,7 @@ public class GamePanel extends JPanel implements Runnable {
         player.setItems();
         assetPool.setObjects();
         assetPool.setInteractiveTiles();
+        this.stopMusic();
     }
 
     /** startGameThread - instantierea la inceperea rularii jocului */
