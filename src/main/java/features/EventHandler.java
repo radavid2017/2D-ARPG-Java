@@ -8,7 +8,7 @@ import java.awt.*;
 public class EventHandler {
 
     GamePanel gPanel;
-    EventRect[][] eventRect;
+    EventRect[][][] eventRect;
 
     double previousEventX, previousEventY;
     boolean canTouchEvent = true;
@@ -16,23 +16,29 @@ public class EventHandler {
     public EventHandler(GamePanel gPanel) {
         this.gPanel = gPanel;
 
-        eventRect = new EventRect[gPanel.maxWorldCol][gPanel.maxWorldRow];
+        eventRect = new EventRect[gPanel.maxMap][gPanel.maxWorldCol][gPanel.maxWorldRow];
 
+        int map = 0;
         int col = 0;
         int row = 0;
-        while (col < gPanel.maxWorldCol && row < gPanel.maxWorldRow) {
-            eventRect[col][row] = new EventRect();
-            eventRect[col][row].x = 23;
-            eventRect[col][row].y = 23;
-            eventRect[col][row].width = 2;
-            eventRect[col][row].height = 2;
-            eventRect[col][row].eventRectDefaultX = eventRect[col][row].x;
-            eventRect[col][row].eventRectDefaultY = eventRect[col][row].y;
+        while (map < gPanel.maxMap && col < gPanel.maxWorldCol && row < gPanel.maxWorldRow) {
+            eventRect[map][col][row] = new EventRect();
+            eventRect[map][col][row].x = 23;
+            eventRect[map][col][row].y = 23;
+            eventRect[map][col][row].width = 2;
+            eventRect[map][col][row].height = 2;
+            eventRect[map][col][row].eventRectDefaultX = eventRect[map][col][row].x;
+            eventRect[map][col][row].eventRectDefaultY = eventRect[map][col][row].y;
 
             col++;
             if (col == gPanel.maxWorldCol) {
                 col = 0;
                 row++;
+
+                if (row == gPanel.maxWorldRow) {
+                    row = 0;
+                    map++;
+                }
             }
         }
     }
@@ -50,44 +56,49 @@ public class EventHandler {
         }
 
         if (canTouchEvent) {
-            int col, row;
 //        if (hit(27, 16, Direction.RIGHT)) {
 //            teleport(GameState.Dialogue);
 //        }
-            col = 27; row = 16;
-            if (hit(col, row, Direction.RIGHT)) {
-                damagePit(col, row, GameState.Dialogue);
+            if (hit(0, 27, 16, Direction.RIGHT)) {
+                damagePit(GameState.Dialogue);
             }
-            col = 23; row = 12;
-            if (hit(col, row, Direction.UP)) {
+            else if (hit(0, 23, 12, Direction.UP)) {
                 healingPool(GameState.Dialogue);
+            }
+            else if (hit(0, 10, 39, Direction.ANY)) {
+                teleport(1, 12, 13);
+            }
+            else if (hit(1, 12, 13, Direction.ANY)) {
+                teleport(0, 10, 39);
             }
         }
     }
 
     /** Coliziune player cu arie de declansare eveniment */
-    public boolean hit(int col, int row, Direction reqDirection) {
+    public boolean hit(int map, int col, int row, Direction reqDirection) {
 
         boolean hit = false;
 
-        gPanel.player.solidArea.x = (int) (gPanel.player.worldX + gPanel.player.solidArea.x);
-        gPanel.player.solidArea.y = (int) (gPanel.player.worldY + gPanel.player.solidArea.y);
-        eventRect[col][row].x = col * gPanel.tileSize + eventRect[col][row].x;
-        eventRect[col][row].y = row * gPanel.tileSize + eventRect[col][row].y;
+        if (map == gPanel.currentMap) {
+            gPanel.player.solidArea.x = (int) (gPanel.player.worldX + gPanel.player.solidArea.x);
+            gPanel.player.solidArea.y = (int) (gPanel.player.worldY + gPanel.player.solidArea.y);
+            eventRect[map][col][row].x = col * gPanel.tileSize + eventRect[map][col][row].x;
+            eventRect[map][col][row].y = row * gPanel.tileSize + eventRect[map][col][row].y;
 
-        if (gPanel.player.solidArea.intersects(eventRect[col][row]) && !eventRect[col][row].eventDone) {
-            if (gPanel.player.direction.equals(reqDirection) || reqDirection.equals(Direction.ANY)) {
-                hit = true;
+            if (gPanel.player.solidArea.intersects(eventRect[map][col][row]) && !eventRect[map][col][row].eventDone) {
+                if (gPanel.player.direction.equals(reqDirection) || reqDirection.equals(Direction.ANY)) {
+                    hit = true;
 
-                previousEventX = gPanel.player.worldX;
-                previousEventY = gPanel.player.worldY;
+                    previousEventX = gPanel.player.worldX;
+                    previousEventY = gPanel.player.worldY;
+                }
             }
-        }
 
-        gPanel.player.solidArea.x = gPanel.player.solidAreaDefaultX;
-        gPanel.player.solidArea.y = gPanel.player.solidAreaDefaultY;
-        eventRect[col][row].x = eventRect[col][row].eventRectDefaultX;
-        eventRect[col][row].y = eventRect[col][row].eventRectDefaultY;
+            gPanel.player.solidArea.x = gPanel.player.solidAreaDefaultX;
+            gPanel.player.solidArea.y = gPanel.player.solidAreaDefaultY;
+            eventRect[map][col][row].x = eventRect[map][col][row].eventRectDefaultX;
+            eventRect[map][col][row].y = eventRect[map][col][row].eventRectDefaultY;
+        }
 
         return hit;
     }
@@ -100,7 +111,7 @@ public class EventHandler {
         gPanel.player.worldY = gPanel.tileSize*10;
     }
 
-    public void damagePit(int col, int row, GameState gameState) {
+    public void damagePit(GameState gameState) {
         GamePanel.gameState = gameState;
         gPanel.player.invincible = true;
         gPanel.playSE("receivedamage.wav");
@@ -121,5 +132,18 @@ public class EventHandler {
                 gPanel.assetPool.setMonster();
             }
         }
+    }
+
+    public void teleport(int map, int col, int row) {
+        gPanel.currentMap = map;
+
+        gPanel.player.worldX = gPanel.tileSize * col;
+        gPanel.player.worldY = gPanel.tileSize * row;
+
+        previousEventX = gPanel.player.worldX;
+        previousEventY = gPanel.player.worldY;
+
+        gPanel.playSE("stairs.wav");
+        canTouchEvent = false;
     }
 }

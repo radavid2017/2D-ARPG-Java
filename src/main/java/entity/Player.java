@@ -479,9 +479,10 @@ public class Player extends Creature {
 
         if (objIndex > -1) {
             // PICKUP COIN
-            if (gPanel.objects[gPanel.currentMap][objIndex].getClass().isAssignableFrom(OBJ_Coin.class)) {  // FIXED
-                OBJ_Coin coin = (OBJ_Coin) gPanel.objects[gPanel.currentMap][objIndex];  // FIXED
-                coin.use();
+            if (gPanel.objects[gPanel.currentMap][objIndex] instanceof OBJ_Coin) {  // FIXED
+                // FIXED
+                ((OBJ_Coin) gPanel.objects[gPanel.currentMap][objIndex]).use();
+//                coin.use();
                 gPanel.objects[gPanel.currentMap][objIndex] = null;  // FIXED
 //                gPanel.objects.remove(objIndex);
             }

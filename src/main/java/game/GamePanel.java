@@ -311,11 +311,17 @@ public class GamePanel extends JPanel implements Runnable {
 
             entities.sort(Comparator.comparingDouble(e -> e.worldY));
 
-            for (Entity entity : entities) {
-//                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
-                if (entity != null)
-                    entity.draw(g2D);
+            for (int i = 0; i < entities.size(); i++) {
+                if (entities.get(i) != null) {
+                    entities.get(i).draw(g2D);
+                }
             }
+
+//            for (Entity entity : entities) {
+////                System.out.println(entity.getClass().getName() + " worldY: " + entity.worldY);
+//                if (entity != null)
+//                    entity.draw(g2D);
+//            }
 
             entities.clear();
 
@@ -415,13 +421,15 @@ public class GamePanel extends JPanel implements Runnable {
                 entities.add(monsterList[currentMap][i]);
             }
         }
-        for (Entity projectile : projectileList) {
-            if (projectile != null)
-                entities.add(projectile);
+        for (int i = 0; i < projectileList.size(); i++) {
+            if (projectileList.get(i) != null) {
+                entities.add(projectileList.get(i));
+            }
         }
-        for (Entity particle : particleList) {
-            if (particle != null)
-                entities.add(particle);
+        for (int i = 0; i < particleList.size(); i++) {
+            if (particleList.get(i) != null) {
+                entities.add(particleList.get(i));
+            }
         }
     }
 
