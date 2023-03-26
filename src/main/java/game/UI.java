@@ -55,6 +55,9 @@ public class UI {
     int subState = 0;
     int commandNum = 0;
 
+    /** TRANZITIE */
+    int counter = 0;
+
     /** INVENTAR */
     public InventoryWindow inventoryWindow;
 
@@ -157,6 +160,9 @@ public class UI {
                 // final de joc
                 drawGameOverScreen();
             }
+            case TransitionState -> {
+                drawTransition();
+            }
         }
 //        if (!gameOver) {
 //            // setarea culorii si a fontului default
@@ -171,6 +177,23 @@ public class UI {
 //            // manevrarea si afisarea textelor pentru finalul rundei / jocului
 //            manageGameOverDisplay(g2D);
 //        }
+    }
+
+    private void drawTransition() {
+
+        counter++;
+        g2D.setColor(new Color(0, 0, 0, counter*5));
+        g2D.fillRect(0, 0, gPanel.screenWidth, gPanel.screenHeight);
+
+        if(counter == 50) {
+            counter = 0;
+            GamePanel.gameState = GameState.Play;
+            gPanel.currentMap = gPanel.eHandler.tempMap;
+            gPanel.player.worldX = gPanel.tileSize * gPanel.eHandler.tempCol;
+            gPanel.player.worldY = gPanel.tileSize * gPanel.eHandler.tempRow;
+            gPanel.eHandler.previousEventX = gPanel.player.worldX;
+            gPanel.eHandler.previousEventY = gPanel.player.worldY;
+        }
     }
 
     public void setCommandNum(int commandNum) {

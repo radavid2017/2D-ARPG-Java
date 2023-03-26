@@ -10,8 +10,10 @@ public class EventHandler {
     GamePanel gPanel;
     EventRect[][][] eventRect;
 
-    double previousEventX, previousEventY;
+    public double previousEventX, previousEventY;
     boolean canTouchEvent = true;
+
+    public int tempMap, tempCol, tempRow;
 
     public EventHandler(GamePanel gPanel) {
         this.gPanel = gPanel;
@@ -135,13 +137,22 @@ public class EventHandler {
     }
 
     public void teleport(int map, int col, int row) {
-        gPanel.currentMap = map;
 
-        gPanel.player.worldX = gPanel.tileSize * col;
-        gPanel.player.worldY = gPanel.tileSize * row;
+        GamePanel.gameState = GameState.TransitionState;
 
-        previousEventX = gPanel.player.worldX;
-        previousEventY = gPanel.player.worldY;
+        tempMap = map;
+        tempCol = col;
+        tempRow = row;
+
+
+
+//        gPanel.currentMap = map;
+//
+//        gPanel.player.worldX = gPanel.tileSize * col;
+//        gPanel.player.worldY = gPanel.tileSize * row;
+//
+//        previousEventX = gPanel.player.worldX;
+//        previousEventY = gPanel.player.worldY;
 
         gPanel.playSE("stairs.wav");
         canTouchEvent = false;
