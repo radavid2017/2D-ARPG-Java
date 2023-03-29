@@ -50,6 +50,7 @@ public class KeyHandler implements KeyListener {
             case CharacterState -> characterState(code);
             case OptionsState -> optionsState(code);
             case GameOverState -> gameOverState(code);
+            case TradeState -> tradeState(code);
         }
 
         switch (code) {
@@ -72,6 +73,37 @@ public class KeyHandler implements KeyListener {
                     GamePanel.gameState == GameState.Play ? GameState.CharacterState : GameState.Play;
         }
 
+    }
+
+    private void tradeState(int code) {
+        if (code == KeyEvent.VK_ENTER) {
+            enterPressed = true;
+        }
+
+        switch (gPanel.ui.getSubState()) {
+            case 0 -> {
+                if (code == KeyEvent.VK_UP) {
+                    gPanel.ui.decreaseTradeCmdSelection();
+                }
+                if (code == KeyEvent.VK_DOWN) {
+                    gPanel.ui.increaseTradeCmdSelection();
+                }
+            }
+        }
+        switch (gPanel.ui.getSubState()) {
+            case 1 -> {
+                npcInventory(code);
+                if (code == KeyEvent.VK_ESCAPE) {
+                    gPanel.ui.setSubState(0);
+                }
+            }
+            case 2 -> {
+                playerInventory(code);
+                if (code == KeyEvent.VK_ESCAPE) {
+                    gPanel.ui.setSubState(0);
+                }
+            }
+        }
     }
 
     private void gameOverState(int code) {
@@ -249,38 +281,74 @@ public class KeyHandler implements KeyListener {
     }
 
     public void characterState(int code) {
+        playerInventory(code);
+        if (code == KeyEvent.VK_ENTER) {// ALEGEREA UNUI ITEM
+            gPanel.player.selectItem();
+        }
+    }
+
+    public void playerInventory(int code) {
         switch (code) {
             case KeyEvent.VK_W -> {
-                if (gPanel.ui.inventoryWindow.slotRow > 0) {
-                    gPanel.ui.inventoryWindow.slotRow--;
+                if (gPanel.ui.playerInventoryWindow.slotRow > 0) {
+                    gPanel.ui.playerInventoryWindow.slotRow--;
 //                    gPanel.ui.slotRow--;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_A -> {
-                if (gPanel.ui.inventoryWindow.slotCol > 0) {
-                    gPanel.ui.inventoryWindow.slotCol--;
+                if (gPanel.ui.playerInventoryWindow.slotCol > 0) {
+                    gPanel.ui.playerInventoryWindow.slotCol--;
 //                    gPanel.ui.slotCol--;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_S -> {
-                if (gPanel.ui.inventoryWindow.slotRow < gPanel.ui.inventoryWindow.maxSlotRow) {
-                    gPanel.ui.inventoryWindow.slotRow++;
+                if (gPanel.ui.playerInventoryWindow.slotRow < gPanel.ui.playerInventoryWindow.maxSlotRow) {
+                    gPanel.ui.playerInventoryWindow.slotRow++;
 //                    gPanel.ui.slotRow++;
                     gPanel.playSE("cursor.wav");
                 }
             }
             case KeyEvent.VK_D -> {
-                if (gPanel.ui.inventoryWindow.slotCol < gPanel.ui.inventoryWindow.maxSlotCol) {
-                    gPanel.ui.inventoryWindow.slotCol++;
+                if (gPanel.ui.playerInventoryWindow.slotCol < gPanel.ui.playerInventoryWindow.maxSlotCol) {
+                    gPanel.ui.playerInventoryWindow.slotCol++;
 //                    gPanel.ui.slotCol++;
                     gPanel.playSE("cursor.wav");
                 }
             }
-            case KeyEvent.VK_ENTER -> {
-                // ALEGEREA UNUI ITEM
-                gPanel.player.selectItem();
+        }
+    }
+
+    public void npcInventory(int code) {
+        switch (code) {
+            case KeyEvent.VK_W -> {
+                if (gPanel.ui.npcInventoryWindow.slotRow > 0) {
+                    gPanel.ui.npcInventoryWindow.slotRow--;
+//                    gPanel.ui.slotRow--;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_A -> {
+                if (gPanel.ui.npcInventoryWindow.slotCol > 0) {
+                    gPanel.ui.npcInventoryWindow.slotCol--;
+//                    gPanel.ui.slotCol--;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_S -> {
+                if (gPanel.ui.npcInventoryWindow.slotRow < gPanel.ui.npcInventoryWindow.maxSlotRow) {
+                    gPanel.ui.npcInventoryWindow.slotRow++;
+//                    gPanel.ui.slotRow++;
+                    gPanel.playSE("cursor.wav");
+                }
+            }
+            case KeyEvent.VK_D -> {
+                if (gPanel.ui.npcInventoryWindow.slotCol < gPanel.ui.npcInventoryWindow.maxSlotCol) {
+                    gPanel.ui.npcInventoryWindow.slotCol++;
+//                    gPanel.ui.slotCol++;
+                    gPanel.playSE("cursor.wav");
+                }
             }
         }
     }

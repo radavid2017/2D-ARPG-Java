@@ -9,5 +9,6 @@ public enum GameState {
     CharacterState,
     OptionsState,
     GameOverState,
-    TransitionState
+    TransitionState,
+    TradeState
 }

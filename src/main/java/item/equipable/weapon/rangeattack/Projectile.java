@@ -19,8 +19,8 @@ public abstract class Projectile extends Weapon implements Atomic {
     public float durability;
     public float maxDurability;
 
-    public Projectile (int damage, IDoDamage damageType, CharacterClass characterClass, GamePanel gp) {
-        super(gp, TypeWeapon.Projectile, characterClass);
+    public Projectile (int damage, IDoDamage damageType, CharacterClass characterClass, GamePanel gp, int price) {
+        super(gp, TypeWeapon.Projectile, characterClass, price);
         typeAnimation = TypeAnimation.OBJECT;
         this.damage = damage;
         addDamageType(damageType);

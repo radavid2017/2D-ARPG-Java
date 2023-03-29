@@ -1,5 +1,6 @@
 package npc;
 
 public enum TypeNPC {
-    OldMan
+    OldMan,
+    Merchant
 }

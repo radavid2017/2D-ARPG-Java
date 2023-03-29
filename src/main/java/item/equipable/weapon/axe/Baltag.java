@@ -8,7 +8,7 @@ public class Baltag extends Axe {
 
     public Baltag(GamePanel gp) {
 
-        super(2, new NormalDamage(), gp);
+        super(2, new NormalDamage(), gp, 20);
 //        loadObject(gp, axePath + "baltag.png");
         setImage("baltag.png");
         name = "Baltag";

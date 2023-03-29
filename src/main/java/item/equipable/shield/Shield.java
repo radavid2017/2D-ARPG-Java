@@ -17,8 +17,8 @@ public abstract class Shield extends Equipable {
     public String shieldPath = "res/item/equipable/shield/";
     public ModelShield modelShield;
 
-    public Shield (int defense, IDoDefense defenseType, GamePanel gp, CharacterClass playerClass) {
-        super(gp, TypeEquipable.Shield, playerClass);
+    public Shield (int defense, IDoDefense defenseType, GamePanel gp, CharacterClass playerClass, int price) {
+        super(gp, TypeEquipable.Shield, playerClass, price);
         this.defense = defense;
         addDefenseType(defenseType);
         typeObject = TypeObject.Item;

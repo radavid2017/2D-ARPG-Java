@@ -6,6 +6,7 @@ import features.Direction;
 import game.GamePanel;
 import game.GameState;
 import game.UI;
+import npc.NPC_Merchant;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -66,5 +67,30 @@ public class StateMachine {
         left.loadDirectionAnimation(animationFolderName);
 
         states.addAll(Arrays.asList(up, down, left, right));
+    }
+
+    public void loadSingleAnimation(GamePanel gp, String animationFolderName, TypeAnimation typeAnimation, Direction direction) {
+        switch (direction) {
+            case UP -> {
+                up = new AnimationState(gp, Direction.UP, typeAnimation);
+                up.loadDirectionAnimation(animationFolderName);
+                states.add(up);
+            }
+            case DOWN -> {
+                down = new AnimationState(gp, Direction.DOWN, typeAnimation);
+                down.loadDirectionAnimation(animationFolderName);
+                states.add(down);
+            }
+            case LEFT -> {
+                left = new AnimationState(gp, Direction.LEFT, typeAnimation);
+                left.loadDirectionAnimation(animationFolderName);
+                states.add(left);
+            }
+            case RIGHT -> {
+                right = new AnimationState(gp, Direction.RIGHT, typeAnimation);
+                right.loadDirectionAnimation(animationFolderName);
+                states.add(right);
+            }
+        }
     }
 }

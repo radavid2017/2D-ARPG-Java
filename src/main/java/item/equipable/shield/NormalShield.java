@@ -8,7 +8,7 @@ public class NormalShield extends Shield {
 
 
     public NormalShield(GamePanel gp) {
-        super(4, new NormalDefense(), gp, CharacterClass.ANY);
+        super(4, new NormalDefense(), gp, CharacterClass.ANY, 7);
         loadObject(gp, shieldPath + "shield_wood.png");
         modelShield = ModelShield.NormalShield;
         name = "Scut Normal";

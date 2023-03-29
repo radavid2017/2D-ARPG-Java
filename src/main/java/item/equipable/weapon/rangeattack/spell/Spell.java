@@ -11,8 +11,8 @@ public abstract class Spell extends Projectile {
 
     public int useCost;
 
-    public Spell(int damage, IDoDamage damageType, GamePanel gp) {
-        super(damage, damageType, CharacterClass.MAGE, gp);
+    public Spell(int damage, IDoDamage damageType, GamePanel gp, int price) {
+        super(damage, damageType, CharacterClass.MAGE, gp, price);
         typeProjectile = TypeProjectile.Spell;
         objPath += "spell/";
     }

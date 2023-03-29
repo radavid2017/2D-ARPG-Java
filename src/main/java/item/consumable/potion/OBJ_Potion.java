@@ -13,8 +13,8 @@ public abstract class OBJ_Potion extends Consumable {
     PotionModel potionModel;
     int healingValue;
 
-    public OBJ_Potion(GamePanel gPanel) {
-        super(gPanel, TypeConsumable.Potion);
+    public OBJ_Potion(GamePanel gPanel, int price) {
+        super(gPanel, TypeConsumable.Potion, price);
         setHealingValue();
         objPath += "potions/";
     }

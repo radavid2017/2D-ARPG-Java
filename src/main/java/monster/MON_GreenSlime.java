@@ -43,9 +43,10 @@ public class MON_GreenSlime extends Monster{
         setupIdle("res\\monster\\greenSlime");
     }
 
+    @Override
     public void offensiveBehaviour() {
         int i = new Random().nextInt(100)+1;
-        if (i > 99 && !weapon.alive && shotAvailableCounter == 30) {
+        if (i > 97 && !weapon.alive && shotAvailableCounter == 30) {
             weapon.set(worldX, worldY, direction, true, this);
             getGamePanel().projectileList.add((Projectile) weapon);
             shotAvailableCounter = 0;
@@ -55,7 +56,6 @@ public class MON_GreenSlime extends Monster{
     public void AI() {
 
         super.AI();
-        offensiveBehaviour();
 
     }
 
@@ -63,6 +63,21 @@ public class MON_GreenSlime extends Monster{
         super.update();
         if (shotAvailableCounter < 30) {
             shotAvailableCounter++;
+        }
+
+        int xDistance = (int) Math.abs(worldX - getGamePanel().player.worldX);
+        int yDistance = (int) Math.abs(worldY - getGamePanel().player.worldY);
+        int tileDistance = (xDistance + yDistance)/getGamePanel().tileSize;
+
+        if (!onPath && tileDistance < 5) {
+            int i = new Random().nextInt(100)+1;
+            if (i > 50) {
+                onPath = true; // 50% sanse sa devina aggro daca player-ul e aproape de entitate
+            }
+        }
+
+        if (onPath && tileDistance > 8) {
+            onPath = false;
         }
     }
 

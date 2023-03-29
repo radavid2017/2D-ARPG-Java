@@ -9,8 +9,8 @@ public abstract class Consumable extends Item{
 
     TypeConsumable typeConsumable;
 
-    public Consumable(GamePanel gPanel, TypeConsumable typeConsumable) {
-        super(gPanel, TypeItem.Consumable);
+    public Consumable(GamePanel gPanel, TypeConsumable typeConsumable, int price) {
+        super(gPanel, TypeItem.Consumable, price);
         this.typeConsumable = typeConsumable;
         objPath += "consumable/";
     }

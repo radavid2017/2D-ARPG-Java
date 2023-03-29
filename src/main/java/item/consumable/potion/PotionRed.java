@@ -8,7 +8,7 @@ public class PotionRed extends OBJ_Potion {
 
 
     public PotionRed(GamePanel gPanel) {
-        super(gPanel);
+        super(gPanel, 100);
         name = "Licoare rosie";
         description = "[" + name + "]\nPotiune vindecatoare:\n+" + healingValue + " viata.";
         potionModel = PotionModel.PotionRed;

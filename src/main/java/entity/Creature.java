@@ -3,6 +3,7 @@ package entity;
 import animations.AnimationState;
 import animations.StateMachine;
 import animations.TypeAnimation;
+import features.Direction;
 import game.GamePanel;
 
 import java.util.LinkedHashMap;
@@ -19,17 +20,24 @@ public abstract class Creature extends Entity {
         super(gp);
     }
 
-    public void update() {
+    public void checkCollisions() {
         collisionOn = false;
         gPanel.collisionDetector.manageTileCollision(this);
-        gPanel.collisionDetector.manageObjCollision(this);
+        if (this instanceof Player) {
+            gPanel.collisionDetector.manageObjCollision(this);
+        }
         gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
         gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
         gPanel.collisionDetector.checkPlayer(this);
         gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles);
+    }
 
-        if (!collisionOn && inMotion)
+    public void update() {
+        checkCollisions();
+
+        if (!collisionOn && inMotion) {
             this.manageMovement();
+        }
 
         manageInvincible();
 
@@ -49,6 +57,21 @@ public abstract class Creature extends Entity {
     public void setupIdle(String creaturePath) {
         idle = new StateMachine();
         idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE);
+    }
+
+    public void setupStaticIdle(String creaturePath) {
+        idle = new StateMachine();
+        idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE);
+        currentAnimation = idle.down;
+//        idle.loadSingleAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE, Direction.DOWN);
+
+        /** setari statice */
+        this.collisionOn = false;
+        inMotion = false;
+        this.direction = Direction.DOWN;
+        for (int i = 0; i < idle.states.size(); i++) {
+            idle.states.get(i).timeToChangeFrame = 28;
+        }
     }
 
     public void setupAttack(String creaturePath) {

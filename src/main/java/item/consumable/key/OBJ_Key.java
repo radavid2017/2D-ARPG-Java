@@ -11,8 +11,8 @@ import object.TypeObject;
 public abstract class OBJ_Key extends Consumable {
     KeyModel keyModel;
 
-    public OBJ_Key(GamePanel gPanel) {
-        super(gPanel, TypeConsumable.Key);
+    public OBJ_Key(GamePanel gPanel, int price) {
+        super(gPanel, TypeConsumable.Key, price);
         this.typeObject = TypeObject.Key;
         objPath += "keys/";
     }

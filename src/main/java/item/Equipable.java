@@ -9,8 +9,8 @@ public abstract class Equipable extends Item {
     public CharacterClass playerClass;
     public TypeEquipable typeEquipable;
 
-    public Equipable(GamePanel gPanel, TypeEquipable typeEquipable, CharacterClass playerClass) {
-        super(gPanel, TypeItem.Equipable);
+    public Equipable(GamePanel gPanel, TypeEquipable typeEquipable, CharacterClass playerClass, int price) {
+        super(gPanel, TypeItem.Equipable, price);
         this.playerClass = playerClass;
         this.typeEquipable = typeEquipable;
         objPath += "equipable/";

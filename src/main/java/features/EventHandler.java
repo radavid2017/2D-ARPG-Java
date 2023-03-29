@@ -1,5 +1,6 @@
 package features;
 
+import entity.Entity;
 import game.GamePanel;
 import game.GameState;
 
@@ -73,6 +74,18 @@ public class EventHandler {
             else if (hit(1, 12, 13, Direction.ANY)) {
                 teleport(0, 10, 39);
             }
+            else if (hit(1, 12, 9, Direction.UP)) {
+                speak(gPanel.npcList[1][0]);
+            }
+        }
+    }
+
+    private void speak(Entity entity) {
+
+        if (gPanel.keyH.enterPressed) {
+            GamePanel.gameState = GameState.Dialogue;
+            gPanel.player.attackCanceled = true;
+            entity.speak();
         }
     }
 

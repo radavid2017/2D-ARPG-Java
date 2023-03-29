@@ -4,18 +4,25 @@ import entity.ArtificialIntelligence;
 import entity.Entity;
 import entity.TypeAI;
 import game.GamePanel;
+import item.Item;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.random.RandomGenerator;
 
 public abstract class NPC extends ArtificialIntelligence {
 
+    public BufferedImage sprite;
+    public ArrayList<Item> inventory = new ArrayList<>();
+    public final int maxInventorySize = 20;
     TypeNPC typeNPC;
 
-    public NPC(GamePanel gp) {
+    public NPC(GamePanel gp, TypeNPC typeNPC) {
         super(gp);
         typeAI = TypeAI.NPC;
+        typeNPC = this.typeNPC;
     }
 
     public void update() {
@@ -27,16 +34,20 @@ public abstract class NPC extends ArtificialIntelligence {
 
         super.draw(g2D);
 
-        BufferedImage sprite;
-
         if (inMotion)
             sprite = movement.manageAnimations(this, direction);
-        else
+        else{
             sprite = idle.manageAnimations(this, direction);
+        }
+
 
         // Management Camera
         camera.drawEntity(g2D, sprite);
 
         drawSolidArea(g2D);
     }
+
+    public abstract void setDialogue();
+
+    public abstract void setItems();
 }

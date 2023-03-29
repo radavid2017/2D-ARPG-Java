@@ -21,6 +21,7 @@ public class TileManager {
     public static List<BufferedImage> originalTilesImage = new ArrayList<>();
     public int[][][] mapTileNum;
     private int idTiles = 9;
+    boolean drawPath = true;
 
     public List<String> mapPath;
 
@@ -144,6 +145,18 @@ public class TileManager {
             if (worldCol == gPanel.maxWorldCol) {
                 worldCol = 0;
                 worldRow++;
+            }
+        }
+
+        if (drawPath) {
+            g2D.setColor(new Color(255, 0, 0, 70));
+            for (int i = 0; i < gPanel.pFinder.pathList.size(); i++) {
+                int worldX = gPanel.pFinder.pathList.get(i).col * gPanel.tileSize;
+                int worldY = gPanel.pFinder.pathList.get(i).row * gPanel.tileSize;
+                int screenX = (int) (worldX - gPanel.player.worldX + gPanel.player.screenX);
+                int screenY = (int) (worldY - gPanel.player.worldY + gPanel.player.screenY);
+
+                g2D.fillRect(screenX, screenY, gPanel.tileSize, gPanel.tileSize);
             }
         }
     }

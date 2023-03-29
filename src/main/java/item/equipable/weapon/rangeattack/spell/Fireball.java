@@ -9,7 +9,7 @@ import java.awt.*;
 public class Fireball extends Spell {
 
     public Fireball(GamePanel gp) {
-        super(2, new FireDamage(), gp);
+        super(2, new FireDamage(), gp, 0);
 
         name = "Minge de foc";
         speed = 6.5f;

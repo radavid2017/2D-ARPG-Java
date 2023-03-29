@@ -1,5 +1,6 @@
 package game;
 
+import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
 import features.*;
@@ -57,6 +58,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Config file
     Config config = new Config(this);
+
+    // Path Finder
+    public PathFinder pFinder = new PathFinder(this);
 
     // FPS - limitarea cadrelor pe secunda
     float FPS = 60.0f;

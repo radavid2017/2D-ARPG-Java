@@ -26,6 +26,8 @@ public abstract class Monster extends ArtificialIntelligence {
 
     int shotAvailableCounter = 0;
 
+    public BufferedImage sprite;
+
     public Monster(GamePanel gp) {
         super(gp);
         typeAI = TypeAI.Monster;
@@ -36,7 +38,8 @@ public abstract class Monster extends ArtificialIntelligence {
 
         actionLockCounterDirection = 0;
         actionLockCounterInMotion = 0;
-        direction = getGamePanel().player.direction;
+//        direction = getGamePanel().player.direction;
+        onPath = true;
         inMotion = true;
     }
 
@@ -110,8 +113,6 @@ public abstract class Monster extends ArtificialIntelligence {
 
         super.draw(g2D);
 
-        BufferedImage sprite;
-
         if (inMotion)
             sprite = movement.manageAnimations(this, direction);
         else
@@ -141,5 +142,17 @@ public abstract class Monster extends ArtificialIntelligence {
         drawSolidArea(g2D);
 
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+    }
+
+    public abstract void offensiveBehaviour();
+
+    @Override
+    public void pathFinding() {
+        int goalCol = (int) ((getGamePanel().player.worldX + getGamePanel().player.solidArea.x)/getGamePanel().tileSize);
+        int goalRow = (int) ((getGamePanel().player.worldY + getGamePanel().player.solidArea.y)/getGamePanel().tileSize);
+
+        searchPath(goalCol, goalRow, true);
+
+        offensiveBehaviour();
     }
 }

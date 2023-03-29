@@ -10,7 +10,7 @@ public class OBJ_Coin extends Consumable {
     int value = 1;
 
     public OBJ_Coin(GamePanel gPanel) {
-        super(gPanel, TypeConsumable.Coin);
+        super(gPanel, TypeConsumable.Coin, 0);
         name = "Bani";
         setImage("coin/coin_bronze.png");
         description = "O moneda";

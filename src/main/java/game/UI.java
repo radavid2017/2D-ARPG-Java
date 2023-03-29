@@ -5,6 +5,7 @@ import features.Dialogue;
 import features.Direction;
 import features.UtilityTool;
 import hud.window.InventoryWindow;
+import npc.NPC;
 import object.OBJ_Heart;
 import object.OBJ_ManaCrystal;
 import object.SuperStatesObject;
@@ -58,8 +59,12 @@ public class UI {
     /** TRANZITIE */
     int counter = 0;
 
+    /** TRADING NPC */
+    private NPC merchant;
+
     /** INVENTAR */
-    public InventoryWindow inventoryWindow;
+    public InventoryWindow playerInventoryWindow;
+    public InventoryWindow npcInventoryWindow;
 
     /** UI HUD */
 //    public ArrayList<SuperStatesObject> hudList = new ArrayList<>();
@@ -109,11 +114,22 @@ public class UI {
         manaCrystal.loadObject(gPanel);
 
         // INSTANTIERE COORDONATE CADRU INVENTAR
-        inventoryWindow = new InventoryWindow(
+        playerInventoryWindow = new InventoryWindow(
+                gPanel,
                 (int) ((gPanel.screenWidth/22) * 13.75),
-                gPanel.screenHeight/10,
+                gPanel.screenHeight/25,
                 gPanel.defaultTileSize * 5 + 80,
-                gPanel.defaultTileSize * 6 + 90
+                gPanel.defaultTileSize * 6 + 90,
+                true
+        );
+
+        npcInventoryWindow = new InventoryWindow(
+                gPanel,
+                playerInventoryWindow.x - 1000,
+                gPanel.screenHeight/25,
+                gPanel.defaultTileSize * 5 + 80,
+                gPanel.defaultTileSize * 6 + 90,
+                false
         );
     }
 
@@ -145,13 +161,12 @@ public class UI {
             }
             case Dialogue -> {
                 // starea de dialog
-                drawLifeManaPlayer();
                 drawDialogueScreen();
             }
             case CharacterState -> {
                 // starea de status caracter
                 drawCharacterScreen();
-                drawInventory();
+                drawPlayerInventory(true);
             }
             case OptionsState -> {
                 drawOptionsScreen();
@@ -162,6 +177,9 @@ public class UI {
             }
             case TransitionState -> {
                 drawTransition();
+            }
+            case TradeState -> {
+                drawTradeScreen();
             }
         }
 //        if (!gameOver) {
@@ -177,6 +195,120 @@ public class UI {
 //            // manevrarea si afisarea textelor pentru finalul rundei / jocului
 //            manageGameOverDisplay(g2D);
 //        }
+    }
+
+    private void drawTradeScreen() {
+        switch (subState) {
+            case 0 -> trade_select();
+            case 1 -> trade_buy();
+            case 2 -> trade_sell();
+        }
+        gPanel.keyH.enterPressed = false;
+    }
+
+    public void trade_select() {
+
+        drawDialogueScreen();
+
+        // DRAW WINDOW
+        int x = (int) (gPanel.screenWidth/1.45f);
+        int y = (int) (gPanel.screenHeight/4f);
+        int width = gPanel.screenWidth/7;
+        int height = (int) (gPanel.screenHeight/6);
+        drawSubWindow(x, y, width, height);
+
+        // DRAW TEXTS
+        x += 50;
+        y += 50;
+        y += drawTradeItemOptionSelection("Cumpara", x, y, 0);
+        y += drawTradeItemOptionSelection("Vinde", x, y, 1);
+        drawTradeItemOptionSelection("Paraseste", x, y, 2);
+    }
+
+    public int drawTradeItemOptionSelection(String itemName, int textX, int textY, int cmd) {
+        g2D.drawString(itemName, textX, textY);
+        if (commandNum == cmd) {
+            g2D.drawString(">", textX-30, textY);
+            if (gPanel.keyH.enterPressed) {
+                switch (cmd) {
+                    case 0 -> subState = 1;
+                    case 1 -> subState = 2;
+                    case 2 -> {
+                        commandNum = 0;
+                        GamePanel.gameState = GameState.Dialogue;
+                        currentDialogue = new Dialogue("Te mai astept!");
+                    }
+                }
+            }
+        }
+        return 50; // text Level Distance Between Items
+    }
+
+    public void increaseTradeCmdSelection() {
+        if (commandNum < 2) {
+            commandNum++;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    public void decreaseTradeCmdSelection() {
+        if (commandNum > 0) {
+            commandNum--;
+            gPanel.playSE("cursor.wav");
+        }
+    }
+
+    public void trade_buy() {
+
+        // DRAW PLAYER INVENTORY
+        drawPlayerInventory(false);
+
+        // DRAW NPC INVENTORY
+        drawNPCInventory(true);
+
+        int itemIndex = npcInventoryWindow.getItemIndexOnSlot();
+
+        // BUY AN ITEM
+        if (gPanel.keyH.enterPressed) {
+            if (itemIndex < merchant.inventory.size()) {
+                if (merchant.inventory.get(itemIndex).price > gPanel.player.coin) {
+                    gPanel.ui.setSubState(0);
+                    GamePanel.gameState = GameState.Dialogue;
+                    gPanel.ui.setCurrentDialogue(new Dialogue("Monede insuficiente! Revino dupa ce aduni mai multe!"));
+                    gPanel.ui.drawDialogueScreen();
+                } else if (gPanel.player.inventory.size() == gPanel.player.maxInventorySize) {
+                    gPanel.ui.setSubState(0);
+                    GamePanel.gameState = GameState.Dialogue;
+                    gPanel.ui.setCurrentDialogue(new Dialogue("Inventarul tau este plin!"));
+                } else {
+                    gPanel.player.coin -= merchant.inventory.get(itemIndex).price;
+                    gPanel.player.inventory.add(merchant.inventory.get(itemIndex));
+                }
+            }
+        }
+    }
+
+    public void trade_sell() {
+        // DRAW PLAYER INVENTORY
+        drawPlayerInventory(true);
+
+        int itemIndex = playerInventoryWindow.getItemIndexOnSlot();
+
+        // SELL AN ITEM
+        if (gPanel.keyH.enterPressed) {
+            if (itemIndex < gPanel.player.inventory.size()) {
+                if (gPanel.player.inventory.get(itemIndex) == gPanel.player.currentWeapon ||
+                        gPanel.player.inventory.get(itemIndex) == gPanel.player.currentShield) {
+                    commandNum = 0;
+                    subState = 0;
+                    GamePanel.gameState = GameState.Dialogue;
+                    currentDialogue = new Dialogue("Nu poti vinde un obiect echipat!");
+                } else {
+                    gPanel.player.coin += gPanel.player.inventory.get(itemIndex).price / 2;
+                    gPanel.player.inventory.remove(itemIndex);
+                }
+            }
+        }
     }
 
     private void drawTransition() {
@@ -299,6 +431,7 @@ public class UI {
                 subState = 0;
                 GamePanel.gameState = GameState.Title;
                 gPanel.stopMusic();
+                gPanel.currentMap = 0;
             }
         }
 
@@ -494,6 +627,10 @@ public class UI {
 
     public int getSubState() {
         return subState;
+    }
+
+    public void setSubState(int subState) {
+        this.subState = subState;
     }
 
     public int getCommandNum() {
@@ -767,7 +904,7 @@ public class UI {
 //        messageOn = true;
 //    }
 
-    private void drawDialogueScreen() {
+    public void drawDialogueScreen() {
 
         // fereastra de dialog
         int x = 156;
@@ -836,8 +973,12 @@ public class UI {
         }
     }
 
-    private void drawInventory() {
-        inventoryWindow.draw(gPanel, g2D);
+    private void drawPlayerInventory(boolean isUsing) {
+        playerInventoryWindow.draw(gPanel, gPanel.player, gPanel.player.inventory, g2D, isUsing);
+    }
+
+    private void drawNPCInventory(boolean isUsing) {
+        npcInventoryWindow.draw(gPanel, merchant, merchant.inventory, g2D, isUsing);
     }
 
     public int getXForCenteredFrame(String text, int frameX) {
@@ -982,5 +1123,13 @@ public class UI {
 
     public void setCurrentDialogue(Dialogue currentDialogue) {
         this.currentDialogue = currentDialogue;
+    }
+
+    public NPC getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(NPC merchant) {
+        this.merchant = merchant;
     }
 }

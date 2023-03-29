@@ -7,7 +7,7 @@ import game.GamePanel;
 public class BlueShield extends Shield {
 
     public BlueShield(GamePanel gp) {
-        super(5, new NormalDefense(), gp, CharacterClass.ANY);
+        super(5, new NormalDefense(), gp, CharacterClass.ANY, 15);
         loadObject(gp, shieldPath + "shield_blue.png");
         modelShield = ModelShield.BlueShield;
         name = "Scut Albastru";

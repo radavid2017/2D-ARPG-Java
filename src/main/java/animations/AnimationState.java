@@ -53,6 +53,11 @@ public class AnimationState {
         }
     }
 
+    public AnimationState(GamePanel gp, Direction direction) {
+        this.gp = gp;
+        this.direction = direction;
+    }
+
     public AnimationState(GamePanel gp, Direction direction, TypeAnimation typeAnimation) {
         this.gp = gp;
         this.direction = direction;

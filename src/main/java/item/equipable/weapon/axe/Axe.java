@@ -11,8 +11,8 @@ public abstract class Axe extends Weapon {
     public String axePath = "res/item/equipable/weapon/axe/";
     ModelAxe modelAxe;
 
-    public Axe(int damage, IDoDamage damageType, GamePanel gp) {
-        super(gp, TypeWeapon.Axe, CharacterClass.ANY);
+    public Axe(int damage, IDoDamage damageType, GamePanel gp, int price) {
+        super(gp, TypeWeapon.Axe, CharacterClass.ANY, price);
         this.damage = damage;
         addDamageType(damageType);
         objPath += "axe/";

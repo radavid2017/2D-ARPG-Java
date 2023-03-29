@@ -7,7 +7,7 @@ public class NormalSword extends Sword {
 
     public NormalSword(GamePanel gp) {
 
-        super(1, new NormalDamage(), gp);
+        super(1, new NormalDamage(), gp, 6);
 //        loadObject(gp, swordPath + "sword_normal.png");
         setImage("sword_normal.png");
         name = "Sabie Normala";

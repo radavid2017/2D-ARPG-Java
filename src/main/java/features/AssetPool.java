@@ -15,6 +15,7 @@ import item.consumable.potion.PotionRed;
 import item.equipable.shield.Shield;
 import monster.MON_GreenSlime;
 import monster.TypeMonster;
+import npc.NPC_Merchant;
 import npc.NPC_OldMan;
 import npc.TypeNPC;
 import game.GamePanel;
@@ -167,7 +168,13 @@ public class AssetPool {
         int mapNum = 0;
         Arrays.fill(gPanel.npcList[mapNum], null);
         loadNPC(TypeNPC.OldMan, 21, 21, mapNum);
-        loadNPC(TypeNPC.OldMan, 31, 21, mapNum);
+//        loadNPC(TypeNPC.OldMan, 31, 21, mapNum);
+
+        mapNum = 1;
+        Arrays.fill(gPanel.npcList[mapNum], null);
+        iteratorNPC = 0;
+        loadNPC(TypeNPC.Merchant, 12, 7, mapNum);
+
 
 //        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 11, gPanel.tileSize * 21);
 //        loadNPC(TypeNPC.OldMan, gPanel.tileSize * 21, gPanel.tileSize * 11);
@@ -180,6 +187,7 @@ public class AssetPool {
     public void loadNPC( TypeNPC typeNPC, double worldX, double worldY, int mapNum) {
         switch (typeNPC) {
             case OldMan -> gPanel.npcList[mapNum][iteratorNPC] = new NPC_OldMan(gPanel);
+            case Merchant -> gPanel.npcList[mapNum][iteratorNPC] = new NPC_Merchant(gPanel);
         }
         if (gPanel.npcList[mapNum][iteratorNPC] != null) {
             gPanel.npcList[mapNum][iteratorNPC++].setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);

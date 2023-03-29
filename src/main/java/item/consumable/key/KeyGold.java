@@ -6,7 +6,7 @@ import item.TypeItem;
 
 public class KeyGold extends OBJ_Key {
     public KeyGold(GamePanel gPanel) {
-        super(gPanel);
+        super(gPanel, 100);
         name = "Cheie de aur";
         description = "[" + name + "]\nDeschide o usa.";
         this.setImage("key.png");

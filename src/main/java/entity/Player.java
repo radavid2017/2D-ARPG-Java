@@ -7,7 +7,6 @@ import game.CharacterClass;
 import game.GamePanel;
 import game.GameState;
 import interactive_tile.DestructibleTile;
-import interactive_tile.InteractiveTile;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
@@ -55,6 +54,9 @@ public class Player extends Creature {
     // ATRIBUTE ITEME
     public int attackValue;
     public int defenseValue;
+
+    // DISABLE ATTACK
+    public boolean attackCanceled = false;
 
     // INVENTAR JUCATOR
     public ArrayList<Item> inventory = new ArrayList<>();
@@ -136,8 +138,14 @@ public class Player extends Creature {
     public void setDefaultPositions() {
         worldX = gPanel.tileSize * 23;
         worldY = gPanel.tileSize * 21;
+
+        // map 2
 //        worldX = gPanel.tileSize * 12;
-//        worldY = gPanel.tileSize * 13;
+//        worldY = gPanel.tileSize * 10;
+
+        // langa hut
+//        worldX = gPanel.tileSize * 10;
+//        worldY = gPanel.tileSize * 41;
         direction = Direction.DOWN;
     }
 
@@ -417,7 +425,7 @@ public class Player extends Creature {
 
     public void selectItem() {
 
-        int itemIndex = gPanel.ui.inventoryWindow.getItemIndexOnSlot();
+        int itemIndex = gPanel.ui.playerInventoryWindow.getItemIndexOnSlot();
 
         if (itemIndex < inventory.size()) {
             Item selectedItem = inventory.get(itemIndex);

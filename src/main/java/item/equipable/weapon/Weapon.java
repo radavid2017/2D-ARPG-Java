@@ -23,8 +23,8 @@ public abstract class Weapon extends Equipable {
     public List<IDoDamage> damageTypes = new ArrayList<>();
     public TypeWeapon typeWeapon;
 
-    public Weapon(GamePanel gPanel, TypeWeapon typeWeapon,CharacterClass playerClass) {
-        super(gPanel, TypeEquipable.Weapon, playerClass);
+    public Weapon(GamePanel gPanel, TypeWeapon typeWeapon,CharacterClass playerClass, int price) {
+        super(gPanel, TypeEquipable.Weapon, playerClass, price);
         this.typeWeapon = typeWeapon;
         typeObject = TypeObject.Item;
         objPath += "weapon/";

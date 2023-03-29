@@ -9,7 +9,7 @@ import java.awt.*;
 public class Rock extends Projectile {
 
     public Rock(GamePanel gp) {
-        super(2, new EarthDamage(), CharacterClass.ANY, gp);
+        super(2, new EarthDamage(), CharacterClass.ANY, gp, 0);
 
         name = "Piatra";
         speed = 6.5f;
