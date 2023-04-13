@@ -10,9 +10,11 @@ import item.consumable.coin.OBJ_Coin;
 import item.consumable.potion.PotionRed;
 import item.equipable.shield.BlueShield;
 import item.equipable.weapon.Weapon;
+import object.SuperObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class Monster extends ArtificialIntelligence {
@@ -25,6 +27,7 @@ public abstract class Monster extends ArtificialIntelligence {
     int hpBarCounter = 0;
 
     int shotAvailableCounter = 0;
+    final int shotAvailableTrigger = 30;
 
     public BufferedImage sprite;
 
@@ -100,13 +103,25 @@ public abstract class Monster extends ArtificialIntelligence {
 
         item.setPosition(worldX, worldY); // atribuim pozitia obiectului distrus (monstrul mort)
 
-        for (int i = 0; i < getGamePanel().objects[1].length; i++) {
-            if(getGamePanel().objects[getGamePanel().currentMap][i] == null) {
-                getGamePanel().objects[getGamePanel().currentMap][i] = item;
-                break;
+//        for (int i = 0; i < getGamePanel().objects[1].length; i++) {
+//            if(getGamePanel().objects[getGamePanel().currentMap][i] == null) {
+//                getGamePanel().objects[getGamePanel().currentMap][i] = item;
+//                break;
+//            }
+//        }
+
+        replaceWithItem(item, getGamePanel().objects.get(getGamePanel().currentMap));
+
+//        getGamePanel().objects.add(item);
+    }
+
+    private void replaceWithItem(Item item, ArrayList<Entity> objects) {
+        for (int i = 0; i < objects.size(); i++) {
+            if (objects.get(i) != null) {
+                objects.set(i, item);
+                return;
             }
         }
-//        getGamePanel().objects.add(item);
     }
 
     public void draw(Graphics2D g2D) {

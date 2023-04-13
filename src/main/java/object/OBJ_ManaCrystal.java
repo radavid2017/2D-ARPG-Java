@@ -1,9 +1,13 @@
 package object;
 
+import game.GamePanel;
+
 public class OBJ_ManaCrystal extends SuperStatesObject {
 
-    public OBJ_ManaCrystal() {
-        super("manaCrystal", TypeStatesObject.ManaCrystal);
+    public OBJ_ManaCrystal(GamePanel gp) {
+        super(gp, TypeStatesObject.ManaCrystal);
+        name = "manaCrystal";
+        folderPath += "manaCrystal";
     }
 
     @Override

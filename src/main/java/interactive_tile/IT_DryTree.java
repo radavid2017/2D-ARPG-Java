@@ -14,7 +14,7 @@ public class IT_DryTree extends DestructibleTile {
         super(gp, TypeDestructibleTile.DryTree);
         setImage("tree/drytree.png");
         setDefaultSolidArea();
-        life = 3;
+        life = 1;
     }
 
     @Override

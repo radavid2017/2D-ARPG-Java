@@ -152,8 +152,10 @@ public class Camera {
     }
 
     public static void rescaleObjects() {
-        for (SuperObject object : gPanel.objects[gPanel.currentMap]) {
-            object.image = UtilityTool.scaledImage(object.originalObjImage, gPanel.tileSize, gPanel.tileSize);
+        for (Entity object : gPanel.objects.get(gPanel.currentMap)) {
+            if (object instanceof SuperObject obj) {
+                obj.image = UtilityTool.scaledImage(obj.originalObjImage, gPanel.tileSize, gPanel.tileSize);
+            }
         }
     }
 
@@ -174,7 +176,7 @@ public class Camera {
     }
 
     public static void fixNPCStuckInTile() {
-        for (Entity npc : gPanel.npcList[gPanel.currentMap]) {
+        for (Entity npc : gPanel.npcList.get(gPanel.currentMap)) {
             int tileHoldingEntity = gPanel.tiles.mapTileNum[gPanel.currentMap][(int) npc.worldX][(int) npc.worldY];
             for (Tile tile : gPanel.tiles.generalTiles){
                 if (tile.idTile == tileHoldingEntity && tile.isColliding) {

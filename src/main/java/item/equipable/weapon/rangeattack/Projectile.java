@@ -42,11 +42,22 @@ public abstract class Projectile extends Weapon implements Atomic {
         // DETECTARE COLIZIUNE
         // proiectil aruncat de jucator
         if(user == getGamePanel().player) {
-            int monsterIndex = getGamePanel().collisionDetector.checkEntity(this, getGamePanel().monsterList);
+            int monsterIndex = getGamePanel().collisionDetector.checkEntity(this, getGamePanel().monsterList.get(getGamePanel().currentMap));
             if (monsterIndex > -1) {
-                getGamePanel().player.doDamageToMonster(monsterIndex);
-                this.generateParticle(getGamePanel().monsterList[getGamePanel().currentMap][monsterIndex]);
+                getGamePanel().player.doDamageToMonster(monsterIndex, getGamePanel().player.currentWeapon.knockBackPower);
+                this.generateParticle(getGamePanel().monsterList.get(getGamePanel().currentMap).get(monsterIndex));  //[getGamePanel().currentMap][monsterIndex]);
                 alive = false;
+            }
+
+            int projectileIndex = getGamePanel().collisionDetector.checkEntity(this, getGamePanel().projectileList);
+            if (projectileIndex > -1 && getGamePanel().projectileList.get(projectileIndex)
+            instanceof Projectile projectile) {
+
+                this.generateParticle(this);
+                projectile.generateParticle(projectile);
+
+                alive = false;
+                projectile.alive = false;
             }
         }
         // proiectil aruncat de alte entitati

@@ -66,7 +66,7 @@ public class NPC_OldMan extends NPC {
     public void speak() {
         super.speak();
 
-        onPath = true;
+        onPath = !onPath;
     }
 
     @Override

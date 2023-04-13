@@ -27,7 +27,8 @@ public class MON_GreenSlime extends Monster{
         timeToChangeDirection = RandomGenerator.getDefault().nextInt(220)+timeToChangeInMotion;
 
         typeMonster = TypeMonster.GreenSlime;
-        speed = 1;
+        defaultSpeed = 1;
+        speed = defaultSpeed;
         maxLife = 4;
         life = maxLife;
 
@@ -46,9 +47,9 @@ public class MON_GreenSlime extends Monster{
     @Override
     public void offensiveBehaviour() {
         int i = new Random().nextInt(100)+1;
-        if (i > 97 && !weapon.alive && shotAvailableCounter == 30) {
+        if (i > 99 && !weapon.alive && shotAvailableCounter == shotAvailableTrigger) {
             weapon.set(worldX, worldY, direction, true, this);
-            getGamePanel().projectileList.add((Projectile) weapon);
+            getGamePanel().projectileList.add(weapon);
             shotAvailableCounter = 0;
         }
     }
@@ -61,7 +62,7 @@ public class MON_GreenSlime extends Monster{
 
     public void update() {
         super.update();
-        if (shotAvailableCounter < 30) {
+        if (shotAvailableCounter < shotAvailableTrigger) {
             shotAvailableCounter++;
         }
 

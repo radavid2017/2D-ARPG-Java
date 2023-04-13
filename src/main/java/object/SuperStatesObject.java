@@ -17,31 +17,34 @@ import java.util.ArrayList;
 public abstract class SuperStatesObject extends Entity {
     public TypeStatesObject typeStatesObject;
     public ArrayList<BufferedImage> imgStates = new ArrayList<>();
-    public String name;
+    public BufferedImage currentState;
+    public int currentStateIndex = 0;
+    public String objPath = "res/objects/";
     public boolean collision = false;
     public double worldX, worldY;
     public Rectangle solidArea = new Rectangle(0, 0, 74, 62);
     public int solidAreaDefaultX = 0;
     public int solidAreaDefaultY = 0;
-    String folderPath;
+    public String folderPath = "res/objectsWithStates/";
 
     public ArrayList<BufferedImage> originalObjStatesImages = new ArrayList<>();
 
-    public SuperStatesObject() {
-
-    }
-
-    public SuperStatesObject(String folderName, TypeStatesObject typeStatesObject) {
-        this.folderPath = "res/objectsWithStates/" + folderName;
+    public SuperStatesObject(GamePanel gp, TypeStatesObject typeStatesObject) {
+        super(gp);
         this.typeStatesObject = typeStatesObject;
     }
+
+//    public SuperStatesObject(TypeStatesObject typeStatesObject) {
+//        super();
+//        this.typeStatesObject = typeStatesObject;
+//    }
 
     public void loadObject(GamePanel gp) {
         RenameFolderFiles.rename(folderPath);
         File directory = new File(folderPath);
         for (int i = 0; i < directory.list().length; i++) {
             String stateObjName = folderPath + "/" + i + ".png";
-            System.out.println("Ipostaza " + name + " a obiectului " + typeStatesObject.name() + " incarcata cu succes.");
+            System.out.println("Ipostaza " + i + " a obiectului " + name + " incarcata cu succes.");
             try {
                 BufferedImage image = ImageIO.read(new FileInputStream(stateObjName));
                 originalObjStatesImages.add(image);
@@ -50,6 +53,9 @@ public abstract class SuperStatesObject extends Entity {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+        if (imgStates != null) {
+            currentState = imgStates.get(0);
         }
     }
 
@@ -62,16 +68,28 @@ public abstract class SuperStatesObject extends Entity {
         this.collision = true;
     }
 
-//
-//    public void draw(Graphics2D g2D, GamePanel gPanel) {
-//        double screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
-//        double screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
-//        // Instantiere camera
-//        Camera camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
-//        // Management Camera
-//        camera.manageObjects(g2D, image);
+//    public void draw(Graphics2D g2D) {
+//        if (getGamePanel().player!=null) {
+//            super.draw(g2D);
+//            camera.drawEntity(g2D, imgStates.get(currentStateIndex));
+//            drawSolidArea(g2D);
+////            System.out.println("x: " + worldX/ getGamePanel().tileSize + " y: " + worldY/getGamePanel().tileSize);
+////            g2D.drawImage(currentState, (int) worldX, (int) worldY, null);
+//        }
 //    }
 
+    public void update() {
+        super.update();
+    }
+
+    public void draw(Graphics2D g2D) {
+        if (getGamePanel().player!=null) {
+            screenX = worldX - getGamePanel().player.worldX + getGamePanel().player.screenX;
+            screenY = worldY - getGamePanel().player.worldY + getGamePanel().player.screenY;
+            g2D.drawImage(currentState, (int) screenX, (int) screenY, null);
+            drawSolidArea(g2D);
+        }
+    }
     public void setWidth(int width) {
         this.solidArea.width = width;
     }
@@ -95,12 +113,16 @@ public abstract class SuperStatesObject extends Entity {
         this.setHeight(height);
     }
 
-    public static BufferedImage setImage(String imagePath) {
-        try {
-            return ImageIO.read(new FileInputStream(imagePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+//    public static BufferedImage setImage(String imagePath) {
+//        try {
+//            return ImageIO.read(new FileInputStream(imagePath));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+
+    public BufferedImage nextState() {
+        return imgStates.get(++currentStateIndex);
     }
 }

@@ -2,8 +2,10 @@ package features;
 
 import entity.Entity;
 import game.GamePanel;
+import object.SuperObject;
 import tile.Tile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CollisionDetector {
@@ -74,52 +76,58 @@ public class CollisionDetector {
         return false;
     }
 
-    // returnez index-ul obiectului cu care are loc colizunea
-    public int manageObjCollision(Entity entity) {
-
+    private int manageObjListCollision(ArrayList<Entity> objects, Entity entity) {
         int index=-1;
-        for (int i = 0; i < gPanel.objects[1].length; i++) { // FIXED
-            if (gPanel.objects[gPanel.currentMap][i] != null) { // FIXED
-                // preia pozitia ariei de coliziune a entitatii
-                entity.solidArea.x += entity.worldX;
-                entity.solidArea.y += entity.worldY;
+        if (objects != null) {
+            for (int i = 0; i < objects.size(); i++) { // FIXED
+                if (objects.get(i) != null) { // FIXED
+                    // preia pozitia ariei de coliziune a entitatii
+                    entity.solidArea.x += entity.worldX;
+                    entity.solidArea.y += entity.worldY;
 
-                // preia pozitia ariei de coliziune a obiectului
-                gPanel.objects[gPanel.currentMap][i].solidArea.x += gPanel.objects[gPanel.currentMap][i].worldX; // FIXED
-                gPanel.objects[gPanel.currentMap][i].solidArea.y += gPanel.objects[gPanel.currentMap][i].worldY; // FIXED
+                    // preia pozitia ariei de coliziune a obiectului
+                    objects.get(i).solidArea.x += objects.get(i).worldX; // FIXED
+                    objects.get(i).solidArea.y += objects.get(i).worldY; // FIXED
 
-                switch (entity.direction) {
-                    case UP -> entity.solidArea.y -= entity.speed;
-                    case DOWN -> entity.solidArea.y += entity.speed;
-                    case LEFT -> entity.solidArea.x -= entity.speed;
-                    case RIGHT -> entity.solidArea.x += entity.speed;
-                }
-                if (entity.solidArea.intersects(gPanel.objects[gPanel.currentMap][i].solidArea)) { // FIXED
-                    if (gPanel.objects[gPanel.currentMap][i].isSolid) { // FIXED
-                        entity.collisionOn = true;
-                        setMotionOff(entity);
+                    switch (entity.direction) {
+                        case UP -> entity.solidArea.y -= entity.speed;
+                        case DOWN -> entity.solidArea.y += entity.speed;
+                        case LEFT -> entity.solidArea.x -= entity.speed;
+                        case RIGHT -> entity.solidArea.x += entity.speed;
                     }
-                    if (entity.isPlayer) {
-                        index = i;
+                    if (entity.solidArea.intersects(objects.get(i).solidArea)) { // FIXED
+                        if (objects.get(i).isSolid) { // FIXED
+                            entity.collisionOn = true;
+                            setMotionOff(entity);
+                        }
+                        if (entity.isPlayer) {
+                            index = i;
+                        }
                     }
+                    entity.solidArea.x = entity.solidAreaDefaultX;
+                    entity.solidArea.y = entity.solidAreaDefaultY;
+                    objects.get(i).solidArea.x = objects.get(i).solidAreaDefaultX; // FIXED
+                    objects.get(i).solidArea.y = objects.get(i).solidAreaDefaultY; // FIXED
                 }
-                entity.solidArea.x = entity.solidAreaDefaultX;
-                entity.solidArea.y = entity.solidAreaDefaultY;
-                gPanel.objects[gPanel.currentMap][i].solidArea.x = gPanel.objects[gPanel.currentMap][i].solidAreaDefaultX; // FIXED
-                gPanel.objects[gPanel.currentMap][i].solidArea.y = gPanel.objects[gPanel.currentMap][i].solidAreaDefaultY; // FIXED
             }
         }
         return index;
     }
 
+    // returnez index-ul obiectului cu care are loc colizunea
+    public int manageObjCollision(Entity entity) {
+        return manageObjListCollision(gPanel.objects.get(gPanel.currentMap), entity);
+    }
+
     /** NPC SAU MONSTRII */
-    public int checkEntity(Entity entity, Entity[][] target) { // FIXED
-//        int index=-1;
-        for (int i = 0; i < target[1].length; i++) { // FIXED
-            if (target[gPanel.currentMap][i] != null) { // FIXED
-                if (collisionOnTarget(entity, target[gPanel.currentMap][i])) { // FIXED
-                    entity.collisionOn = true;
-                    return i;
+    public int checkEntity(Entity entity, ArrayList<Entity> target) { // FIXED
+        if (target != null) {
+            for (int i = 0; i < target.size(); i++) { // FIXED
+                if (target.get(i) != null) { // FIXED
+                    if (collisionOnTarget(entity, target.get(i))) { // FIXED
+                        entity.collisionOn = true;
+                        return i;
+                    }
                 }
             }
         }

@@ -17,10 +17,11 @@ public class OBJ_Coin extends Consumable {
     }
 
     @Override
-    public void use() {
+    public boolean use(Entity user) {
         getGamePanel().playSE("coin.wav");
         getGamePanel().ui.addMessage(name + " +" + value);
         getGamePanel().player.coin += value;
+        return true;
     }
 
     @Override

@@ -3,14 +3,17 @@ package object;
 import animations.StateMachine;
 import animations.TypeAnimation;
 import entity.Entity;
+import features.RenameFolderFiles;
 import features.UtilityTool;
 import game.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
 public abstract class SuperObject extends Entity {
@@ -18,12 +21,15 @@ public abstract class SuperObject extends Entity {
     public StateMachine animation;
     public TypeObject typeObject;
     public BufferedImage image;
-    public String name;
     public String objPath = "res/objects/";
 
     public BufferedImage originalObjImage;
 
     public String description = "";
+
+    public ArrayList<BufferedImage> imgStates = new ArrayList<>();
+    public ArrayList<BufferedImage> originalObjStatesImage = new ArrayList<>();
+    public int currentStateIndex = 0;
 
     public SuperObject(GamePanel gPanel) {
         super(gPanel);
@@ -40,6 +46,30 @@ public abstract class SuperObject extends Entity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadObject(GamePanel gp) {
+        RenameFolderFiles.rename(objPath);
+        File directory = new File(objPath);
+        for (int i = 0; i < directory.list().length; i++) {
+            String stateObjName = objPath + "/" + i + ".png";
+            System.out.println("Ipostaza " + i + " a obiectului " + name + " incarcata cu succes.");
+            try {
+                BufferedImage image = ImageIO.read(new FileInputStream(stateObjName));
+                originalObjStatesImage.add(image);
+                image = UtilityTool.scaledImage(image, gp.tileSize, gp.tileSize);
+                imgStates.add(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (imgStates != null) {
+            image = imgStates.get(0);
+        }
+    }
+
+    public BufferedImage nextState() {
+        return imgStates.get(++currentStateIndex);
     }
 
     public void setupAnimation(String objFolderPath) {

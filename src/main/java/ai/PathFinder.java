@@ -90,21 +90,9 @@ public class PathFinder {
                 }
             }
 
-//            if (gp.tiles.generalTiles.get(tileNum).isColliding) {
-//                // Este solid
-//                node[col][row].solid = true;
-//            }
-
             // Verific tile-urile interactive
-            for (int i = 0; i < gp.interactiveTiles[1].length; i++) {
-                if (gp.interactiveTiles[gp.currentMap][i] != null &&
-                        gp.interactiveTiles[gp.currentMap][i] instanceof DestructibleTile) {
-                    // obiect solid
-                    int itCol = (int) (gp.interactiveTiles[gp.currentMap][i].worldX/gp.tileSize);
-                    int itRow = (int) (gp.interactiveTiles[gp.currentMap][i].worldY/gp.tileSize);
-                    node[itCol][itRow].solid = true;
-                }
-            }
+            checkInteractiveTiles(gp.interactiveTiles.get(gp.currentMap));
+
             // Setez costul
             getCost(node[col][row]);
 
@@ -112,6 +100,18 @@ public class PathFinder {
             if (col == gp.maxWorldCol) {
                 col = 0;
                 row++;
+            }
+        }
+    }
+
+    private void checkInteractiveTiles(ArrayList<Entity> interactiveTiles) {
+        for (int i = 0; i < gp.interactiveTiles.size(); i++) {
+            if (interactiveTiles.get(i) != null &&
+                    interactiveTiles.get(i) instanceof DestructibleTile) {
+                // obiect solid
+                int itCol = (int) (interactiveTiles.get(i).worldX/gp.tileSize);
+                int itRow = (int) (interactiveTiles.get(i).worldY/gp.tileSize);
+                node[itCol][itRow].solid = true;
             }
         }
     }

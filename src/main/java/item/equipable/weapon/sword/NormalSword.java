@@ -13,6 +13,9 @@ public class NormalSword extends Sword {
         name = "Sabie Normala";
         description = "[" + name + "]\nO sabie veche.";
         modelSword = ModelSword.NormalSword;
+
+        knockBackPower = 2;
+
         setAttackAreaValues();
 
     }

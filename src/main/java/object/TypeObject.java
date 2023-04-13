@@ -7,5 +7,6 @@ public enum TypeObject {
     Boots,
     Item,
     Consumable,
-    Coin
+    Coin,
+    Obstacle
 }

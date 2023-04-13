@@ -2,5 +2,6 @@ package object;
 
 public enum TypeStatesObject {
     HEART,
-    ManaCrystal
+    ManaCrystal,
+    StatesObstacle
 }

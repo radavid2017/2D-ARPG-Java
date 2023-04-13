@@ -15,6 +15,8 @@ public class Baltag extends Axe {
         modelAxe = ModelAxe.Baltag;
         description = "[" + name + "]\nBaltagul lui Ghita.";
 
+        knockBackPower = 10;
+
         setAttackAreaValues();
     }
 

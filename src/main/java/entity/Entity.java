@@ -38,6 +38,10 @@ public abstract class Entity {
     public boolean collisionOn = false;
     public boolean isSolid = true;
 
+    public int knockBackCounter = 0;
+    public boolean knockBack = false;
+    public int knockBackPower = 0;
+
     public String name;
 
     /** Suprafata de detectare a loviturilor */
@@ -229,5 +233,29 @@ public abstract class Entity {
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, -1));
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,-2, 1));
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, 1));
+    }
+
+    public int getLeftX() {
+        return (int) (worldX + solidArea.x);
+    }
+
+    public int getRightX() {
+        return (int) (worldX + solidArea.x + solidArea.width);
+    }
+
+    public int getTopY() {
+        return (int) (worldY + solidArea.y);
+    }
+
+    public int getBottomY() {
+        return (int) (worldY + solidArea.y + solidArea.height);
+    }
+
+    public int getCol() {
+        return (int) ((worldX + solidArea.x)/gPanel.tileSize);
+    }
+
+    public int getRow() {
+        return (int) ((worldY + solidArea.y)/gPanel.tileSize);
     }
 }

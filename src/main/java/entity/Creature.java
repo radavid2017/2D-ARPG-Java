@@ -6,8 +6,6 @@ import animations.TypeAnimation;
 import features.Direction;
 import game.GamePanel;
 
-import java.util.LinkedHashMap;
-
 public abstract class Creature extends Entity {
     /** Liste de imagini pentru realizarea animatiilor de miscare */
     public AnimationState walkUp, walkDown, walkLeft, walkRight;
@@ -15,6 +13,8 @@ public abstract class Creature extends Entity {
     public StateMachine movement = null;
     public StateMachine idle = null;
     public StateMachine attackState = null;
+
+    public double defaultSpeed;
 
     public Creature(GamePanel gp) {
         super(gp);
@@ -26,17 +26,89 @@ public abstract class Creature extends Entity {
         if (this instanceof Player) {
             gPanel.collisionDetector.manageObjCollision(this);
         }
-        gPanel.collisionDetector.checkEntity(this, gPanel.npcList);
-        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList);
+        gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
+        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
         gPanel.collisionDetector.checkPlayer(this);
-        gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles);
+        gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
+    }
+
+    private boolean hasToStop() {
+        checkCollisions();
+        if (collisionOn) {
+            knockBackCounter = 0;
+            knockBack = false;
+            speed = defaultSpeed;
+            return true;
+        }
+        return false;
     }
 
     public void update() {
-        checkCollisions();
 
-        if (!collisionOn && inMotion) {
-            this.manageMovement();
+        if (knockBack) {
+            if(!hasToStop()) {
+                int i = 0;
+                switch (gPanel.player.direction) {
+                    case UP -> {
+                        while (i < speed) {
+                            if(hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldY--;
+                                i++;
+                            }
+                        }
+                    }
+                    case DOWN -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldY++;
+                                i++;
+                            }
+                        }
+                    }
+                    case LEFT -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldX--;
+                                i++;
+                            }
+                        }
+                    }
+                    case RIGHT -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldX++;
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            knockBackCounter++;
+            if (knockBackCounter == 10) {
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            }
+        }
+        else {
+            checkCollisions();
+
+            if (!collisionOn && inMotion) {
+                this.manageMovement();
+            }
         }
 
         manageInvincible();

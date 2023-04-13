@@ -26,18 +26,22 @@ public abstract class OBJ_Potion extends Consumable {
 
     public abstract void setHealingValue();
 
-    public void use() {
-        GamePanel.gameState = GameState.Dialogue;
-        getGamePanel().ui.setCurrentDialogue(new Dialogue("Ai consumat " + name + "!\n" +
-                "Incepi sa te vindeci..."));
+    @Override
+    public boolean use(Entity user) {
 
+        if (user.life != user.maxLife) {
+            GamePanel.gameState = GameState.Dialogue;
+            getGamePanel().ui.setCurrentDialogue(new Dialogue("Ai consumat " + name + "!\n" +
+                    "Incepi sa te vindeci..."));
 
-        getGamePanel().player.life += healingValue;
+            getGamePanel().player.life += healingValue;
 
-        if (getGamePanel().player.life > getGamePanel().player.maxLife) {
-            getGamePanel().player.life = getGamePanel().player.maxLife;
+            if (getGamePanel().player.life > getGamePanel().player.maxLife) {
+                getGamePanel().player.life = getGamePanel().player.maxLife;
+            }
+            getGamePanel().playSE("powerup.wav");
+            return true;
         }
-        getGamePanel().playSE("powerup.wav");
-
+        return false;
     }
 }

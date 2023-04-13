@@ -18,7 +18,9 @@ public class Fireball extends Spell {
         // damage = 2;
         useCost = 1;
         alive = false;
+
         setupAnimation(objPath + "fireball");
+        setDefaultSolidArea();
     }
 
     @Override
@@ -32,7 +34,10 @@ public class Fireball extends Spell {
 
     @Override
     public void setDefaultSolidArea() {
-
+        solidArea.width = getGamePanel().tileSize/2;
+        solidArea.height = getGamePanel().tileSize/2;
+        solidAreaDefaultX = 25;
+        solidAreaDefaultY = 25;
     }
 
     public void playSound() {

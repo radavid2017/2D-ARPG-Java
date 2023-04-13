@@ -75,7 +75,7 @@ public class EventHandler {
                 teleport(0, 10, 39);
             }
             else if (hit(1, 12, 9, Direction.UP)) {
-                speak(gPanel.npcList[1][0]);
+                speak(gPanel.npcList.get(1).get(0));
             }
         }
     }

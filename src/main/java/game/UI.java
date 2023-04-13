@@ -102,13 +102,13 @@ public class UI {
         }
 
         // INSTANTIERE HUD HP JUCATOR
-        heart = new OBJ_Heart();
+        heart = new OBJ_Heart(gPanel);
         heart.screenX = 15;
         heart.screenY = 15;
         heart.loadObject(gPanel);
 //        hudList.add(heart);
         // INSTANTIERE MANA CRYSTAL
-        manaCrystal = new OBJ_ManaCrystal();
+        manaCrystal = new OBJ_ManaCrystal(gPanel);
         manaCrystal.screenX = heart.screenX - 15;
         manaCrystal.screenY = heart.screenY * 7;
         manaCrystal.loadObject(gPanel);

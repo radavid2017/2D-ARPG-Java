@@ -15,5 +15,5 @@ public abstract class Consumable extends Item{
         objPath += "consumable/";
     }
 
-    public abstract void use();
+    public abstract boolean use(Entity user);
 }
