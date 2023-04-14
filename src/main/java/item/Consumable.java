@@ -13,6 +13,7 @@ public abstract class Consumable extends Item{
         super(gPanel, TypeItem.Consumable, price);
         this.typeConsumable = typeConsumable;
         objPath += "consumable/";
+        stackable = true;
     }
 
     public abstract boolean use(Entity user);

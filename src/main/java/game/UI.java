@@ -276,13 +276,16 @@ public class UI {
                     GamePanel.gameState = GameState.Dialogue;
                     gPanel.ui.setCurrentDialogue(new Dialogue("Monede insuficiente! Revino dupa ce aduni mai multe!"));
                     gPanel.ui.drawDialogueScreen();
-                } else if (gPanel.player.inventory.size() == gPanel.player.maxInventorySize) {
-                    gPanel.ui.setSubState(0);
-                    GamePanel.gameState = GameState.Dialogue;
-                    gPanel.ui.setCurrentDialogue(new Dialogue("Inventarul tau este plin!"));
-                } else {
-                    gPanel.player.coin -= merchant.inventory.get(itemIndex).price;
-                    gPanel.player.inventory.add(merchant.inventory.get(itemIndex));
+                }
+                else {
+                    if (gPanel.player.obtainItem(merchant.inventory.get(itemIndex))) {
+                        gPanel.player.coin -= merchant.inventory.get(itemIndex).price;
+                    }
+                    else {
+                        gPanel.ui.setSubState(0);
+                        GamePanel.gameState = GameState.Dialogue;
+                        gPanel.ui.setCurrentDialogue(new Dialogue("Inventarul tau este plin!"));
+                    }
                 }
             }
         }
@@ -305,7 +308,7 @@ public class UI {
                     currentDialogue = new Dialogue("Nu poti vinde un obiect echipat!");
                 } else {
                     gPanel.player.coin += gPanel.player.inventory.get(itemIndex).price / 2;
-                    gPanel.player.inventory.remove(itemIndex);
+                    gPanel.player.removeItem(itemIndex);
                 }
             }
         }
@@ -878,6 +881,12 @@ public class UI {
     public int getXForCenteredText(String text) {
         int length = (int) g2D.getFontMetrics().getStringBounds(text, g2D).getWidth();
         return gPanel.screenWidth / 2 - length / 2;
+    }
+
+    public int getXForAlignToRightText(String text, int tailX) {
+        int length = (int) g2D.getFontMetrics().getStringBounds(text, g2D).getWidth();
+        int x = tailX - length;
+        return x;
     }
 
     public void drawPauseScreen() {

@@ -38,12 +38,11 @@ public abstract class OBJ_Chest extends Obstacle {
             StringBuilder sb = new StringBuilder();
             sb.append("Ai gasit " + loot.name + "!");
 
-            if (!getGamePanel().player.hasSpace()) {
+            if (!getGamePanel().player.obtainItem(loot)) {
                 sb.append("\n...Dar nu ai spatiu inventar!");
             }
             else {
                 sb.append("\nAi obtinut " + loot.name + "!");
-                getGamePanel().player.addToInventory(loot);
                 image = nextState();
                 opened = true;
             }

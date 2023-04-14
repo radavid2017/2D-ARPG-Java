@@ -71,6 +71,7 @@ public class AssetPool {
         loadAxe("axe.png", 33, 21, ModelAxe.Baltag, mapNum);
         loadShield("shield_blue.png", 35, 21, ModelShield.BlueShield, mapNum);
         loadPotion("potion_red.png", 22, 27, PotionModel.PotionRed, mapNum);
+        loadPotion("potion_red.png", 22, 28, PotionModel.PotionRed, mapNum);
         loadCoin(23, 30, mapNum);
         loadObstacle(14, 28, TypeObstacle.Door, mapNum);
         loadObstacle(12, 12, TypeObstacle.Door, mapNum);

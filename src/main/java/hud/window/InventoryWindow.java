@@ -93,8 +93,27 @@ public class InventoryWindow extends WindowHUD {
                     g2D.fillRoundRect(slotX, slotY, gp.defaultTileSize, gp.defaultTileSize, 10, 10);
                 }
             }
-
             g2D.drawImage(inventory.get(i).image, slotX, slotY, null);
+
+            // AFISARE CANTITATE OBIECTE STACKABLE
+            if (inventory.get(i).amount > 1) {
+                g2D.setFont(g2D.getFont().deriveFont(48f));
+                int amountX;
+                int amountY;
+
+                String s = String.valueOf(inventory.get(i).amount);
+                amountX = gp.ui.getXForAlignToRightText(s, slotX + 95);
+                amountY = slotY + 95;
+
+                // UMBRA
+                g2D.setColor(new Color(60, 60, 60));
+                g2D.drawString(s, amountX, amountY);
+
+                // NUMARUL
+                g2D.setColor(Color.white);
+                g2D.drawString(s, amountX - 3, amountY - 3);
+            }
+
 //            System.out.println("i: " + i);
             slotX += slotSize;
             if (i % 10 == 4 || i % 10 == 9) {

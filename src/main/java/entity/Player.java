@@ -12,6 +12,7 @@ import item.Equipable;
 import item.Item;
 import item.consumable.coin.OBJ_Coin;
 import item.consumable.key.KeyGold;
+import item.consumable.potion.PotionRed;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
 import item.equipable.weapon.rangeattack.Projectile;
@@ -107,7 +108,7 @@ public class Player extends Creature {
         dexterity = 1;
         exp = 0;
         nextLevelExp = 5;
-        coin = 0;
+        coin = 500;
         currentWeapon = new NormalSword(gPanel);
         currentShield = new NormalShield(gPanel);
 
@@ -202,15 +203,44 @@ public class Player extends Creature {
         }
     }
 
-//    private void manageInvincible() {
-//        if (invincible) {
-//            invincibleCounter++;
-//            if (invincibleCounter > 60) {
-//                invincible = false;
-//                invincibleCounter = 0;
-//            }
-//        }
-//    }
+    public int searchItemInInventory(String itemName) {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i).name.equals(itemName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private boolean addIfPossible(Item item) {
+        if (inventory.size() < maxInventorySize) {
+            inventory.add(item);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean obtainItem(Item item) {
+        // Verific stackable
+        if (item.stackable) {
+            int index = searchItemInInventory(item.name);
+
+            if (index > -1) {
+                inventory.get(index).amount++;
+                return true;
+            }
+            else {
+                // Item nou
+                // Verificam slot disponibil
+                return addIfPossible(item);
+            }
+        }
+        else {
+            // Nu e stackable
+            // Verificam slot disponibil
+            return addIfPossible(item);
+        }
+    }
 
     @Override
     public void draw(Graphics2D g2D) {
@@ -299,17 +329,11 @@ public class Player extends Creature {
 
     public void setItems() {
         inventory.clear();
-        int slots = 0;
-        inventory.add(currentWeapon);
-        inventory.add(currentShield);
-        slots += 2;
+        obtainItem(currentWeapon);
+        obtainItem(currentShield);
         for (int i = 0; i < 2; i++) {
-            if (slots < maxInventorySize) {
-                inventory.add(new KeyGold(gPanel));
-                slots++;
-            }
-            else
-                return;
+            obtainItem(new KeyGold(gPanel));
+            obtainItem(new PotionRed(gPanel));
         }
     }
 
@@ -490,10 +514,28 @@ public class Player extends Creature {
                     Consumable selectedConsumable = (Consumable) selectedItem;
                     boolean hasUsed = selectedConsumable.use(this);
                     if (hasUsed) {
-                        inventory.remove(itemIndex);
+                        removeItem(selectedConsumable);
                     }
                 }
             }
+        }
+    }
+
+    public void removeItem(Item item) {
+        if (item.amount > 1) {
+            item.amount--;
+        }
+        else {
+            inventory.remove(item);
+        }
+    }
+
+    public void removeItem(int itemIndex) {
+        if (inventory.get(itemIndex).amount > 1) {
+            inventory.get(itemIndex).amount--;
+        }
+        else {
+            inventory.remove(itemIndex);
         }
     }
 
@@ -529,77 +571,34 @@ public class Player extends Creature {
 
         if (objIndex > -1) {
             // PICKUP COIN
-            if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof OBJ_Coin) {//[gPanel.currentMap][objIndex] instanceof OBJ_Coin) {  // FIXED
-                // FIXED
-//                ((OBJ_Coin) gPanel.objects[gPanel.currentMap][objIndex]).use();
-                ((OBJ_Coin) gPanel.objects.get(gPanel.currentMap).get(objIndex)).use(this);
-//                coin.use();
-//                gPanel.objects[gPanel.currentMap][objIndex] = null;  // FIXED
-                gPanel.objects.get(gPanel.currentMap).remove(objIndex);  // FIXED
-//                gPanel.objects.remove(objIndex);
-            }
-
-            else if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Obstacle obstacle) {
-                if (keyH.enterPressed) {
-                    obstacle.interact();
+            if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Item item) {
+                if (item instanceof OBJ_Coin coin) {//[gPanel.currentMap][objIndex] instanceof OBJ_Coin) {  // FIXED
+                    // FIXED
+                    coin.use(this);
+                    gPanel.objects.get(gPanel.currentMap).remove(objIndex);  // FIXED
                 }
-            }
-
-            else {
-                // PICKUP ITEME INVENTAR
-                if (inventory.size() < maxInventorySize) {
-//                    inventory.add((Item) gPanel.objects[gPanel.currentMap][objIndex]); // FIXED
-                    inventory.add((Item) gPanel.objects.get(gPanel.currentMap).get(objIndex)); // FIXED
-                    gPanel.playSE("coin.wav");
+                else {
+                    // PICKUP ITEME INVENTAR
+                    if (obtainItem(item)) {
+                        gPanel.playSE("coin.wav");
 //                switch (gPanel.objects.get(objIndex).typeObject) {
 //                    case Key -> gPanel.playSE("coin.wav");
 //                }
-                    textMsg = "Ai primit " + gPanel.objects.get(gPanel.currentMap).get(objIndex).name + "!"; // FIXED
+                        textMsg = "Ai primit " + item.name + "!"; // FIXED
+                    }
+                    else {
+                        textMsg = "Nu mai ai spatiu in inventar!";
+                    }
+                    gPanel.ui.addMessage(textMsg);
+                    gPanel.objects.get(gPanel.currentMap).remove(objIndex); // FIXED
                 }
-                else {
-                    textMsg = "Nu mai ai spatiu in inventar!";
-                }
-                gPanel.ui.addMessage(textMsg);
-//                gPanel.objects.set(objIndex, null);
-//                gPanel.objects[gPanel.currentMap][objIndex] = null; // FIXED
-                gPanel.objects.get(gPanel.currentMap).remove(objIndex); // FIXED
-//                gPanel.objects.remove(objIndex);
             }
-//            TypeObject typeObject = gPanel.objects.get(objIndex).typeObject;
-//            switch (typeObject) {
-//                case Key -> {
-//                    gPanel.playSE("coin.wav");
-//                    numKeys++;
-//                    gPanel.objects.remove(objIndex);
-//                    gPanel.ui.showMessage("Ai gasit o cheie!");
-//                }
-//                case Door -> {
-//                    if (numKeys > 0) {
-//                        gPanel.playSE("unlock.wav");
-//                        gPanel.objects.remove(objIndex);
-//                        numKeys--;
-//                        gPanel.ui.showMessage("Ai deschis usa!");
-//                    } else {
-//                        gPanel.ui.showMessage("Iti trebuie o cheie!");
-//                    }
-//                }
-//                case Boots -> {
-//                    gPanel.playSE("powerup.wav");
-//                    // mareste viteza jucatorului
-//                    float increaseSpeed = 4f;
-//                    speed += increaseSpeed;
-//                    AnimationState.timeToChangeFrame -= increaseSpeed;
-//                    gPanel.objects.remove(objIndex);
-//                    gPanel.ui.showMessage("Acum esti mai rapid!");
-//                }
-//                case Chest -> {
-//                    gPanel.ui.gameOver = true;
-//                    UI.GAME_OVER = true;
-//                    gPanel.stopMusic();
-//                    gPanel.playSE("fanfare.wav");
-//                    gPanel.hasPlayed = true;
-//                }
-//            }
+            else if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Obstacle obstacle) {
+                if (keyH.enterPressed) {
+                    System.out.println("AICI");
+                    obstacle.interact();
+                }
+            }
         }
     }
 
