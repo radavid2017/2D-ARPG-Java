@@ -871,7 +871,8 @@ public class UI {
                 return;
             }
         }
-        gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
+        gp.setupGame();
+//        gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
         GamePanel.gameState = GameState.Play;
         titleScreenState = TitleScreenState.MAIN_PAGE;
         gp.player.getPlayerSprites();

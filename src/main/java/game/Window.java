@@ -44,7 +44,7 @@ public class Window {
         // fereastra devine vizibila
         window.setVisible(true);
 
-        gamePanel.setupGame();
+//        gamePanel.setupGame();
         gamePanel.startGameThread();
 
     }

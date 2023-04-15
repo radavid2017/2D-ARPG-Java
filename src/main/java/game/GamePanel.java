@@ -3,6 +3,7 @@ package game;
 import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
+import environment.EnvironmentManager;
 import features.*;
 import interactive_tile.InteractiveTile;
 import monster.Monster;
@@ -80,6 +81,9 @@ public class GamePanel extends JPanel implements Runnable {
     public UI ui = new UI(this);
     public EventHandler eHandler = new EventHandler(this);
 
+    /** Efecte de lumina */
+    EnvironmentManager environmentManager = new EnvironmentManager(this);
+
     /** Creand firul de executie al jocului, adaugam conceptul de timp in joc */
     // crearea firului de executie a jocului
     Thread gameThread;
@@ -111,7 +115,7 @@ public class GamePanel extends JPanel implements Runnable {
     public boolean hasZoomed = false;
 
     // GAME STATE - starea jocului
-    public static GameState gameState = GameState.NULL;
+    public static GameState gameState = GameState.Title;
 
     /** Constructorul panoului de joc */
     public GamePanel() {
@@ -151,9 +155,11 @@ public class GamePanel extends JPanel implements Runnable {
         assetPool.setMonster();
         // interactive tiles
         assetPool.setInteractiveTiles();
+        // setUp jucator
+        player = new Player(this, keyH, tileSize * 23, tileSize * 21, Direction.DOWN, characterClassPath);
+        // Efecte de lumina
+        environmentManager.setup();
         // setup muzica de fundal
-//        playMusic("BlueBoyAdventure.wav");
-//        stopMusic();
         gameState = GameState.Title;
     }
 
@@ -353,6 +359,11 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             entities.clear();
+
+            // Efecte de lumina
+            if (player != null) {
+                environmentManager.draw(g2D);
+            }
 
             // UI
             ui.draw(g2D);
