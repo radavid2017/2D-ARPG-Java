@@ -305,6 +305,9 @@ public class GamePanel extends JPanel implements Runnable {
 
                 // INTERACTIVE TILES
                 updateList(interactiveTiles.get(currentMap));
+
+                // Update Efecte Mediu Inconjurator
+                environmentManager.update();
             }
             case Pause -> {
                 // nimic

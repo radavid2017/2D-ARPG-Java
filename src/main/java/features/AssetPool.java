@@ -2,6 +2,9 @@ package features;
 
 import interactive_tile.*;
 import item.consumable.coin.OBJ_Coin;
+import item.equipable.light.Lantern;
+import item.equipable.light.Light;
+import item.equipable.light.ModelLight;
 import item.equipable.weapon.axe.Axe;
 import item.equipable.weapon.axe.Baltag;
 import item.equipable.weapon.axe.ModelAxe;
@@ -76,6 +79,7 @@ public class AssetPool {
         loadObstacle(14, 28, TypeObstacle.Door, mapNum);
         loadObstacle(12, 12, TypeObstacle.Door, mapNum);
         loadObstacle(23, 16, TypeObstacle.Chest, mapNum);
+        loadLight(18, 20, ModelLight.Lantern, mapNum);
     }
 
     public void loadCoin(int worldX, int worldY, int mapNum) {
@@ -144,6 +148,17 @@ public class AssetPool {
         }
 
         gPanel.statesObjectList.add(statesObject);
+    }
+
+    private void loadLight(int worldX, int worldY, ModelLight modelLight, int mapNum) {
+        Light light = null;
+        switch (modelLight) {
+            case Lantern -> light = new Lantern(gPanel);
+        }
+        if (light != null) {
+            light.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+            gPanel.objects.get(mapNum).add(light);
+        }
     }
 
     private void loadShield(String itemName, int worldX, int worldY, ModelShield modelShield, int mapNum) {

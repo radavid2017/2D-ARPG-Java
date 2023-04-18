@@ -2,5 +2,6 @@ package item.equipable;
 
 public enum TypeEquipable {
     Weapon,
-    Shield
+    Shield,
+    Light
 }

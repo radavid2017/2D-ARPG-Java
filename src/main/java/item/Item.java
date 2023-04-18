@@ -3,6 +3,7 @@ package item;
 import game.CharacterClass;
 import game.GamePanel;
 import object.SuperObject;
+import object.TypeObject;
 
 public abstract class Item  extends SuperObject {
 
@@ -14,6 +15,7 @@ public abstract class Item  extends SuperObject {
     public Item(GamePanel gPanel, TypeItem typeItem, int price) {
         super(gPanel);
         this.typeItem = typeItem;
+        typeObject = TypeObject.Item;
         objPath = "res/item/";
 
         this.price = price;

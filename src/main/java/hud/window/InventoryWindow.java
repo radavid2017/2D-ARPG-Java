@@ -5,6 +5,7 @@ import entity.Player;
 import features.Dialogue;
 import game.GamePanel;
 import game.GameState;
+import item.Equipable;
 import item.Item;
 import item.consumable.coin.OBJ_Coin;
 import npc.NPC;
@@ -88,7 +89,8 @@ public class InventoryWindow extends WindowHUD {
             // CURSOR ECHIPARE PLAYER
             if (entity instanceof Player player) {
                 if (player.inventory.get(i) == player.currentWeapon
-                        || player.inventory.get(i) == player.currentShield) {
+                        || player.inventory.get(i) == player.currentShield
+                        || player.inventory.get(i) == player.currentLight) {
                     g2D.setColor(new Color(240, 190, 90));
                     g2D.fillRoundRect(slotX, slotY, gp.defaultTileSize, gp.defaultTileSize, 10, 10);
                 }

@@ -21,7 +21,6 @@ public abstract class Shield extends Equipable {
         super(gp, TypeEquipable.Shield, playerClass, price);
         this.defense = defense;
         addDefenseType(defenseType);
-        typeObject = TypeObject.Item;
     }
 
     public void addDefenseType(IDoDefense defenseType) {

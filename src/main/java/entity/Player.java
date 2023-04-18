@@ -13,6 +13,7 @@ import item.Item;
 import item.consumable.coin.OBJ_Coin;
 import item.consumable.key.KeyGold;
 import item.consumable.potion.PotionRed;
+import item.equipable.light.Light;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
 import item.equipable.weapon.rangeattack.Projectile;
@@ -34,6 +35,8 @@ public class Player extends Creature {
 
     public KeyHandler keyH;
 
+    public boolean lightUpdated = false;
+
     public final int screenX;
     public final int screenY;
 
@@ -47,6 +50,7 @@ public class Player extends Creature {
     public int coin;
     public Weapon currentWeapon;
     public Shield currentShield;
+    public Light currentLight;
 
     /** Lista animatii arme */
     public StateMachine attackWeapon = null;
@@ -507,6 +511,9 @@ public class Player extends Creature {
                                 currentShield = (Shield) selectedEquipable;
                                 updateDefense();
                             }
+                            case Light -> {
+                                updateCurrentLight((Light) selectedEquipable);
+                            }
                         }
                     }
                 }
@@ -519,6 +526,16 @@ public class Player extends Creature {
                 }
             }
         }
+    }
+
+    private void updateCurrentLight(Light light) {
+        if (currentLight == light) {
+            currentLight = null;
+        }
+        else {
+            currentLight = light;
+        }
+        lightUpdated = true;
     }
 
     public void removeItem(Item item) {
