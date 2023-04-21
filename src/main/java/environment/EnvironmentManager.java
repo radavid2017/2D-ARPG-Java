@@ -23,4 +23,8 @@ public class EnvironmentManager {
     public void draw(Graphics2D g2D) {
         lighting.draw(g2D);
     }
+
+    public Lighting getLighting() {
+        return lighting;
+    }
 }

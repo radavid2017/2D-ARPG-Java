@@ -1,17 +1,23 @@
 package environment;
 
 import game.GamePanel;
+import item.equipable.light.DayState;
 
 import java.awt.*;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Lighting {
     GamePanel gp;
     BufferedImage darknessFilter;
+
+    public void resetDayCounter() {
+        dayCounter = 0;
+    }
+
+    // Variabile Ciclu Zi-Noapte
+    int dayCounter;
+    public float filterAlpha = 0f;
+    public DayState dayState = DayState.Day;
 
     public Lighting(GamePanel gp) {
         this.gp = gp;
@@ -24,7 +30,7 @@ public class Lighting {
         Graphics2D g2D = (Graphics2D) darknessFilter.getGraphics();
 
         if (gp.player.currentLight == null) {
-            g2D.setColor(new Color(0, 0, 0, 0.98f));
+            g2D.setColor(new Color(0, 0, 0.1f, 0.98f));
         }
         else {
             //        // Creeaza o suprafata de dimensiunea ecranului
@@ -54,7 +60,7 @@ public class Lighting {
             Color[] colors = new Color[gradationSize];
             float[] fractions = new float[gradationSize];
             for (int i = 0; i < gradationSize; i++) {
-                colors[i] = new Color(0, 0, 0, darknessLevel);
+                colors[i] = new Color(0, 0, 0.1f, darknessLevel);
                 darknessLevel += 0.0816f;
 
                 if (i == 1) {
@@ -92,9 +98,64 @@ public class Lighting {
             setLightSource();
             gp.player.lightUpdated = false;
         }
+
+        // Verifica starea zilei
+        switch (dayState) {
+            case Day -> {
+                dayCounter++;
+
+                if (dayCounter > 600) {
+                    dayState = DayState.Dusk;
+                    dayCounter = 0;
+                }
+            }
+
+            case Dusk -> {
+                filterAlpha += 0.001f; // ecranul devine mai intunecat
+
+                if (filterAlpha > 1f) {
+                    filterAlpha = 1f;
+                    dayState = DayState.Night;
+                }
+            }
+
+            case Night -> {
+                dayCounter++;
+
+                if (dayCounter > 600) {
+                    dayState = DayState.Dawn;
+                    dayCounter = 0;
+                }
+            }
+
+            case Dawn -> {
+                filterAlpha -= 0.001f;
+
+                if (filterAlpha < 0f) {
+                    filterAlpha = 0f;
+                    dayState = DayState.Day;
+                }
+            }
+        }
     }
 
     public void draw(Graphics2D g2D) {
+        g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
         g2D.drawImage(darknessFilter, 0, 0, null);
+        g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+        // DEBUG
+        String situation = "";
+        switch (dayState) {
+            case Day -> situation = "Ziua";
+            case Dusk -> situation = "Apus";
+            case Night -> situation = "Noapte";
+            case Dawn -> situation = "Insorit";
+        }
+        g2D.setColor(Color.white);
+        g2D.setFont(gp.ui.font);
+        g2D.setFont(g2D.getFont().deriveFont(70f));
+        int x = gp.ui.getXForAlignToRightText(situation, gp.screenWidth-200);
+        g2D.drawString(situation, x, 75);
     }
 }

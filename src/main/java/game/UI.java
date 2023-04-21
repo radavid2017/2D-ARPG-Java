@@ -5,6 +5,7 @@ import features.Dialogue;
 import features.Direction;
 import features.UtilityTool;
 import hud.window.InventoryWindow;
+import item.equipable.light.DayState;
 import npc.NPC;
 import object.OBJ_Heart;
 import object.OBJ_ManaCrystal;
@@ -181,6 +182,9 @@ public class UI {
             case TradeState -> {
                 drawTradeScreen();
             }
+            case SleepState -> {
+                drawSleepScreen();
+            }
         }
 //        if (!gameOver) {
 //            // setarea culorii si a fontului default
@@ -195,6 +199,28 @@ public class UI {
 //            // manevrarea si afisarea textelor pentru finalul rundei / jocului
 //            manageGameOverDisplay(g2D);
 //        }
+    }
+
+    private void drawSleepScreen() {
+        counter++;
+
+        if (counter < 120) {
+            gPanel.environmentManager.getLighting().filterAlpha += 0.01f;
+            if (gPanel.environmentManager.getLighting().filterAlpha > 1f) {
+                gPanel.environmentManager.getLighting().filterAlpha = 1f;
+            }
+        }
+
+        if (counter >= 120) {
+            gPanel.environmentManager.getLighting().filterAlpha -= 0.01f;
+            if (gPanel.environmentManager.getLighting().filterAlpha <= 0f) {
+                gPanel.environmentManager.getLighting().filterAlpha = 0f;
+                counter = 0;
+                gPanel.environmentManager.getLighting().dayState = DayState.Day;
+                gPanel.environmentManager.getLighting().resetDayCounter();
+                GamePanel.gameState = GameState.Play;
+            }
+        }
     }
 
     private void drawTradeScreen() {

@@ -2,14 +2,9 @@ package hud.window;
 
 import entity.Entity;
 import entity.Player;
-import features.Dialogue;
 import game.GamePanel;
-import game.GameState;
-import item.Equipable;
 import item.Item;
-import item.consumable.coin.OBJ_Coin;
-import npc.NPC;
-import npc.NPC_Merchant;
+import item.consumable.coin.Coin;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -50,7 +45,7 @@ public class InventoryWindow extends WindowHUD {
             priceWindow.x += 1000;
         }
 
-        OBJ_Coin coin = new OBJ_Coin(gp);
+        Coin coin = new Coin(gp);
         coinImg = coin.image;
     }
 

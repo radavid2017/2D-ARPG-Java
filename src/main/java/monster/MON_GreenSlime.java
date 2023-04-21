@@ -3,10 +3,9 @@ package monster;
 import entity.AttackStyle;
 import features.Direction;
 import game.GamePanel;
-import item.consumable.coin.OBJ_Coin;
+import item.consumable.coin.Coin;
 import item.consumable.potion.PotionRed;
 import item.equipable.shield.BlueShield;
-import item.equipable.weapon.rangeattack.Projectile;
 import item.equipable.weapon.rangeattack.Rock;
 
 import java.util.Random;
@@ -88,7 +87,7 @@ public class MON_GreenSlime extends Monster{
 
         // 50% sanse de a arunca un banut
         if (i < 50) {
-            dropItem(new OBJ_Coin(getGamePanel()));
+            dropItem(new Coin(getGamePanel()));
         }
         // 25% sanse de a arunca potiune rosie
         if (i >= 50 && i < 75) {

@@ -1,7 +1,8 @@
 package features;
 
 import interactive_tile.*;
-import item.consumable.coin.OBJ_Coin;
+import item.consumable.Tent;
+import item.consumable.coin.Coin;
 import item.equipable.light.Lantern;
 import item.equipable.light.Light;
 import item.equipable.light.ModelLight;
@@ -80,13 +81,19 @@ public class AssetPool {
         loadObstacle(12, 12, TypeObstacle.Door, mapNum);
         loadObstacle(23, 16, TypeObstacle.Chest, mapNum);
         loadLight(18, 20, ModelLight.Lantern, mapNum);
+        loadTent(19, 20, mapNum);
     }
 
     public void loadCoin(int worldX, int worldY, int mapNum) {
-        ArrayList<SuperObject> objectArrayList = new ArrayList<>();
-        OBJ_Coin coin = new OBJ_Coin(gPanel);
+        Coin coin = new Coin(gPanel);
         coin.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
         gPanel.objects.get(mapNum).add(coin);
+    }
+
+    public void loadTent(int worldX, int worldY, int mapNum) {
+        Tent tent = new Tent(gPanel);
+        tent.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        gPanel.objects.get(mapNum).add(tent);
     }
 
     public void setStatesObjects() {

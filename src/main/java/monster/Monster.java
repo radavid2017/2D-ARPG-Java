@@ -6,16 +6,11 @@ import entity.Entity;
 import entity.TypeAI;
 import game.GamePanel;
 import item.Item;
-import item.consumable.coin.OBJ_Coin;
-import item.consumable.potion.PotionRed;
-import item.equipable.shield.BlueShield;
 import item.equipable.weapon.Weapon;
-import object.SuperObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 public abstract class Monster extends ArtificialIntelligence {
 

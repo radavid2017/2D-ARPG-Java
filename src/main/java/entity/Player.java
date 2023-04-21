@@ -10,7 +10,8 @@ import interactive_tile.DestructibleTile;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
-import item.consumable.coin.OBJ_Coin;
+import item.consumable.Tent;
+import item.consumable.coin.Coin;
 import item.consumable.key.KeyGold;
 import item.consumable.potion.PotionRed;
 import item.equipable.light.Light;
@@ -258,32 +259,35 @@ public class Player extends Creature {
         /** Management animatii */
         BufferedImage sprite = null;
 
-        inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
-        /** Animatiile de atac */
-        if (isAttacking()) {
-            if(inMotion) inMotion = false;
-            switch (characterClass) {
-                case WARRIOR -> {
-                    sprite = attackState.manageAnimations(this, direction);
-                }
-                case MAGE -> {
-                    sprite = idle.manageAnimations(this, direction);
-                    // SETAREA COORDONATELOR, DIRECTIEI SI A UTILIZATORULUI DE PROIECTIL
-                    if (!currentWeapon.alive) {
-                        Projectile playerProjectile = (Projectile) currentWeapon;
-                        playerProjectile.set(worldX, worldY, direction, true, this);
-
-                        // ADAUGAREA PROIECTILULUI IN LISTA
-                        gPanel.projectileList.add(playerProjectile);
-                    }
-                }
-            }
-        }
-        else if (inMotion) {
-            sprite = movement.manageAnimations(this, direction);
+        if (GamePanel.gameState == GameState.SleepState) {
+            sprite = Tent.Image;
         }
         else {
-            sprite = idle.manageAnimations(this, direction);
+            inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
+            /** Animatiile de atac */
+            if (isAttacking()) {
+                if (inMotion) inMotion = false;
+                switch (characterClass) {
+                    case WARRIOR -> {
+                        sprite = attackState.manageAnimations(this, direction);
+                    }
+                    case MAGE -> {
+                        sprite = idle.manageAnimations(this, direction);
+                        // SETAREA COORDONATELOR, DIRECTIEI SI A UTILIZATORULUI DE PROIECTIL
+                        if (!currentWeapon.alive) {
+                            Projectile playerProjectile = (Projectile) currentWeapon;
+                            playerProjectile.set(worldX, worldY, direction, true, this);
+
+                            // ADAUGAREA PROIECTILULUI IN LISTA
+                            gPanel.projectileList.add(playerProjectile);
+                        }
+                    }
+                }
+            } else if (inMotion) {
+                sprite = movement.manageAnimations(this, direction);
+            } else {
+                sprite = idle.manageAnimations(this, direction);
+            }
         }
 
         int x = screenX;
@@ -589,7 +593,7 @@ public class Player extends Creature {
         if (objIndex > -1) {
             // PICKUP COIN
             if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Item item) {
-                if (item instanceof OBJ_Coin coin) {//[gPanel.currentMap][objIndex] instanceof OBJ_Coin) {  // FIXED
+                if (item instanceof Coin coin) {//[gPanel.currentMap][objIndex] instanceof Coin) {  // FIXED
                     // FIXED
                     coin.use(this);
                     gPanel.objects.get(gPanel.currentMap).remove(objIndex);  // FIXED

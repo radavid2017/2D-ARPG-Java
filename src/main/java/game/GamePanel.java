@@ -81,6 +81,10 @@ public class GamePanel extends JPanel implements Runnable {
     public UI ui = new UI(this);
     public EventHandler eHandler = new EventHandler(this);
 
+    public EnvironmentManager getEnvironmentManager() {
+        return environmentManager;
+    }
+
     /** Efecte de lumina */
     EnvironmentManager environmentManager = new EnvironmentManager(this);
 
