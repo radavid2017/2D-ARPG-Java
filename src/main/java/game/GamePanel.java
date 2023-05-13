@@ -10,6 +10,7 @@ import monster.Monster;
 import object.SuperObject;
 import object.SuperStatesObject;
 import item.equipable.weapon.rangeattack.Projectile;
+import tile.Map;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -87,6 +88,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     /** Efecte de lumina */
     EnvironmentManager environmentManager = new EnvironmentManager(this);
+
+    /** Harta */
+    public Map map = new Map(this);
 
     /** Creand firul de executie al jocului, adaugam conceptul de timp in joc */
     // crearea firului de executie a jocului
@@ -343,6 +347,10 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == GameState.Title) {
             ui.draw(g2D);
         }
+        // MAP SCREEN
+        else if (gameState == GameState.MapState) {
+            map.drawFullMapScreen(g2D);
+        }
         // ALTELE
         else {
 
@@ -371,6 +379,9 @@ public class GamePanel extends JPanel implements Runnable {
             if (player != null) {
                 environmentManager.draw(g2D);
             }
+
+            // MINI MAP SCREEN
+            map.drawMiniMap(g2D);
 
             // UI
             ui.draw(g2D);

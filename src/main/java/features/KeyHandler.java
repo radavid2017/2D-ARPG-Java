@@ -51,7 +51,9 @@ public class KeyHandler implements KeyListener {
             case OptionsState -> optionsState(code);
             case GameOverState -> gameOverState(code);
             case TradeState -> tradeState(code);
+            case MapState -> mapState(code);
         }
+
 
         switch (code) {
             // EXIT GAME
@@ -71,8 +73,17 @@ public class KeyHandler implements KeyListener {
             // CHARACTER STATE
             case KeyEvent.VK_C -> GamePanel.gameState =
                     GamePanel.gameState == GameState.Play ? GameState.CharacterState : GameState.Play;
+            // MAP STATE
+            case KeyEvent.VK_M -> GamePanel.gameState =
+                    GamePanel.gameState == GameState.Play ? GameState.MapState : GameState.Play;
         }
 
+    }
+
+    private void mapState(int code) {
+        if (code == KeyEvent.VK_ESCAPE) {
+            GamePanel.gameState = GameState.Play;
+        }
     }
 
     private void tradeState(int code) {
@@ -271,6 +282,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ESCAPE -> {
                 GamePanel.gameState = GameState.OptionsState;
             }
+            // MINI MAP
+            case KeyEvent.VK_N -> gPanel.map.miniMapOn = !gPanel.map.miniMapOn;
         }
     }
 

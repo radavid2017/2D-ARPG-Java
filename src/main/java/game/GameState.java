@@ -11,5 +11,6 @@ public enum GameState {
     GameOverState,
     TransitionState,
     TradeState,
-    SleepState
+    SleepState,
+    MapState
 }
