@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /** Clasa parinte a obiectelor de interactionare & iteme din joc */
 public abstract class SuperObject extends Entity {
 
-    public StateMachine animation;
+    public StateMachine animation = new StateMachine();
     public TypeObject typeObject;
     public BufferedImage image;
     public String objPath = "res/objects/";
@@ -73,7 +73,7 @@ public abstract class SuperObject extends Entity {
     }
 
     public void setupAnimation(String objFolderPath) {
-        animation = new StateMachine();
+//        animation = new StateMachine();
         animation.loadCompleteAnimation(getGamePanel(), objFolderPath, TypeAnimation.OBJECT);
     }
 

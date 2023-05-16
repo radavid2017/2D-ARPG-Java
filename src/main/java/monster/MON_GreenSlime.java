@@ -16,7 +16,7 @@ public class MON_GreenSlime extends Monster{
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
 
-        name = "Green Slime";
+        name = "Mazga Verde";
 
         exp = 2;
 
@@ -65,20 +65,20 @@ public class MON_GreenSlime extends Monster{
             shotAvailableCounter++;
         }
 
-        int xDistance = (int) Math.abs(worldX - getGamePanel().player.worldX);
-        int yDistance = (int) Math.abs(worldY - getGamePanel().player.worldY);
-        int tileDistance = (xDistance + yDistance)/getGamePanel().tileSize;
+//        int xDistance = (int) Math.abs(worldX - getGamePanel().player.worldX);
+//        int yDistance = (int) Math.abs(worldY - getGamePanel().player.worldY);
+//        int tileDistance = (xDistance + yDistance)/getGamePanel().tileSize;
 
-        if (!onPath && tileDistance < 5) {
-            int i = new Random().nextInt(100)+1;
-            if (i > 50) {
-                onPath = true; // 50% sanse sa devina aggro daca player-ul e aproape de entitate
-            }
-        }
+//        if (!onPath && tileDistance < 5) {
+//            int i = new Random().nextInt(100)+1;
+//            if (i > 50) {
+//                onPath = true; // 50% sanse sa devina aggro daca player-ul e aproape de entitate
+//            }
+//        }
 
-        if (onPath && tileDistance > 8) {
-            onPath = false;
-        }
+//        if (onPath && tileDistance > 8) {
+//            onPath = false;
+//        }
     }
 
     @Override

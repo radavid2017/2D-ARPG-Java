@@ -129,7 +129,7 @@ public class Camera {
     }
 
     public static void rescalePlayer() {
-        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attackWeapon);
+        List<StateMachine> allAnimations = Arrays.asList(gPanel.player.movement, gPanel.player.idle, gPanel.player.attackSword);
         rescaleAllAnimations(allAnimations);
     }
 

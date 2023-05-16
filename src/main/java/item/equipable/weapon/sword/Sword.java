@@ -1,5 +1,6 @@
 package item.equipable.weapon.sword;
 
+import animations.AnimationState;
 import damage.IDoDamage;
 import game.CharacterClass;
 import item.equipable.weapon.Weapon;
@@ -14,6 +15,10 @@ public abstract class Sword extends Weapon {
         this.damage = damage;
         addDamageType(damageType);
         objPath += "sword/";
+        for (AnimationState state : animation.states) {
+            state.motion1_duration = 5;
+            state.motion2_duration = 25;
+        }
     }
 
     @Override

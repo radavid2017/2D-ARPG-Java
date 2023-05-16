@@ -1,5 +1,6 @@
 package entity;
 
+import animations.AnimationState;
 import animations.StateMachine;
 import animations.TypeAnimation;
 import features.*;
@@ -17,10 +18,12 @@ import item.consumable.potion.PotionRed;
 import item.equipable.light.Light;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
+import item.equipable.weapon.axe.Axe;
 import item.equipable.weapon.rangeattack.Projectile;
 import item.equipable.weapon.rangeattack.spell.Fireball;
 import item.equipable.shield.NormalShield;
 import item.equipable.weapon.sword.NormalSword;
+import monster.MON_GreenSlime;
 import monster.Monster;
 import object.obstacle.Obstacle;
 
@@ -54,7 +57,7 @@ public class Player extends Creature {
     public Light currentLight;
 
     /** Lista animatii arme */
-    public StateMachine attackWeapon = null;
+    public StateMachine attackSword = null;
     public StateMachine attackAxe = null;
 //    public Projectile currentProjectile;
 
@@ -178,9 +181,9 @@ public class Player extends Creature {
     public void setupAttackAnimationPlayer(String creaturePath) {
         attackAxe = new StateMachine();
         attackAxe.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\axe", TypeAnimation.ATTACK);
-        attackWeapon = new StateMachine();
-        attackWeapon.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
-        attackState = attackWeapon;
+        attackSword = new StateMachine();
+        attackSword.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
+        attackState = attackSword;
     }
 
     /** incarcarea animatiilor pentru player */
@@ -197,7 +200,7 @@ public class Player extends Creature {
         this.managePlayerMovement();
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
-        currentAnimation.updateFrames();
+        currentAnimation.updateFrames(this);
 
         manageInvincible();
         if (life <= 0) {
@@ -362,7 +365,7 @@ public class Player extends Creature {
         attack = strength * currentWeapon.damage;
 
         switch (currentWeapon.typeWeapon) {
-            case Sword -> attackState = attackWeapon;
+            case Sword -> attackState = attackSword;
             case Axe -> attackState = attackAxe;
         }
     }
@@ -376,47 +379,9 @@ public class Player extends Creature {
 //        attackArea.height = 36;
 //    }
 
-    public void attacking() {
-        // salveaza datele curente ale ariei solide
-        int currentWorldX = (int) worldX;
-        int currentWorldY = (int) worldY;
-        int solidAreaWidth = solidArea.width;
-        int solidAreaHeight = solidArea.height;
 
-        // ajusteaza coordonatele jucatorului pentru aria de atac
-        switch (direction) {
-            case UP -> worldY -= attackArea.height;
-            case DOWN -> worldY += attackArea.height;
-            case LEFT -> worldX -= attackArea.width;
-            case RIGHT -> worldX += attackArea.width;
-        }
 
-        // schimbarea dimensiunii ariei solide pentru aria de atac
-        solidArea.width = attackArea.width;
-        solidArea.height = attackArea.height;
-
-        // verifica coliziunea ariei de atac cu monstrii
-        int monsterIndex = gPanel.collisionDetector.
-                checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
-        doDamageToMonster(monsterIndex, currentWeapon.knockBackPower);
-
-        // coliziunea cu tiles interactive
-        int iTileIndex = gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
-        doDamageToITile(iTileIndex);
-
-        // coliziunea cu proiectile
-        int projectileIndex = gPanel.collisionDetector.checkEntity(this, gPanel.projectileList);
-        doDamageToProjectile(projectileIndex);
-
-        // dupa verificarea coliziunii, restabileste datele originale
-        worldX = currentWorldX;
-        worldY = currentWorldY;
-        solidArea.width = solidAreaWidth;
-        solidArea.height = solidAreaHeight;
-
-    }
-
-    private void doDamageToProjectile(int projectileIndex) {
+    public void doDamageToProjectile(int projectileIndex) {
         if (projectileIndex > -1 &&
                 gPanel.projectileList.get(projectileIndex)
                         instanceof Projectile projectile) {
@@ -429,14 +394,14 @@ public class Player extends Creature {
         }
     }
 
-    public void doDamageToMonster(int monsterIndex, int knockBackPower) {
+    public void doDamageToMonster(int monsterIndex, Entity attacker, int knockBackPower) {
         if (monsterIndex > -1) {
             if (!gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex).invincible) { // FIXED
                 // ofera daune
                 gPanel.playSE("hitmonster.wav");
 
                 if (knockBackPower > 0) {
-                    knockBack(gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex), knockBackPower);
+                    setKnockBack(gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex), attacker, knockBackPower);
                 }
 
                 int damageValue = currentWeapon.tryDoAttack(this, gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex));
@@ -455,12 +420,6 @@ public class Player extends Creature {
                 }
             }
         }
-    }
-
-    public void knockBack(Entity entity, int knockBackPower) {
-        entity.direction = direction;
-        entity.speed += knockBackPower;
-        entity.knockBack = true;
     }
 
     public void doDamageToITile(int iTileIndex) {
@@ -701,7 +660,9 @@ public class Player extends Creature {
 
 //                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
                 Monster monster = (Monster) gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex); // FIXED
-                monster.doDamage();
+                if (monster instanceof MON_GreenSlime) {
+                    monster.doDamage();
+                }
 
 
                 invincible = true;

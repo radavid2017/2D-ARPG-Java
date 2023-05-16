@@ -53,10 +53,10 @@ public class NPC_OldMan extends NPC {
 //        int goalCol = 12;
 //        int goalRow = 9;
 
-        int goalCol = (int) ((getGamePanel().player.worldX + getGamePanel().player.solidArea.x)/getGamePanel().tileSize);
-        int goalRow = (int) ((getGamePanel().player.worldY + getGamePanel().player.solidArea.y)/getGamePanel().tileSize);
+//        int goalCol = (int) ((getGamePanel().player.worldX + getGamePanel().player.solidArea.x)/getGamePanel().tileSize);
+//        int goalRow = (int) ((getGamePanel().player.worldY + getGamePanel().player.solidArea.y)/getGamePanel().tileSize);
 
-        searchPath(goalCol, goalRow, true);
+        searchPath(getGoalCol(getGamePanel().player), getGoalRow(getGamePanel().player), true);
     }
 
     public void update() {

@@ -1,9 +1,11 @@
 package monster;
 
+import animations.TypeAnimation;
 import entity.ArtificialIntelligence;
 import entity.AttackStyle;
 import entity.Entity;
 import entity.TypeAI;
+import features.Direction;
 import game.GamePanel;
 import item.Item;
 import item.equipable.weapon.Weapon;
@@ -11,6 +13,7 @@ import item.equipable.weapon.Weapon;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 public abstract class Monster extends ArtificialIntelligence {
 
@@ -49,6 +52,13 @@ public abstract class Monster extends ArtificialIntelligence {
         if (getGamePanel().collisionDetector.checkPlayer(this)) {
             doDamage();
         }
+
+        if (onPath) {
+            checkStopChasingOrNot(getGamePanel().player, 8, 100);
+        }
+        else {
+            checkStartChasingOrNot(getGamePanel().player, 5, 100);
+        }
     }
 
     public void doDamage() {
@@ -56,13 +66,18 @@ public abstract class Monster extends ArtificialIntelligence {
             // ofera daune
             getGamePanel().playSE("receivedamage.wav");
 
-            weapon.tryDoAttack(this, getGamePanel().player);
-
-//            switch (attackStyle) {
-//                case Touching -> {
-//                    touchingDamage(getGamePanel().player);
-//                }
-//            }
+            if (weapon != null) {
+                weapon.tryDoAttack(this, getGamePanel().player);
+            }
+            else {
+                switch (attackStyle) {
+                    case Nearly -> {
+                        if (currentAnimation.currentFrame == 1) {
+                            nearlyDamage(getGamePanel().player);
+                        }
+                    }
+                }
+            }
 
             getGamePanel().player.invincible = true;
         }
@@ -123,10 +138,16 @@ public abstract class Monster extends ArtificialIntelligence {
 
         super.draw(g2D);
 
-        if (inMotion)
-            sprite = movement.manageAnimations(this, direction);
-        else
-            sprite = idle.manageAnimations(this, direction);
+        if (attacking) {
+            sprite = attackState.manageAnimations(this, direction);
+        }
+        else {
+            if (inMotion)
+                sprite = movement.manageAnimations(this, direction);
+            else
+                sprite = idle.manageAnimations(this, direction);
+        }
+
 
         // Management Camera
 
@@ -147,7 +168,37 @@ public abstract class Monster extends ArtificialIntelligence {
             dyingEffect(g2D);
         }
 
-        camera.drawEntity(g2D, sprite);
+        int x = (int) screenX;
+        int y = (int) screenY;
+
+        if (screenX > worldX) {
+            x = (int) worldX;
+        }
+        if (screenY > worldY) {
+            y = (int) worldY;
+        }
+        int rightOffset = (int) (getGamePanel().screenWidth - screenX);
+        if (rightOffset > getGamePanel().worldWidth - worldX) {
+            x = (int) (getGamePanel().screenWidth - (getGamePanel().worldWidth - worldX));
+        }
+        int bottomOffset = (int) (getGamePanel().screenHeight - screenY);
+        if (bottomOffset > getGamePanel().worldHeight - worldY) {
+            y = (int) (getGamePanel().screenHeight - (getGamePanel().worldHeight - worldY));
+        }
+
+//        // setarea opacitatii
+//        if (invincible) {
+//            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+//        }
+
+        if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.UP)
+            g2D.drawImage(sprite, x, y-getGamePanel().tileSize, null);
+        else if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.LEFT)
+            g2D.drawImage(sprite, x-getGamePanel().tileSize, y, null);
+        else
+            camera.drawEntity(g2D, sprite);
+
+
 
         drawSolidArea(g2D);
 
@@ -156,12 +207,30 @@ public abstract class Monster extends ArtificialIntelligence {
 
     public abstract void offensiveBehaviour();
 
+    public void checkStartChasingOrNot(Entity target, int distance, int rate) {
+        if (getTileDistance(target) < distance) {
+            int i = new Random().nextInt(rate);
+            if (i == 0) {
+                onPath = true;
+            }
+        }
+    }
+
+    public void checkStopChasingOrNot(Entity target, int distance, int rate) {
+        if (getTileDistance(target) > distance) {
+            int i = new Random().nextInt(rate);
+            if (i == 0) {
+                onPath = false;
+            }
+        }
+    }
+
     @Override
     public void pathFinding() {
-        int goalCol = (int) ((getGamePanel().player.worldX + getGamePanel().player.solidArea.x)/getGamePanel().tileSize);
-        int goalRow = (int) ((getGamePanel().player.worldY + getGamePanel().player.solidArea.y)/getGamePanel().tileSize);
+//        int goalCol = (int) ((getGamePanel().player.worldX + getGamePanel().player.solidArea.x)/getGamePanel().tileSize);
+//        int goalRow = (int) ((getGamePanel().player.worldY + getGamePanel().player.solidArea.y)/getGamePanel().tileSize);
 
-        searchPath(goalCol, goalRow, true);
+        searchPath(getGoalCol(getGamePanel().player), getGoalRow(getGamePanel().player), true);
 
         offensiveBehaviour();
     }

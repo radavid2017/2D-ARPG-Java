@@ -77,6 +77,9 @@ public abstract class Entity {
     public int defense = 0;
     public int exp;
 
+    public Entity attacker;
+    public Direction knockBackDirection;
+
     /** Constrcutor entitate */
     public Entity(GamePanel gPanel) {
         this.gPanel = gPanel;
@@ -210,6 +213,15 @@ public abstract class Entity {
     }
 
     public int touchingDamage(Entity target) {
+        int totalDamage = attack - target.defense;
+        if (totalDamage < 0) {
+            totalDamage = 1;
+        }
+        target.life -= totalDamage;
+        return totalDamage;
+    }
+
+    public int nearlyDamage(Entity target) {
         int totalDamage = attack - target.defense;
         if (totalDamage < 0) {
             totalDamage = 1;

@@ -16,6 +16,7 @@ import item.consumable.potion.PotionModel;
 import item.consumable.potion.PotionRed;
 import item.equipable.shield.Shield;
 import monster.MON_GreenSlime;
+import monster.MON_Orc;
 import monster.Monster;
 import monster.TypeMonster;
 import npc.NPC;
@@ -263,6 +264,8 @@ public class AssetPool {
         loadMonster(TypeMonster.GreenSlime, 34, 42, mapNum);
         loadMonster(TypeMonster.GreenSlime, 38, 42, mapNum);
 
+        loadMonster(TypeMonster.Orc, 12, 33, mapNum);
+
         // debug
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*10);
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*11);
@@ -272,6 +275,7 @@ public class AssetPool {
         Monster monster = null;
         switch (typeMonster) {
             case GreenSlime -> monster = new MON_GreenSlime(gPanel);//gPanel.monsterList[mapNum][iteratorMonsters] = new MON_GreenSlime(gPanel);
+            case Orc -> monster = new MON_Orc(gPanel);
         }
 
         if (monster != null) {

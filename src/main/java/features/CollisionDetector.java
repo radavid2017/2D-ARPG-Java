@@ -29,7 +29,13 @@ public class CollisionDetector {
 
         int leftTile, rightTile;
 
-        switch (entity.direction) {
+        // Foloseste o directie temporala cand este knockbacked
+        Direction direction = entity.direction;
+        if (entity.knockBack) {
+            direction = entity.knockBackDirection;
+        }
+
+        switch (direction) {
             case UP -> {
                 entityTopRow = (int) ((entityTopWorldY - entity.speed) / gPanel.tileSize);
                 leftTile = gPanel.tiles.mapTileNum[gPanel.currentMap][entityLeftCol][entityTopRow];
@@ -121,6 +127,7 @@ public class CollisionDetector {
 
     /** NPC SAU MONSTRII */
     public int checkEntity(Entity entity, ArrayList<Entity> target) { // FIXED
+
         if (target != null) {
             for (int i = 0; i < target.size(); i++) { // FIXED
                 if (target.get(i) != null) { // FIXED
@@ -145,6 +152,13 @@ public class CollisionDetector {
 
     /** fucntia returneaza true daca exista coliziune intre doua entitati */
     private boolean collisionOnTarget(Entity entity, Entity target) {
+
+        // Foloseste o directie temporala cand este knockbacked
+        Direction direction = entity.direction;
+        if (entity.knockBack) {
+            direction = entity.knockBackDirection;
+        }
+
         boolean isColliding = false;
         if (target != null && target.isSolid && entity.isSolid) {
             // preia pozitia ariei de coliziune a entitatii
@@ -155,7 +169,7 @@ public class CollisionDetector {
             target.solidArea.x += target.worldX;
             target.solidArea.y += target.worldY;
 
-            switch (entity.direction) {
+            switch (direction) {
                 case UP -> entity.solidArea.y -= entity.speed;
                 case DOWN -> entity.solidArea.y += entity.speed;
                 case LEFT -> entity.solidArea.x -= entity.speed;

@@ -1,5 +1,6 @@
 package item.equipable.weapon.axe;
 
+import animations.AnimationState;
 import damage.IDoDamage;
 import game.CharacterClass;
 import game.GamePanel;
@@ -16,6 +17,10 @@ public abstract class Axe extends Weapon {
         this.damage = damage;
         addDamageType(damageType);
         objPath += "axe/";
+        for (AnimationState state : animation.states) {
+            state.motion1_duration = 20;
+            state.motion2_duration = 40;
+        }
     }
 
     @Override

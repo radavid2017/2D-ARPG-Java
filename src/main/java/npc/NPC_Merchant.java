@@ -31,7 +31,7 @@ public class NPC_Merchant extends NPC{
 
     @Override
     public void update() {
-        currentAnimation.updateFrames();
+        currentAnimation.updateFrames(this);
     }
 
     @Override

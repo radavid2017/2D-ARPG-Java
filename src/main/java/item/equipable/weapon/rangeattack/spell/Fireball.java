@@ -19,6 +19,8 @@ public class Fireball extends Spell {
         useCost = 1;
         alive = false;
 
+//        knockBackPower = 10;
+
         setupAnimation(objPath + "fireball");
         setDefaultSolidArea();
     }

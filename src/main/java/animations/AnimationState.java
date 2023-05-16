@@ -1,5 +1,7 @@
 package animations;
 
+import entity.Creature;
+import entity.Entity;
 import features.Direction;
 import features.RenameFolderFiles;
 import features.UtilityTool;
@@ -29,6 +31,8 @@ public class AnimationState {
     public int currentFrame = 0;
     public int numFrames = 0;
     public int timeToChangeFrame = 10;
+    public int motion1_duration = 5;
+    public int motion2_duration = 25;
 
     public AnimationState(GamePanel gp, String title, Direction direction, String filePath, TypeAnimation typeAnimation) {
         try {
@@ -99,7 +103,7 @@ public class AnimationState {
         }
     }
 
-    public void updateFrames() {
+    public void updateFrames(Entity entity) {
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
         switch (typeAnimation) {
             case IN_MOTION, IDLE -> {
@@ -114,18 +118,19 @@ public class AnimationState {
             }
             case ATTACK -> {
                 intervalChangingFrames++;
-                if (intervalChangingFrames <= 5) {
+                if (intervalChangingFrames <= motion1_duration) {
                     currentFrame = 0;
                 }
-                if (intervalChangingFrames > 5 && intervalChangingFrames <= 25) {
+                if (intervalChangingFrames > motion1_duration && intervalChangingFrames <= motion2_duration) {
                     currentFrame = 1;
 
-                    gp.player.attacking();
+                    ((Creature) entity).attacking();
                 }
-                if (intervalChangingFrames > 25) {
+                if (intervalChangingFrames > motion2_duration) {
                     currentFrame = 0;
                     intervalChangingFrames = 0;
                     gp.player.keyH.spacePressed = false;
+                    ((Creature) entity).attacking = false;
                 }
             }
             case OBJECT -> {
