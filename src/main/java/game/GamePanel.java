@@ -1,21 +1,19 @@
 package game;
 
 import ai.PathFinder;
+import data.SaveLoad;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
 import features.*;
-import interactive_tile.InteractiveTile;
 import monster.Monster;
 import object.SuperObject;
 import object.SuperStatesObject;
-import item.equipable.weapon.rangeattack.Projectile;
 import tile.Map;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
@@ -92,6 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
     /** Harta */
     public Map map = new Map(this);
 
+    /** Save & Load */
+    public SaveLoad saveLoad = new SaveLoad(this);
+
     /** Creand firul de executie al jocului, adaugam conceptul de timp in joc */
     // crearea firului de executie a jocului
     Thread gameThread;
@@ -153,6 +154,15 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
+    public void startGame() {
+        setupGame();
+//        gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
+        GamePanel.gameState = GameState.Play;
+        ui.titleScreenState = TitleScreenState.MAIN_PAGE;
+        player.getPlayerSprites();
+        playMusic("BlueBoyAdventure.wav");
+    }
+
     /** instantieri joc */
     public void setupGame() {
         // adaugarea obiectelor in joc
@@ -171,20 +181,20 @@ public class GamePanel extends JPanel implements Runnable {
         gameState = GameState.Title;
     }
 
-    public void retry() {
+    public void resetGame(boolean restart) {
         player.setDefaultPositions();
-        player.restoreLifeMana();
+        player.restoreStatus();
         assetPool.setNPC();
         assetPool.setMonster();
         this.playMusic("BlueBoyAdventure.wav");
-    }
 
-    public void restart() {
-        retry();
-        player.setItems();
-        assetPool.setObjects();
-        assetPool.setInteractiveTiles();
-        this.stopMusic();
+        if (restart) {
+            player.setItems();
+            assetPool.setObjects();
+            assetPool.setInteractiveTiles();
+            environmentManager.getLighting().resetDay();
+            this.stopMusic();
+        }
     }
 
     /** startGameThread - instantierea la inceperea rularii jocului */

@@ -64,9 +64,8 @@ public abstract class Monster extends ArtificialIntelligence {
     public void doDamage() {
         if (!getGamePanel().player.invincible && !dying) {
             // ofera daune
-            getGamePanel().playSE("receivedamage.wav");
-
             if (weapon != null) {
+                getGamePanel().playSE("receivedamage.wav");
                 weapon.tryDoAttack(this, getGamePanel().player);
             }
             else {

@@ -93,6 +93,11 @@ public class Lighting {
         g2D.dispose();
     }
 
+    public void resetDay() {
+        dayState = DayState.Day;
+        filterAlpha = 0f;
+    }
+
     public void update() {
         if (gp.player.lightUpdated) {
             setLightSource();
@@ -104,7 +109,7 @@ public class Lighting {
             case Day -> {
                 dayCounter++;
 
-                if (dayCounter > 600) {
+                if (dayCounter > 600000) {
                     dayState = DayState.Dusk;
                     dayCounter = 0;
                 }
@@ -122,7 +127,7 @@ public class Lighting {
             case Night -> {
                 dayCounter++;
 
-                if (dayCounter > 600) {
+                if (dayCounter > 600000) {
                     dayState = DayState.Dawn;
                     dayCounter = 0;
                 }

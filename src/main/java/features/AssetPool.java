@@ -108,7 +108,7 @@ public class AssetPool {
                 obstacle = new WoodDoor(gPanel);
             }
             case Chest -> {
-                obstacle = new WoodChest(gPanel, new BlueShield(gPanel));
+                obstacle = new WoodChest(gPanel);
             }
         }
         if (obstacle != null) {

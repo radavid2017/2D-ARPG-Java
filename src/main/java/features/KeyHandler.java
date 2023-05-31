@@ -14,6 +14,7 @@ public class KeyHandler implements KeyListener {
     public boolean enterPressed;
     public boolean showDebugText = false;
     public boolean spacePressed;
+    public boolean shiftPressed;
     GamePanel gPanel;
 
     public boolean hasPlayed = false;
@@ -125,12 +126,12 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ENTER -> {
                 if (gPanel.ui.getCommandNum() == 0) {
                     GamePanel.gameState = GameState.Play;
-                    gPanel.retry();
+                    gPanel.resetGame(false);
                 }
                 else {
                     if (gPanel.ui.getCommandNum() == 1) {
                         GamePanel.gameState = GameState.Title;
-                        gPanel.restart();
+                        gPanel.resetGame(true);
                     }
                 }
             }
@@ -256,6 +257,8 @@ public class KeyHandler implements KeyListener {
                         spacePressed = true;
                 }
             }
+            // GUARD
+            case KeyEvent.VK_SHIFT -> shiftPressed = true;
             // ZOOM IN
             case KeyEvent.VK_UP -> {
 //                Camera.zoomInOut(1);
@@ -382,6 +385,7 @@ public class KeyHandler implements KeyListener {
                 spacePressed = false;
                 gPanel.player.currentAnimation.intervalChangingFrames = 0;
             }
+            case KeyEvent.VK_SHIFT -> shiftPressed = false;
         }
     }
 }

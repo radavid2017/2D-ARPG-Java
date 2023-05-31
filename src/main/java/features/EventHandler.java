@@ -142,9 +142,10 @@ public class EventHandler {
             if (gPanel.player.life < gPanel.player.maxLife) {
                 GamePanel.gameState = gameState;
                 gPanel.playSE("powerup.wav");
-                gPanel.ui.setCurrentDialogue(new Dialogue("Bei din apa.\nViata ta este recuperata!"));
+                gPanel.ui.setCurrentDialogue(new Dialogue("Bei din apa.\nViata ta este recuperata!\n(Progresul a fost salvat)"));
                 gPanel.player.life = gPanel.player.maxLife;
                 gPanel.assetPool.setMonster();
+                gPanel.saveLoad.save();
             }
         }
     }

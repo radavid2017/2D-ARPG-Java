@@ -142,6 +142,10 @@ public class AnimationState {
                     intervalChangingFrames = 0;
                 }
             }
+//            case GUARD -> {
+//                intervalChangingFrames++;
+//                if (intervalChangingFrames > )
+//            }
         }
     }
 

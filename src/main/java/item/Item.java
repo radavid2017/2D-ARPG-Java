@@ -5,7 +5,9 @@ import game.GamePanel;
 import object.SuperObject;
 import object.TypeObject;
 
-public abstract class Item  extends SuperObject {
+import java.io.Serializable;
+
+public abstract class Item  extends SuperObject implements Serializable {
 
     public TypeItem typeItem;
     public int price;

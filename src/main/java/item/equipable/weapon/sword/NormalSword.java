@@ -3,6 +3,8 @@ package item.equipable.weapon.sword;
 import damage.NormalDamage;
 import game.GamePanel;
 
+import java.io.Serializable;
+
 public class NormalSword extends Sword {
 
     public NormalSword(GamePanel gp) {

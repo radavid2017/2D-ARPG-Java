@@ -1,6 +1,5 @@
 package entity;
 
-import animations.AnimationState;
 import animations.StateMachine;
 import animations.TypeAnimation;
 import features.*;
@@ -18,13 +17,13 @@ import item.consumable.potion.PotionRed;
 import item.equipable.light.Light;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
-import item.equipable.weapon.axe.Axe;
 import item.equipable.weapon.rangeattack.Projectile;
 import item.equipable.weapon.rangeattack.spell.Fireball;
 import item.equipable.shield.NormalShield;
 import item.equipable.weapon.sword.NormalSword;
 import monster.MON_GreenSlime;
 import monster.Monster;
+import object.obstacle.OBJ_Chest;
 import object.obstacle.Obstacle;
 
 import java.awt.*;
@@ -67,6 +66,10 @@ public class Player extends Creature {
 
     // DISABLE ATTACK
     public boolean attackCanceled = false;
+
+    // GUARD & PARRY
+    public StateMachine guard = new StateMachine();
+    public boolean guarding = false;
 
     // INVENTAR JUCATOR
     public ArrayList<Item> inventory = new ArrayList<>();
@@ -119,6 +122,7 @@ public class Player extends Creature {
         coin = 500;
         currentWeapon = new NormalSword(gPanel);
         currentShield = new NormalShield(gPanel);
+        currentLight = null;
 
 
 
@@ -160,10 +164,16 @@ public class Player extends Creature {
         direction = Direction.DOWN;
     }
 
-    public void restoreLifeMana() {
+    public void restoreStatus() {
         life = maxLife;
         mana = maxMana;
         invincible = false;
+        transparent = false;
+        attacking = false;
+        guarding = false;
+        knockBack = false;
+        lightUpdated = true;
+        speed = defaultSpeed;
     }
 
     public void setUpClassChooser() {
@@ -192,15 +202,106 @@ public class Player extends Creature {
         setupMovement("res/player/" + characterClassPath);
         setupIdle("res/player/" + characterClassPath);
         setupAttackAnimationPlayer("res/player/" + characterClassPath);
+        setupGuard("res/player/" + characterClassPath);
 //        this.loadMovementAnimations("res/player/" + characterClassPath);
     }
 
+    public void setupGuard(String playerPath) {
+        guard.loadCompleteAnimation(getGamePanel(), playerPath + "\\guard", TypeAnimation.GUARD);
+    }
+
     public void update() {
+
+        if (knockBack) {
+
+            inMotion = false;
+            guarding = false;
+            guardCounter = 0;
+
+            // verifica coliziunea cu texturile hartii
+            collisionOn = false;
+            gPanel.collisionDetector.manageTileCollision(this);
+            // verifica coliziunea cu NPC
+            gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
+            // verifica coliziuni cu monstrii
+            gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
+            // verifica coliziuni cu iTiles
+            gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
+
+            if (collisionOn) {
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            }
+
+            else {
+                int i = 0;
+                switch (knockBackDirection) {
+                    case UP -> {
+                        while (i < speed) {
+                            if(hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldY--;
+                                i++;
+                            }
+                        }
+                    }
+                    case DOWN -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldY++;
+                                i++;
+                            }
+                        }
+                    }
+                    case LEFT -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldX--;
+                                i++;
+                            }
+                        }
+                    }
+                    case RIGHT -> {
+                        while (i < speed) {
+                            if (hasToStop()) {
+                                break;
+                            }
+                            else {
+                                worldX++;
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            knockBackCounter++;
+            if (knockBackCounter == 10) {
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            }
+        }
+
         // Animatii jucator
         this.managePlayerMovement();
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
         currentAnimation.updateFrames(this);
+
+        if (!keyH.shiftPressed) {
+            guarding = false;
+            guardCounter = 0;
+        }
 
         manageInvincible();
         if (life <= 0) {
@@ -208,6 +309,14 @@ public class Player extends Creature {
             gPanel.ui.setCommandNum(0);
             gPanel.stopMusic();
             gPanel.playSE("gameover.wav");
+        }
+
+        if (offBalance) {
+            offBalanceCounter++;
+            if (offBalanceCounter > 60) {
+                offBalance = false;
+                offBalanceCounter = 0;
+            }
         }
     }
 
@@ -286,6 +395,11 @@ public class Player extends Creature {
                         }
                     }
                 }
+            } else if (keyH.shiftPressed) {
+                inMotion = false;
+                guarding = true;
+                guardCounter++;
+                sprite = guard.manageAnimations(this, direction);
             } else if (inMotion) {
                 sprite = movement.manageAnimations(this, direction);
             } else {
@@ -312,7 +426,7 @@ public class Player extends Creature {
         }
 
         // setarea opacitatii
-        if (invincible) {
+        if (transparent) {
             g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
         }
 
@@ -360,7 +474,7 @@ public class Player extends Creature {
         return false;
     }
 
-    void updateAttack() {
+    public void updateAttack() {
         attackArea = currentWeapon.attackArea;
         attack = strength * currentWeapon.damage;
 
@@ -370,7 +484,7 @@ public class Player extends Creature {
         }
     }
 
-    void updateDefense() {
+    public void updateDefense() {
         defense = dexterity * currentShield.defense;
     }
 
@@ -395,6 +509,7 @@ public class Player extends Creature {
     }
 
     public void doDamageToMonster(int monsterIndex, Entity attacker, int knockBackPower) {
+        boolean attackIncreased = false;
         if (monsterIndex > -1) {
             if (!gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex).invincible) { // FIXED
                 // ofera daune
@@ -404,8 +519,17 @@ public class Player extends Creature {
                     setKnockBack(gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex), attacker, knockBackPower);
                 }
 
+                if (gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex).offBalance) {
+                    attack *= 5;
+                    attackIncreased = true;
+                }
+
                 int damageValue = currentWeapon.tryDoAttack(this, gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex));
                 gPanel.ui.addMessage(damageValue + " dauna!");
+
+                if (attackIncreased) {
+                    attack /= 5;
+                }
 
 //                gPanel.monsterList.get(monsterIndex).life -= 1;
                 gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex).invincible = true; // FIXED
@@ -438,7 +562,7 @@ public class Player extends Creature {
     }
 
     public void checkLevelUp() {
-        if (exp >= nextLevelExp) {
+        while (exp >= nextLevelExp) {
 
             level++;
             nextLevelExp = nextLevelExp * 2;
@@ -555,7 +679,7 @@ public class Player extends Creature {
                 if (item instanceof Coin coin) {//[gPanel.currentMap][objIndex] instanceof Coin) {  // FIXED
                     // FIXED
                     coin.use(this);
-                    gPanel.objects.get(gPanel.currentMap).remove(objIndex);  // FIXED
+                    gPanel.objects.get(gPanel.currentMap).set(objIndex, null);  // FIXED
                 }
                 else {
                     // PICKUP ITEME INVENTAR
@@ -570,7 +694,7 @@ public class Player extends Creature {
                         textMsg = "Nu mai ai spatiu in inventar!";
                     }
                     gPanel.ui.addMessage(textMsg);
-                    gPanel.objects.get(gPanel.currentMap).remove(objIndex); // FIXED
+                    gPanel.objects.get(gPanel.currentMap).set(objIndex, null); // FIXED
                 }
             }
             else if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Obstacle obstacle) {
@@ -606,6 +730,26 @@ public class Player extends Creature {
         return keyH.spacePressed;
     }
 
+    @Override
+    public void checkCollisions() {
+        // verifica coliziunea cu texturile hartii
+        collisionOn = false;
+        gPanel.collisionDetector.manageTileCollision(this);
+
+        // verifica coliziunea cu NPC
+        gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
+
+        // verifica coliziunea cu obiecte
+        int objIndex = gPanel.collisionDetector.manageObjCollision(this);
+        pickUpObj(objIndex);
+
+        // verifica coliziuni cu monstrii
+        int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
+        contactMonster(monsterIndex);
+
+        // verifica coliziuni cu iTiles
+        gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
+    }
 
     public void managePlayerMovement() {
 
@@ -614,26 +758,12 @@ public class Player extends Creature {
 
         if (isMoving()) {
 //            System.out.println("up: " + keyH.upPressed + " down: " + keyH.downPressed + " left: " + keyH.leftPressed + " right: " + keyH.rightPressed);
-            // verifica coliziunea cu texturile hartii
-            collisionOn = false;
-            gPanel.collisionDetector.manageTileCollision(this);
-
-            // verifica coliziunea cu NPC
-            gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
-
-            // verifica coliziunea cu obiecte
-            int objIndex = gPanel.collisionDetector.manageObjCollision(this);
-            pickUpObj(objIndex);
-
-            // verifica coliziuni cu monstrii
-            int monsterIndex = gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
-            contactMonster(monsterIndex);
-
-            // verifica coliziuni cu iTiles
-            gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
+            checkCollisions();
 
             if (!collisionOn && inMotion)
                 manageMovement();
+
+//            guarding = false;
         }
         // interactiune cu npc
         if (keyH.enterPressed) {
@@ -673,6 +803,24 @@ public class Player extends Creature {
     public void contactProjectile() {
         invincible = true;
         gPanel.playSE("receivedamage.wav");
+    }
+
+    public int getCurrentWeaponSlot() {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i) == currentWeapon) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public int getCurrentShieldSlot() {
+        for (int i = 0; i < inventory.size(); i++) {
+            if (inventory.get(i) == currentShield) {
+                return i;
+            }
+        }
+        return 0;
     }
 
 }

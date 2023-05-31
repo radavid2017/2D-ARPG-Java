@@ -39,7 +39,7 @@ public abstract class Creature extends Entity {
         gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
     }
 
-    private boolean hasToStop() {
+    public boolean hasToStop() {
         checkCollisions();
         if (collisionOn) {
             knockBackCounter = 0;
@@ -179,14 +179,6 @@ public abstract class Creature extends Entity {
 
     public int getGoalRow(Entity target) {
         return (int) ((target.worldY + target.solidArea.y) / getGamePanel().tileSize);
-    }
-
-    public void setKnockBack(Entity target, Entity attacker, int knockBackPower) {
-
-        this.attacker = attacker;
-        target.knockBackDirection = attacker.direction;
-        target.speed += knockBackPower;
-        target.knockBack = true;
     }
 
     public void attacking() {

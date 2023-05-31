@@ -4,5 +4,6 @@ public enum TypeAnimation {
     IN_MOTION,
     IDLE,
     ATTACK,
-    OBJECT
+    OBJECT,
+    GUARD
 }

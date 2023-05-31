@@ -5,6 +5,7 @@ import game.GamePanel;
 public class WoodDoor extends OBJ_Door {
     public WoodDoor(GamePanel gPanel) {
         super(gPanel);
+        name = "Usa de lemn";
         setImage("wood_door.png");
     }
 }

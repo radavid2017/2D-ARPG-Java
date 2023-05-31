@@ -15,6 +15,7 @@ public class MON_Orc extends Monster {
         name = "Orc";
 
         exp = 10;
+        knockBackPower = 5;
 
         direction = Direction.DOWN;
 

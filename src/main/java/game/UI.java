@@ -459,6 +459,7 @@ public class UI {
             if (gPanel.keyH.enterPressed) {
                 subState = 0;
                 GamePanel.gameState = GameState.Title;
+                gPanel.resetGame(true);
                 gPanel.stopMusic();
                 gPanel.currentMap = 0;
             }
@@ -878,7 +879,9 @@ public class UI {
 //                gPanel.playMusic("BlueBoyAdventure.wav");
             }
             case LOAD_GAME -> {
-                // adauga mai tarziu
+                gPanel.saveLoad.load();
+//                GamePanel.gameState = GameState.Play;
+//                gPanel.playMusic("BlueBoyAdventure.wav");
             }
             case EXIT -> {
                 System.exit(0);
@@ -897,12 +900,7 @@ public class UI {
                 return;
             }
         }
-        gp.setupGame();
-//        gp.player = new Player(gp, gp.keyH, gp.tileSize * 23, gp.tileSize * 21, Direction.DOWN, gp.characterClassPath);
-        GamePanel.gameState = GameState.Play;
-        titleScreenState = TitleScreenState.MAIN_PAGE;
-        gp.player.getPlayerSprites();
-        gPanel.playMusic("BlueBoyAdventure.wav");
+        gPanel.startGame();
     }
 
     public int getXForCenteredText(String text) {

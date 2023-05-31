@@ -35,10 +35,10 @@ public abstract class OBJ_Key extends Consumable {
         int nextWorldY = user.getTopY();
 
         switch (user.direction) {
-            case UP -> nextWorldY = user.getTopY() - 1;
-            case DOWN -> nextWorldY = user.getBottomY() + 1;
-            case LEFT -> nextWorldX = user.getLeftX() - 1;
-            case RIGHT -> nextWorldX = user.getRightX() + 1;
+            case UP -> nextWorldY = (int) (user.getTopY() - getGamePanel().player.speed);
+            case DOWN -> nextWorldY = (int) (user.getBottomY() + getGamePanel().player.speed);
+            case LEFT -> nextWorldX = (int) (user.getLeftX() - getGamePanel().player.speed);
+            case RIGHT -> nextWorldX = (int) (user.getRightX() + getGamePanel().player.speed);
         }
 
         int col = nextWorldX/getGamePanel().tileSize;

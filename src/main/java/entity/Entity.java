@@ -41,6 +41,9 @@ public abstract class Entity {
     public int knockBackCounter = 0;
     public boolean knockBack = false;
     public int knockBackPower = 0;
+    public int guardCounter = 0;
+    public int offBalanceCounter = 0;
+    public boolean offBalance = false;
 
     public String name;
 
@@ -67,6 +70,7 @@ public abstract class Entity {
     public boolean alive = true;
     public boolean dying = false;
     public int dyingCounter = 0;
+    public boolean transparent = false;
 
     /** Status caracter */
     public int maxLife;
@@ -181,6 +185,7 @@ public abstract class Entity {
             invincibleCounter++;
             if (invincibleCounter > invincibleTime) {
                 invincible = false;
+                transparent = false;
                 invincibleCounter = 0;
             }
         }
@@ -221,12 +226,52 @@ public abstract class Entity {
         return totalDamage;
     }
 
+    public void setKnockBack(Entity target, Entity attacker, int knockBackPower) {
+
+        this.attacker = attacker;
+        target.knockBackDirection = attacker.direction;
+        target.speed += knockBackPower;
+        target.knockBack = true;
+    }
+
     public int nearlyDamage(Entity target) {
         int totalDamage = attack - target.defense;
         if (totalDamage < 0) {
-            totalDamage = 1;
+            totalDamage = 0;
         }
+
+        // Afla directia opusa atacatorului
+        Direction canGuardDirection = getOppositeDirection(direction);
+
+        if (gPanel.player.guarding && gPanel.player.direction.equals(canGuardDirection)) {
+            // Parare
+            if (gPanel.player.guardCounter < 10) {
+                totalDamage = 0;
+                gPanel.playSE("parry.wav");
+                setKnockBack(this, getGamePanel().player, knockBackPower);
+                offBalance = true;
+//                currentAnimation.currentFrame = 0;
+                currentAnimation.intervalChangingFrames = -60;
+            }
+            // Normal guard
+            else {
+                totalDamage /= 3;
+                getGamePanel().playSE("blocked.wav");
+            }
+        }
+        else {
+            // Not guarding
+            // ofera daune
+            getGamePanel().playSE("receivedamage.wav");
+        }
+
+        if (totalDamage != 0) {
+            target.transparent = true;
+            setKnockBack(target, this, knockBackPower);
+        }
+
         target.life -= totalDamage;
+        target.invincible = true;
         return totalDamage;
     }
 
@@ -245,6 +290,19 @@ public abstract class Entity {
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, -1));
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,-2, 1));
         getGamePanel().particleList.add(new Particle(getGamePanel(), target, color, size, speed, maxLife,2, 1));
+    }
+
+    public Direction getOppositeDirection(Direction direction) {
+        Direction oppositeDirection = null;
+
+        switch (direction) {
+            case UP -> oppositeDirection = Direction.DOWN;
+            case DOWN -> oppositeDirection = Direction.UP;
+            case LEFT -> oppositeDirection = Direction.RIGHT;
+            case RIGHT -> oppositeDirection = Direction.LEFT;
+        }
+
+        return oppositeDirection;
     }
 
     public int getLeftX() {
