@@ -3,11 +3,15 @@ package npc;
 import entity.ArtificialIntelligence;
 import entity.Entity;
 import entity.TypeAI;
+import features.UtilityTool;
 import game.GamePanel;
 import item.Item;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.random.RandomGenerator;

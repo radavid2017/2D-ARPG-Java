@@ -12,6 +12,7 @@ import item.equipable.shield.BlueShield;
 import item.equipable.shield.NormalShield;
 import item.equipable.weapon.axe.Baltag;
 import item.equipable.weapon.sword.NormalSword;
+import object.TypeMaterial;
 
 import java.util.Random;
 
@@ -20,8 +21,8 @@ public abstract class OBJ_Chest extends Obstacle {
     Item loot;
     boolean opened = false;
 
-    public OBJ_Chest(GamePanel gPanel) {
-        super(gPanel);
+    public OBJ_Chest(GamePanel gPanel, TypeMaterial typeMaterial) {
+        super(gPanel, typeMaterial);
         typeObstacle = TypeObstacle.Chest;
         this.isSolid = true;
         this.setSolidArea(14, 8, 74, 62);

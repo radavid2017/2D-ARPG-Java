@@ -4,6 +4,7 @@ import entity.Entity;
 import game.GamePanel;
 import item.Consumable;
 import item.consumable.TypeConsumable;
+import object.SuperObject;
 
 public class Coin extends Consumable {
 
@@ -14,6 +15,11 @@ public class Coin extends Consumable {
         name = "Bani";
         setImage("coin/coin_bronze.png");
         description = "O moneda";
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new Coin(getGamePanel());
     }
 
     @Override

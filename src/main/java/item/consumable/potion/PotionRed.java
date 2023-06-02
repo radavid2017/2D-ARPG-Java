@@ -3,6 +3,7 @@ package item.consumable.potion;
 import game.GamePanel;
 import item.Consumable;
 import item.consumable.TypeConsumable;
+import object.SuperObject;
 
 public class PotionRed extends OBJ_Potion {
 
@@ -13,6 +14,11 @@ public class PotionRed extends OBJ_Potion {
         description = "[" + name + "]\nPotiune vindecatoare:\n+" + healingValue + " viata.";
         potionModel = PotionModel.PotionRed;
         setImage("potion_red.png");
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new PotionRed(getGamePanel());
     }
 
     @Override

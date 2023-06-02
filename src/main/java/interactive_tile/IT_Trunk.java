@@ -2,6 +2,7 @@ package interactive_tile;
 
 import entity.Player;
 import game.GamePanel;
+import object.SuperObject;
 
 public class IT_Trunk extends ResultTile {
 
@@ -9,6 +10,11 @@ public class IT_Trunk extends ResultTile {
         super(gp, TypeResultTile.Trunk);
         setImage("tree/trunk.png");
         setDefaultSolidArea();
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new IT_Trunk(getGamePanel());
     }
 
     @Override

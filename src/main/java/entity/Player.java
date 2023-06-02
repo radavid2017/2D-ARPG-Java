@@ -7,6 +7,7 @@ import game.CharacterClass;
 import game.GamePanel;
 import game.GameState;
 import interactive_tile.DestructibleTile;
+import interactive_tile.IT_DestructibleWall;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
@@ -23,6 +24,8 @@ import item.equipable.shield.NormalShield;
 import item.equipable.weapon.sword.NormalSword;
 import monster.MON_GreenSlime;
 import monster.Monster;
+import object.obstacle.MovableObstacle;
+import object.obstacle.OBJ_BigRock;
 import object.obstacle.OBJ_Chest;
 import object.obstacle.Obstacle;
 
@@ -58,6 +61,7 @@ public class Player extends Creature {
     /** Lista animatii arme */
     public StateMachine attackSword = null;
     public StateMachine attackAxe = null;
+    public StateMachine attackPickaxe = null;
 //    public Projectile currentProjectile;
 
     // ATRIBUTE ITEME
@@ -194,6 +198,8 @@ public class Player extends Creature {
         attackSword = new StateMachine();
         attackSword.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\sword", TypeAnimation.ATTACK);
         attackState = attackSword;
+        attackPickaxe = new StateMachine();
+        attackPickaxe.loadCompleteAnimation(gPanel, creaturePath + "\\attack\\pickaxe", TypeAnimation.ATTACK);
     }
 
     /** incarcarea animatiilor pentru player */
@@ -331,7 +337,7 @@ public class Player extends Creature {
 
     private boolean addIfPossible(Item item) {
         if (inventory.size() < maxInventorySize) {
-            inventory.add(item);
+            inventory.add((Item) item.generateObject());
             return true;
         }
         return false;
@@ -454,8 +460,8 @@ public class Player extends Creature {
 
     public void setItems() {
         inventory.clear();
-        obtainItem(currentWeapon);
-        obtainItem(currentShield);
+        addToInventory(currentWeapon);
+        addToInventory(currentShield);
         for (int i = 0; i < 2; i++) {
             obtainItem(new KeyGold(gPanel));
             obtainItem(new PotionRed(gPanel));
@@ -481,6 +487,7 @@ public class Player extends Creature {
         switch (currentWeapon.typeWeapon) {
             case Sword -> attackState = attackSword;
             case Axe -> attackState = attackAxe;
+            case Pickaxe -> attackState = attackPickaxe;
         }
     }
 
@@ -554,6 +561,9 @@ public class Player extends Creature {
             destructibleTile.invincible = true;
             destructibleTile.generateParticle(destructibleTile);
             if (destructibleTile.life == 0) {
+//                if (destructibleTile instanceof IT_DestructibleWall destructibleWall) {
+//                    destructibleWall.checkDrop();
+//                }
                 gPanel.interactiveTiles.get(gPanel.currentMap).set(iTileIndex, destructibleTile.getDestroyedForm()); // FIXED
 //                gPanel.interactiveTiles.remove(iTileIndex);
 //                gPanel.interactiveTiles.add(destructibleTile.getDestroyedForm());
@@ -698,8 +708,10 @@ public class Player extends Creature {
                 }
             }
             else if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Obstacle obstacle) {
-                if (keyH.enterPressed) {
-                    System.out.println("AICI");
+                if (obstacle instanceof MovableObstacle) {
+                    obstacle.interact();
+                }
+                else if (keyH.enterPressed) {
                     obstacle.interact();
                 }
             }

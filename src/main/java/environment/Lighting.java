@@ -1,5 +1,6 @@
 package environment;
 
+import game.Area;
 import game.GamePanel;
 import item.equipable.light.DayState;
 
@@ -145,8 +146,13 @@ public class Lighting {
     }
 
     public void draw(Graphics2D g2D) {
-        g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
-        g2D.drawImage(darknessFilter, 0, 0, null);
+
+        if (gp.currentArea == Area.Outside) {
+            g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
+        }
+        if (gp.currentArea == Area.Outside || gp.currentArea == Area.Dungeon) {
+            g2D.drawImage(darknessFilter, 0, 0, null);
+        }
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
         // DEBUG

@@ -1,6 +1,7 @@
 package features;
 
 import entity.Entity;
+import game.Area;
 import game.GamePanel;
 import game.GameState;
 
@@ -69,13 +70,25 @@ public class EventHandler {
                 healingPool(GameState.Dialogue);
             }
             else if (hit(0, 10, 39, Direction.ANY)) {
-                teleport(1, 12, 13);
+                teleport(1, 12, 13, Area.Indoor); // in casa negustorului
             }
             else if (hit(1, 12, 13, Direction.ANY)) {
-                teleport(0, 10, 39);
+                teleport(0, 10, 39, Area.Outside); // afara
             }
             else if (hit(1, 12, 9, Direction.UP)) {
                 speak(gPanel.npcList.get(1).get(0));
+            }
+            else if (hit(0, 12, 9, Direction.ANY)) {
+                teleport(2,9,41, Area.Dungeon); // in temnita
+            }
+            else if (hit(2, 9, 41, Direction.ANY)) {
+                teleport(0,12,9, Area.Outside); // afara
+            }
+            else if (hit(2, 8, 7, Direction.ANY)) {
+                teleport(3,26,41, Area.Dungeon); // in B2
+            }
+            else if (hit(3, 26, 41, Direction.ANY)) {
+                teleport(2,8,7, Area.Dungeon); // in B1
             }
         }
     }
@@ -150,9 +163,10 @@ public class EventHandler {
         }
     }
 
-    public void teleport(int map, int col, int row) {
+    public void teleport(int map, int col, int row, Area area) {
 
         GamePanel.gameState = GameState.TransitionState;
+        gPanel.nextArea = area;
 
         tempMap = map;
         tempCol = col;

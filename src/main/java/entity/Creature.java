@@ -27,18 +27,6 @@ public abstract class Creature extends Entity {
         super(gp);
     }
 
-    public void checkCollisions() {
-        collisionOn = false;
-        gPanel.collisionDetector.manageTileCollision(this);
-        if (this instanceof Player) {
-            gPanel.collisionDetector.manageObjCollision(this);
-        }
-        gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
-        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
-        gPanel.collisionDetector.checkPlayer(this);
-        gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
-    }
-
     public boolean hasToStop() {
         checkCollisions();
         if (collisionOn) {

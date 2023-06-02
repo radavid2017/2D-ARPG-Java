@@ -2,6 +2,7 @@ package item.equipable.weapon.sword;
 
 import damage.NormalDamage;
 import game.GamePanel;
+import object.SuperObject;
 
 import java.io.Serializable;
 
@@ -20,6 +21,11 @@ public class NormalSword extends Sword {
 
         setAttackAreaValues();
 
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new NormalSword(getGamePanel());
     }
 
     @Override

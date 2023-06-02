@@ -3,6 +3,7 @@ package item.equipable.weapon.rangeattack.spell;
 import damage.FireDamage;
 import entity.Entity;
 import game.GamePanel;
+import object.SuperObject;
 
 import java.awt.*;
 
@@ -23,6 +24,11 @@ public class Fireball extends Spell {
 
         setupAnimation(objPath + "fireball");
         setDefaultSolidArea();
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new Fireball(getGamePanel());
     }
 
     @Override

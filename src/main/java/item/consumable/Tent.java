@@ -5,6 +5,7 @@ import game.GamePanel;
 import game.GameState;
 import item.Consumable;
 import item.equipable.light.DayState;
+import object.SuperObject;
 
 import java.awt.image.BufferedImage;
 
@@ -19,6 +20,11 @@ public class Tent extends Consumable {
         description = "[" + name + "]\nPentru dormit noaptea.";
         stackable = true;
         Image = image;
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new Tent(getGamePanel());
     }
 
     @Override

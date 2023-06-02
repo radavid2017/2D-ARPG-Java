@@ -126,6 +126,10 @@ public class GamePanel extends JPanel implements Runnable {
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.Title;
 
+    // AREA
+    public Area currentArea;
+    public Area nextArea;
+
     /** Constructorul panoului de joc */
     public GamePanel() {
         System.out.println("scale: " + scale);
@@ -179,11 +183,13 @@ public class GamePanel extends JPanel implements Runnable {
         environmentManager.setup();
         // setup muzica de fundal
         gameState = GameState.Title;
+        currentArea = Area.Outside;
     }
 
     public void resetGame(boolean restart) {
         player.setDefaultPositions();
         player.restoreStatus();
+        player.resetCounter();
         assetPool.setNPC();
         assetPool.setMonster();
         this.playMusic("BlueBoyAdventure.wav");
@@ -493,5 +499,21 @@ public class GamePanel extends JPanel implements Runnable {
         addList(npcList.get(currentMap));
 
         addList(monsterList.get(currentMap));
+    }
+
+    public void changeArea() {
+
+        if (nextArea != currentArea) {
+            stopMusic();
+            switch (nextArea) {
+                case Outside -> playMusic("BlueBoyAdventure.wav");
+                case Indoor -> playMusic("Merchant.wav");
+                case Dungeon -> playMusic("Dungeon.wav");
+            }
+        }
+
+        currentArea = nextArea;
+        assetPool.setMonster();
+        assetPool.setMovableObstacles(2);
     }
 }

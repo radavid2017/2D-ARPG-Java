@@ -2,6 +2,7 @@ package data;
 
 import entity.Entity;
 import game.GamePanel;
+import interactive_tile.IT_MetalPlate;
 import item.Item;
 import item.consumable.Tent;
 import item.consumable.key.KeyGold;
@@ -12,13 +13,14 @@ import item.equipable.shield.NormalShield;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
 import item.equipable.weapon.axe.Baltag;
+import item.equipable.weapon.pickaxe.Tarnacop;
 import item.equipable.weapon.sword.NormalSword;
+import object.obstacle.door.IronDoor;
 import object.obstacle.OBJ_Chest;
 import object.obstacle.WoodChest;
-import object.obstacle.WoodDoor;
+import object.obstacle.door.WoodDoor;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class SaveLoad {
     GamePanel gp;
@@ -41,6 +43,9 @@ public class SaveLoad {
             case "Lanterna" -> obj = new Lantern(gp);
             case "Usa de lemn" -> obj = new WoodDoor(gp);
             case "Cufarul Padurarului" -> obj = new WoodChest(gp);
+            case "Tarnacop" -> obj = new Tarnacop(gp);
+            case "Usa din fier" -> obj = new IronDoor(gp);
+            case "Placa metalica" -> obj = new IT_MetalPlate(gp);
         }
 
         return obj;

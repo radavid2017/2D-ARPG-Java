@@ -2,6 +2,7 @@ package interactive_tile;
 
 import entity.Entity;
 import entity.Player;
+import object.SuperObject;
 import particles.Particle;
 import game.GamePanel;
 import item.equipable.weapon.TypeWeapon;
@@ -15,6 +16,11 @@ public class IT_DryTree extends DestructibleTile {
         setImage("tree/drytree.png");
         setDefaultSolidArea();
         life = 1;
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new IT_DryTree(getGamePanel());
     }
 
     @Override

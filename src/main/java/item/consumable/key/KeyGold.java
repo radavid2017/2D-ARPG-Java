@@ -5,6 +5,7 @@ import features.Dialogue;
 import game.GamePanel;
 import game.GameState;
 import item.TypeItem;
+import object.SuperObject;
 import object.obstacle.TypeObstacle;
 
 public class KeyGold extends OBJ_Key {
@@ -14,6 +15,11 @@ public class KeyGold extends OBJ_Key {
         description = "[" + name + "]\nDeschide o usa.";
         this.setImage("key.png");
         keyModel = KeyModel.KeyGold;
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new KeyGold(getGamePanel());
     }
 
     @Override

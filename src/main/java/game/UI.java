@@ -346,7 +346,7 @@ public class UI {
         g2D.setColor(new Color(0, 0, 0, counter*5));
         g2D.fillRect(0, 0, gPanel.screenWidth, gPanel.screenHeight);
 
-        if(counter == 50) {
+        if(counter == 50) { // Tranzitia este terminata
             counter = 0;
             GamePanel.gameState = GameState.Play;
             gPanel.currentMap = gPanel.eHandler.tempMap;
@@ -354,6 +354,7 @@ public class UI {
             gPanel.player.worldY = gPanel.tileSize * gPanel.eHandler.tempRow;
             gPanel.eHandler.previousEventX = gPanel.player.worldX;
             gPanel.eHandler.previousEventY = gPanel.player.worldY;
+            gPanel.changeArea();
         }
     }
 

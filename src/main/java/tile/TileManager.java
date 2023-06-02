@@ -100,6 +100,10 @@ public class TileManager {
             loadMap(mapPath.get(0), 0);
             mapPath.add("res/maps/indoor01.txt");
             loadMap(mapPath.get(1), 1);
+            mapPath.add("res/maps/dungeon01.txt");
+            loadMap(mapPath.get(2), 2);
+            mapPath.add("res/maps/dungeon02.txt");
+            loadMap(mapPath.get(3), 3);
 
         } catch (IOException e) {
             System.out.println("Exception!");

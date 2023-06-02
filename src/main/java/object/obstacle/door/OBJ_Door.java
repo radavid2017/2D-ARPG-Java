@@ -1,14 +1,16 @@
-package object.obstacle;
+package object.obstacle.door;
 
 import features.Dialogue;
 import game.GamePanel;
 import game.GameState;
+import object.TypeMaterial;
 import object.obstacle.Obstacle;
+import object.obstacle.TypeObstacle;
 
 public abstract class OBJ_Door extends Obstacle {
 
-    public OBJ_Door(GamePanel gPanel) {
-        super(gPanel);
+    public OBJ_Door(GamePanel gPanel, TypeMaterial typeMaterial) {
+        super(gPanel, typeMaterial);
         this.isSolid = true;
         objPath += "door/";
 
@@ -25,11 +27,5 @@ public abstract class OBJ_Door extends Obstacle {
         solidArea.height = (int) (getGamePanel().tileSize/1.5);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-    }
-
-    @Override
-    public void interact() {
-        GamePanel.gameState = GameState.Dialogue;
-        getGamePanel().ui.setCurrentDialogue(new Dialogue("Ai nevoie de o cheie pentru a deschide usa"));
     }
 }

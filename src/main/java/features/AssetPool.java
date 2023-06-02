@@ -15,14 +15,14 @@ import item.consumable.potion.OBJ_Potion;
 import item.consumable.potion.PotionModel;
 import item.consumable.potion.PotionRed;
 import item.equipable.shield.Shield;
+import item.equipable.weapon.pickaxe.ModelPickaxe;
+import item.equipable.weapon.pickaxe.Pickaxe;
+import item.equipable.weapon.pickaxe.Tarnacop;
 import monster.MON_GreenSlime;
 import monster.MON_Orc;
 import monster.Monster;
 import monster.TypeMonster;
-import npc.NPC;
-import npc.NPC_Merchant;
-import npc.NPC_OldMan;
-import npc.TypeNPC;
+import npc.*;
 import game.GamePanel;
 import object.*;
 import item.equipable.shield.BlueShield;
@@ -32,6 +32,8 @@ import item.equipable.weapon.sword.ModelSword;
 import item.equipable.weapon.sword.NormalSword;
 import item.equipable.weapon.sword.Sword;
 import object.obstacle.*;
+import object.obstacle.door.IronDoor;
+import object.obstacle.door.WoodDoor;
 
 import java.util.ArrayList;
 
@@ -45,6 +47,15 @@ public class AssetPool {
 
     public AssetPool(GamePanel gPanel) {
         this.gPanel = gPanel;
+    }
+
+    public void setMovableObstacles(int mapNum) {
+        gPanel.objects.put(mapNum, new ArrayList<>());
+        gPanel.objects.get(mapNum).clear();
+
+        loadObstacle(20, 25, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+        loadObstacle(11, 18, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+        loadObstacle(23, 14, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
     }
 
     // setarea obiectelor in lumea jocului
@@ -74,15 +85,25 @@ public class AssetPool {
         loadKey("key.png", 21, 19, KeyModel.KeyGold, mapNum);
         loadKey("key.png", 26, 21, KeyModel.KeyGold, mapNum);
         loadAxe("axe.png", 33, 21, ModelAxe.Baltag, mapNum);
+        loadPickaxe(30, 21, ModelPickaxe.Tarnacop, mapNum);
         loadShield("shield_blue.png", 35, 21, ModelShield.BlueShield, mapNum);
         loadPotion("potion_red.png", 22, 27, PotionModel.PotionRed, mapNum);
         loadPotion("potion_red.png", 22, 28, PotionModel.PotionRed, mapNum);
         loadCoin(23, 30, mapNum);
-        loadObstacle(14, 28, TypeObstacle.Door, mapNum);
-        loadObstacle(12, 12, TypeObstacle.Door, mapNum);
-        loadObstacle(23, 16, TypeObstacle.Chest, mapNum);
+        loadObstacle(14, 28, TypeObstacle.Door, TypeMaterial.Wood, mapNum);
+        loadObstacle(12, 12, TypeObstacle.Door, TypeMaterial.Wood, mapNum);
+        loadObstacle(23, 16, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
         loadLight(18, 20, ModelLight.Lantern, mapNum);
         loadTent(19, 20, mapNum);
+
+        mapNum = 2;
+        setMovableObstacles(mapNum);
+
+        loadObstacle(40, 41, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
+        loadObstacle(13, 16, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
+        loadObstacle(26, 34, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
+        loadObstacle(27, 15, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
+        loadObstacle(18, 23, TypeObstacle.Door, TypeMaterial.Iron, mapNum);
     }
 
     public void loadCoin(int worldX, int worldY, int mapNum) {
@@ -101,14 +122,20 @@ public class AssetPool {
         gPanel.statesObjectList.clear();
     }
 
-    public void loadObstacle(int worldX, int worldY, TypeObstacle typeObstacle, int mapNum) {
+    public void loadObstacle(int worldX, int worldY, TypeObstacle typeObstacle, TypeMaterial typeMaterial, int mapNum) {
         Obstacle obstacle = null;
         switch (typeObstacle) {
             case Door -> {
-                obstacle = new WoodDoor(gPanel);
+                switch (typeMaterial) {
+                    case Wood -> obstacle = new WoodDoor(gPanel);
+                    case Iron -> obstacle = new IronDoor(gPanel);
+                }
             }
             case Chest -> {
                 obstacle = new WoodChest(gPanel);
+            }
+            case BigRock -> {
+                obstacle = new OBJ_BigRock(gPanel);
             }
         }
         if (obstacle != null) {
@@ -195,6 +222,18 @@ public class AssetPool {
 //        gPanel.objects.add(sword);
     }
 
+    private void loadPickaxe (int worldX, int worldY, ModelPickaxe modelPickaxe, int mapNum) {
+        Pickaxe pickaxe = null;
+        switch (modelPickaxe) {
+            case Tarnacop -> pickaxe = new Tarnacop(gPanel);
+        }
+
+        if (pickaxe != null) {
+            pickaxe.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+            gPanel.objects.get(mapNum).add(pickaxe);
+        }
+    }
+
     private void loadAxe(String itemName, int worldX, int worldY, ModelAxe modelAxe, int mapNum) {
         Axe axe = null;
         switch (modelAxe) {
@@ -236,7 +275,6 @@ public class AssetPool {
         gPanel.npcList.get(mapNum).clear();
         iteratorNPC = 0;
         loadNPC(TypeNPC.Merchant, 12, 7, mapNum);
-
     }
 
     public void loadNPC( TypeNPC typeNPC, double worldX, double worldY, int mapNum) {
@@ -249,6 +287,9 @@ public class AssetPool {
         if (npc != null) {
             npc.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
             gPanel.npcList.get(mapNum).add(npc);
+        }
+        else {
+            System.out.println("Eroare");
         }
     }
 
@@ -298,12 +339,51 @@ public class AssetPool {
         loadDestructibleTile(TypeDestructibleTile.DryTree, 32, 12, mapNum);
         loadDestructibleTile(TypeDestructibleTile.DryTree, 33, 12, mapNum);
 
+        mapNum = 2;
+        gPanel.interactiveTiles.put(mapNum, new ArrayList<>());
+        gPanel.interactiveTiles.get(mapNum).clear();
+
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 18, 30, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 17, 31, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 17, 32, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 17, 34, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 18, 34, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 18, 33, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 10, 22, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 10, 24, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 38, 18, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 38, 19, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 38, 20, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 38, 21, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 18, 13, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 18, 14, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 22, 28, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 30, 28, mapNum);
+        loadDestructibleTile(TypeDestructibleTile.DestructibleWall, 32, 28, mapNum);
+
+        loadResultTile(TypeResultTile.MetalPlate, 20, 22, mapNum);
+        loadResultTile(TypeResultTile.MetalPlate, 8, 17, mapNum);
+        loadResultTile(TypeResultTile.MetalPlate, 39, 31, mapNum);
+    }
+
+    public void loadResultTile(TypeResultTile typeResultTile, double worldX, double worldY, int mapNum) {
+        ResultTile resultTile = null;
+        switch (typeResultTile) {
+            case Trunk -> resultTile = new IT_Trunk(gPanel);
+            case MetalPlate -> resultTile = new IT_MetalPlate(gPanel);
+        }
+
+        if (resultTile != null) {
+            resultTile.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+            gPanel.interactiveTiles.get(mapNum).add(resultTile);
+        }
     }
 
     public void loadDestructibleTile(TypeDestructibleTile typeDestructibleTile, double worldX, double worldY, int mapNum) {
         DestructibleTile destructibleTile = null;
         switch (typeDestructibleTile) {
             case DryTree -> destructibleTile = new IT_DryTree(gPanel);//gPanel.interactiveTiles[mapNum][iteratorInteractiveTiles] = new IT_DryTree(gPanel);
+            case DestructibleWall -> destructibleTile = new IT_DestructibleWall(gPanel);
         }
 
         if (destructibleTile != null) {

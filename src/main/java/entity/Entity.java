@@ -102,6 +102,18 @@ public abstract class Entity {
 
     }
 
+    public void checkCollisions() {
+        collisionOn = false;
+        gPanel.collisionDetector.manageTileCollision(this);
+        if (this instanceof Player) {
+            gPanel.collisionDetector.manageObjCollision(this);
+        }
+        gPanel.collisionDetector.checkEntity(this, gPanel.npcList.get(gPanel.currentMap));
+        gPanel.collisionDetector.checkEntity(this, gPanel.monsterList.get(gPanel.currentMap));
+        gPanel.collisionDetector.checkPlayer(this);
+        gPanel.collisionDetector.checkEntity(this, gPanel.interactiveTiles.get(gPanel.currentMap));
+    }
+
     public void speak() {
 
         gPanel.ui.setCurrentDialogue(dialogue);
@@ -143,7 +155,13 @@ public abstract class Entity {
         g2D.drawRect((int) (screenX + solidArea.x), (int) (screenY + solidArea.y), solidArea.width, solidArea.height);
     }
 
-
+    public void resetCounter() {
+        invincibleCounter = 0;
+        dyingCounter = 0;
+        knockBackCounter = 0;
+        guardCounter = 0;
+        offBalanceCounter = 0;
+    }
 
     // incarcarea animatiilor de miscare
         /** ANIMATII MOVEMENT */

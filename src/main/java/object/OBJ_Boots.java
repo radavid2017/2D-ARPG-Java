@@ -10,6 +10,11 @@ public class OBJ_Boots extends SuperObject {
     }
 
     @Override
+    public SuperObject generateObject() {
+        return new OBJ_Boots(getGamePanel());
+    }
+
+    @Override
     public void setDefaultSolidArea() {
 
     }

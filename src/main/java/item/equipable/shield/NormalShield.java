@@ -3,6 +3,7 @@ package item.equipable.shield;
 import defense.NormalDefense;
 import game.CharacterClass;
 import game.GamePanel;
+import object.SuperObject;
 
 public class NormalShield extends Shield {
 
@@ -13,6 +14,11 @@ public class NormalShield extends Shield {
         modelShield = ModelShield.NormalShield;
         name = "Scut Normal";
         description = "[" + name + "]\nFacut din lemn.";
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new NormalShield(getGamePanel());
     }
 
     @Override

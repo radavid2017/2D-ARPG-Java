@@ -2,6 +2,7 @@ package item.equipable.weapon.axe;
 
 import damage.NormalDamage;
 import game.GamePanel;
+import object.SuperObject;
 
 public class Baltag extends Axe {
 
@@ -18,6 +19,11 @@ public class Baltag extends Axe {
         knockBackPower = 10;
 
         setAttackAreaValues();
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new Baltag(getGamePanel());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package interactive_tile;
 
 public enum TypeResultTile {
-    Trunk
+    Trunk,
+    MetalPlate
 }

@@ -3,6 +3,7 @@ package item.equipable.weapon.rangeattack;
 import damage.EarthDamage;
 import game.CharacterClass;
 import game.GamePanel;
+import object.SuperObject;
 
 import java.awt.*;
 
@@ -20,6 +21,11 @@ public class Rock extends Projectile {
         alive = false;
         setupAnimation(objPath + "rock");
         setDefaultSolidArea();
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new Rock(getGamePanel());
     }
 
     @Override

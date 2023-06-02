@@ -81,6 +81,8 @@ public abstract class SuperObject extends Entity {
         super.update();
     }
 
+    public abstract SuperObject generateObject();
+
     public void draw(Graphics2D g2D) {
         if (getGamePanel().player!=null) {
             super.draw(g2D);

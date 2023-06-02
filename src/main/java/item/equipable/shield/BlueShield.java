@@ -3,6 +3,7 @@ package item.equipable.shield;
 import defense.NormalDefense;
 import game.CharacterClass;
 import game.GamePanel;
+import object.SuperObject;
 
 public class BlueShield extends Shield {
 
@@ -12,6 +13,11 @@ public class BlueShield extends Shield {
         modelShield = ModelShield.BlueShield;
         name = "Scut Albastru";
         description = "[" + name + "]\nScut albastru stralucitor.";
+    }
+
+    @Override
+    public SuperObject generateObject() {
+        return new BlueShield(getGamePanel());
     }
 
     @Override
