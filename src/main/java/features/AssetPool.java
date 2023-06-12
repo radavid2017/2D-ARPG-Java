@@ -1,7 +1,10 @@
 package features;
 
+import data.GameProgress;
 import interactive_tile.*;
+import item.consumable.LegendaryTreasure.OBJ_BlueHeart;
 import item.consumable.Tent;
+import item.consumable.TypeConsumable;
 import item.consumable.coin.Coin;
 import item.equipable.light.Lantern;
 import item.equipable.light.Light;
@@ -18,10 +21,7 @@ import item.equipable.shield.Shield;
 import item.equipable.weapon.pickaxe.ModelPickaxe;
 import item.equipable.weapon.pickaxe.Pickaxe;
 import item.equipable.weapon.pickaxe.Tarnacop;
-import monster.MON_GreenSlime;
-import monster.MON_Orc;
-import monster.Monster;
-import monster.TypeMonster;
+import monster.*;
 import npc.*;
 import game.GamePanel;
 import object.*;
@@ -47,15 +47,6 @@ public class AssetPool {
 
     public AssetPool(GamePanel gPanel) {
         this.gPanel = gPanel;
-    }
-
-    public void setMovableObstacles(int mapNum) {
-        gPanel.objects.put(mapNum, new ArrayList<>());
-        gPanel.objects.get(mapNum).clear();
-
-        loadObstacle(20, 25, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
-        loadObstacle(11, 18, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
-        loadObstacle(23, 14, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
     }
 
     // setarea obiectelor in lumea jocului
@@ -97,13 +88,47 @@ public class AssetPool {
         loadTent(19, 20, mapNum);
 
         mapNum = 2;
-        setMovableObstacles(mapNum);
+        gPanel.objects.put(mapNum, new ArrayList<>());
+        gPanel.objects.get(mapNum).clear();
+
+        loadObstacle(20, 25, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+        loadObstacle(11, 18, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+        loadObstacle(23, 14, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
 
         loadObstacle(40, 41, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
         loadObstacle(13, 16, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
         loadObstacle(26, 34, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
         loadObstacle(27, 15, TypeObstacle.Chest, TypeMaterial.Wood, mapNum);
         loadObstacle(18, 23, TypeObstacle.Door, TypeMaterial.Iron, mapNum);
+
+        mapNum = 3;
+        gPanel.objects.put(mapNum, new ArrayList<>());
+        gPanel.objects.get(mapNum).clear();
+
+        if (!GameProgress.skeletonLordDefeated) {
+            loadObstacle(25, 15, TypeObstacle.Door, TypeMaterial.Iron, mapNum);
+        }
+
+        loadBlueHeart(25, 8, mapNum);
+    }
+
+//    public void resetBigRocks(int mapNum) {
+//
+//        for (int i = 0; i < gPanel.objects.get(mapNum).size(); i++) {
+//            if (gPanel.objects.get(mapNum).get(i) instanceof OBJ_BigRock bigRock) {
+//                gPanel.objects.get(mapNum).remove(bigRock);
+//            }
+//        }
+//
+//        loadObstacle(20, 25, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+//        loadObstacle(11, 18, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+//        loadObstacle(23, 14, TypeObstacle.BigRock, TypeMaterial.Rock, mapNum);
+//    }
+
+    public void loadBlueHeart(int worldX, int worldY, int mapNum) {
+        OBJ_BlueHeart blueHeart = new OBJ_BlueHeart(gPanel);
+        blueHeart.setPosition(gPanel.tileSize * worldX, gPanel.tileSize * worldY);
+        gPanel.objects.get(mapNum).add(blueHeart);
     }
 
     public void loadCoin(int worldX, int worldY, int mapNum) {
@@ -307,6 +332,27 @@ public class AssetPool {
 
         loadMonster(TypeMonster.Orc, 12, 33, mapNum);
 
+//        loadMonster(TypeMonster.Bat, 22, 21, mapNum);
+//        loadMonster(TypeMonster.SkeletonLord, 35, 7, mapNum);
+
+        mapNum = 2;
+        gPanel.monsterList.put(mapNum, new ArrayList<>());
+        gPanel.monsterList.get(mapNum).clear();
+
+        loadMonster(TypeMonster.Bat, 34, 39, mapNum);
+        loadMonster(TypeMonster.Bat, 36, 25, mapNum);
+        loadMonster(TypeMonster.Bat, 39, 26, mapNum);
+        loadMonster(TypeMonster.Bat, 28, 11, mapNum);
+        loadMonster(TypeMonster.Bat, 10, 19, mapNum);
+
+        mapNum = 3;
+        gPanel.monsterList.put(mapNum, new ArrayList<>());
+        gPanel.monsterList.get(mapNum).clear();
+
+        if (!GameProgress.skeletonLordDefeated) {
+            loadMonster(TypeMonster.SkeletonLord, 23, 16, mapNum);
+        }
+
         // debug
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*10);
 //        loadMonster(TypeMonster.GreenSlime, gPanel.tileSize*11, gPanel.tileSize*11);
@@ -317,6 +363,8 @@ public class AssetPool {
         switch (typeMonster) {
             case GreenSlime -> monster = new MON_GreenSlime(gPanel);//gPanel.monsterList[mapNum][iteratorMonsters] = new MON_GreenSlime(gPanel);
             case Orc -> monster = new MON_Orc(gPanel);
+            case Bat -> monster = new MON_Bat(gPanel);
+            case SkeletonLord -> monster = new MON_SkeletonLord(gPanel);
         }
 
         if (monster != null) {

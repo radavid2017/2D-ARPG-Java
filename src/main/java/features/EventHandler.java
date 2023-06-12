@@ -1,9 +1,11 @@
 package features;
 
+import data.GameProgress;
 import entity.Entity;
 import game.Area;
 import game.GamePanel;
 import game.GameState;
+import game.SceneState;
 
 import java.awt.*;
 
@@ -89,6 +91,9 @@ public class EventHandler {
             }
             else if (hit(3, 26, 41, Direction.ANY)) {
                 teleport(2,8,7, Area.Dungeon); // in B1
+            }
+            else if (hit(3, 25, 27, Direction.ANY)) {
+                skeletonLord(); // BOSS
             }
         }
     }
@@ -184,5 +189,12 @@ public class EventHandler {
 
         gPanel.playSE("stairs.wav");
         canTouchEvent = false;
+    }
+
+    public void skeletonLord() {
+        if (!gPanel.bossBattleOn && !GameProgress.skeletonLordDefeated) {
+            GamePanel.gameState = GameState.CutSceneState;
+            gPanel.cutSceneManager.sceneState = SceneState.Skeleton;
+        }
     }
 }

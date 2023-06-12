@@ -69,6 +69,22 @@ public class StateMachine {
         states.addAll(Arrays.asList(up, down, left, right));
     }
 
+    public void loadCompleteAnimation(GamePanel gp, int scale, String animationFolderName, TypeAnimation typeAnimation) {
+        // instantiere
+        up = new AnimationState(gp, Direction.UP, typeAnimation);
+        down = new AnimationState(gp, Direction.DOWN, typeAnimation);
+        right = new AnimationState(gp, Direction.RIGHT, typeAnimation);
+        left = new AnimationState(gp, Direction.LEFT, typeAnimation);
+
+        // incarcare resurse
+        up.loadDirectionAnimation(scale, animationFolderName);
+        down.loadDirectionAnimation(scale, animationFolderName);
+        right.loadDirectionAnimation(scale, animationFolderName);
+        left.loadDirectionAnimation(scale, animationFolderName);
+
+        states.addAll(Arrays.asList(up, down, left, right));
+    }
+
     public void loadSingleAnimation(GamePanel gp, String animationFolderName, TypeAnimation typeAnimation, Direction direction) {
         switch (direction) {
             case UP -> {

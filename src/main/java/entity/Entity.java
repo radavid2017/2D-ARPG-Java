@@ -72,6 +72,12 @@ public abstract class Entity {
     public int dyingCounter = 0;
     public boolean transparent = false;
 
+    /** Bara de viata */
+    public boolean hpBarOn = false;
+    public int hpBarCounter = 0;
+    public boolean temp = false;
+    public boolean drawing = true;
+
     /** Status caracter */
     public int maxLife;
     public int life;
@@ -83,6 +89,8 @@ public abstract class Entity {
 
     public Entity attacker;
     public Direction knockBackDirection;
+
+    public boolean sleep = false;
 
     /** Constrcutor entitate */
     public Entity(GamePanel gPanel) {
@@ -139,10 +147,20 @@ public abstract class Entity {
         }
     }
 
+    public int getScreenX() {
+        return (int) (worldX - gPanel.player.worldX + gPanel.player.screenX);
+    }
+
+    public int getScreenY() {
+        return (int) (worldY - gPanel.player.worldY + gPanel.player.screenY);
+    }
+
     /** Desenarea entitatii */
     public void draw(Graphics2D g2D) {
-        screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
-        screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
+        screenX = getScreenX();
+        screenY = getScreenY();
+//        screenX = worldX - gPanel.player.worldX + gPanel.player.screenX;
+//        screenY = worldY - gPanel.player.worldY + gPanel.player.screenY;
 
         // Instantiere camera
         camera = new Camera(worldX, worldY, screenX, screenY, gPanel);
@@ -235,21 +253,26 @@ public abstract class Entity {
 
     }
 
-    public int touchingDamage(Entity target) {
-        int totalDamage = attack - target.defense;
-        if (totalDamage < 0) {
-            totalDamage = 1;
-        }
-        target.life -= totalDamage;
-        return totalDamage;
-    }
-
     public void setKnockBack(Entity target, Entity attacker, int knockBackPower) {
 
         this.attacker = attacker;
         target.knockBackDirection = attacker.direction;
         target.speed += knockBackPower;
         target.knockBack = true;
+    }
+
+    public int touchingDamage(Entity target) {
+        int totalDamage = attack - target.defense;
+        if (totalDamage < 0) {
+            totalDamage = 1;
+        }
+        if (totalDamage != 0) {
+            target.transparent = true;
+        }
+        getGamePanel().playSE("receivedamage.wav");
+        target.life -= totalDamage;
+        target.invincible = true;
+        return totalDamage;
     }
 
     public int nearlyDamage(Entity target) {
@@ -291,6 +314,30 @@ public abstract class Entity {
         target.life -= totalDamage;
         target.invincible = true;
         return totalDamage;
+    }
+
+    /** Bara de viata a monstrului */
+    public void showHPBar(Graphics2D g2D) {
+
+        double oneScale = (double) getGamePanel().tileSize / maxLife;
+        double hpBarValue = oneScale * life;
+
+        int hpBarX = (int) getScreenX();
+        int hpBarY = (int) getScreenY();
+
+        g2D.setColor(new Color(35, 35, 35));
+        g2D.fillRect((int) hpBarX - 1, (int) hpBarY - 16, getGamePanel().tileSize, 10);
+        g2D.setColor(new Color(255, 0, 30));
+        g2D.fillRect((int) hpBarX, (int) hpBarY - 15, (int) hpBarValue, 10);
+
+//        System.out.println("screenX: " + screenX + " screenY: " + screenY);
+//        System.out.println("worldX: " + worldX + " worldY: " + worldY);
+
+        hpBarCounter ++;
+        if (hpBarCounter >= 150) {
+            hpBarCounter = 0;
+            hpBarOn = false;
+        }
     }
 
     public void setCollisionOn(boolean collisionOn) {

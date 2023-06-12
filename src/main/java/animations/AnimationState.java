@@ -88,9 +88,45 @@ public class AnimationState {
                 imgList.add(image);
             }
             this.animationFrames = imgList;
+            System.out.println("LUNGIME ANIMATION FRAMES: " + animationFrames.size());
             numFrames = directory.list().length-1;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void loadAnimation(GamePanel gp, int scale, String folderPath) {
+        try {
+            RenameFolderFiles.rename(folderPath);
+            List<BufferedImage> imgList = new ArrayList<>();
+            File directory = new File(folderPath);
+            for (int i = 0; i < directory.list().length; i++) {
+                String spriteName = folderPath + "/" + i + ".png";
+                System.out.println("CADRUL " + spriteName + " incarcat cu succes.");
+                BufferedImage image = ImageIO.read(new FileInputStream(spriteName));
+                if (typeAnimation == TypeAnimation.ATTACK)
+                    switch (direction) {
+                        case UP, DOWN -> image = UtilityTool.scaledImage(image,gp.tileSize*scale, gp.tileSize*2*scale);
+                        case LEFT, RIGHT -> image = UtilityTool.scaledImage(image,gp.tileSize*2*scale, gp.tileSize*scale);
+                    }
+                else
+                    image = UtilityTool.scaledImage(image,gp.tileSize*scale, gp.tileSize*scale);
+                entityOriginalImages.add(image);
+                imgList.add(image);
+            }
+            this.animationFrames = imgList;
+            numFrames = directory.list().length-1;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadDirectionAnimation(int scale, String path) {
+        switch (direction) {
+            case UP -> loadAnimation(gp, scale, path + "\\north");
+            case DOWN -> loadAnimation(gp, scale, path + "\\south");
+            case LEFT -> loadAnimation(gp, scale, path + "\\west");
+            case RIGHT -> loadAnimation(gp, scale, path + "\\east");
         }
     }
 

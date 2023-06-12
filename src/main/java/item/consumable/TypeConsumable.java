@@ -4,5 +4,6 @@ public enum TypeConsumable {
     Key,
     Potion,
     Coin,
-    Tent
+    Tent,
+    BlueHeart
 }

@@ -6,6 +6,7 @@ import features.Direction;
 import features.UtilityTool;
 import hud.window.InventoryWindow;
 import item.equipable.light.DayState;
+import monster.Monster;
 import npc.NPC;
 import object.OBJ_Heart;
 import object.OBJ_ManaCrystal;
@@ -37,7 +38,7 @@ public class UI {
 //    int messageCounter = 0;
     public boolean messageOn = false;
 //    public String message = "";
-    private Dialogue currentDialogue;
+    public Dialogue currentDialogue;
 
     ArrayList<String> msgs = new ArrayList<>();
     ArrayList<Integer> msgCounters = new ArrayList<>();
@@ -152,7 +153,9 @@ public class UI {
             }
             case Play -> {
                 // play staff
+                currentDialogue = null;
                 drawLifeManaPlayer();
+                drawMonsterLife();
                 drawMessage();
             }
             case Pause -> {
@@ -160,9 +163,11 @@ public class UI {
                 drawLifeManaPlayer();
                 drawPauseScreen();
             }
-            case Dialogue -> {
+            case Dialogue, CutSceneState -> {
                 // starea de dialog
-                drawDialogueScreen();
+                if (this.currentDialogue != null) {
+                    drawDialogueScreen();
+                }
             }
             case CharacterState -> {
                 // starea de status caracter
@@ -676,44 +681,74 @@ public class UI {
 //        return null;
 //    }
 
+    public void drawMonsterLife() {
+
+        if (gPanel.monsterList.get(gPanel.currentMap) != null) {
+
+            for (int i = 0; i < gPanel.monsterList.get(gPanel.currentMap).size(); i++) {
+
+                Monster monster = (Monster) gPanel.monsterList.get(gPanel.currentMap).get(i);
+
+                if (monster != null && monster.camera.isOnCamera()) {
+                    if (monster.hpBarOn && !monster.boss) {
+                        monster.showHPBar(g2D);
+                    }
+                    else if (monster.boss){
+                        monster.showHPBossBar(g2D);
+                    }
+                }
+            }
+        }
+    }
+
     public void drawLifeManaPlayer() {
 
         assert heart != null : "Obiectul heart din drawPlayerLife() din clasa ui este null!";
 
         int x = (int) heart.screenX;
         int posY = (int) heart.screenY;
+        int iconSize = 54;
 
         // AFISEAZA HP CURENT PLAYER
         int i;
         // cat timp am 2 vieti, adaug o inima intreaga
         for (i = 0; i < gPanel.player.life-1; i+=2) {
-            g2D.drawImage(heart.imgStates.get(0), x, posY, null);
-            x += 100;
+            g2D.drawImage(heart.imgStates.get(0), x, posY, iconSize, iconSize, null);
+            x += 54;
+            if (x >= screenWidth/1.75) {
+                x = (int) heart.screenX;
+                posY += iconSize;
+            }
         }
+
         // daca mai am o viata de adaugat, adaug jumatate de inima
         if (gPanel.player.life - i == 1) {
-            g2D.drawImage(heart.imgStates.get(1), x, posY, null);
-            x += 100;
+            g2D.drawImage(heart.imgStates.get(1), x, posY, iconSize, iconSize, null);
+            x += 54;
         }
 
         // AFISEAZA HP MAXIM POSIBIL
         int missingLives = gPanel.player.life > 0 ? gPanel.player.maxLife - gPanel.player.life : gPanel.player.maxLife;
         for (int k = 0; k < missingLives/2; k++) {
-            g2D.drawImage(heart.imgStates.get(2), x, posY, null);
-            x += 100;
+            g2D.drawImage(heart.imgStates.get(2), x, posY, iconSize, iconSize, null);
+            x += 54;
         }
 
         int xMana = (int) manaCrystal.screenX;
         // CURRENT MANA
         for(i=0; i<gPanel.player.mana; i++) {
-            g2D.drawImage(manaCrystal.imgStates.get(1), xMana, (int) manaCrystal.screenY, null);
-            xMana += 78;
+            g2D.drawImage(manaCrystal.imgStates.get(1), xMana, posY + 48, iconSize, iconSize, null);
+            xMana += 32;
+            if (xMana >= screenWidth/1.75) {
+                xMana = (int) manaCrystal.screenX;
+                posY += iconSize;
+            }
         }
 
         // MAX MANA
         for (i=gPanel.player.mana; i<gPanel.player.maxMana; i++) {
-            g2D.drawImage(manaCrystal.imgStates.get(0), xMana, (int) manaCrystal.screenY, null);
-            xMana += 78;
+            g2D.drawImage(manaCrystal.imgStates.get(0), xMana, posY + 48, iconSize, iconSize, null);
+            xMana += 32;
         }
     }
 
@@ -804,7 +839,7 @@ public class UI {
                 drawItemClassSelection("Vrajitor", y += gPanel.tileSize, CharacterClass.MAGE);
                 drawItemClassSelection("Arcas", y += gPanel.tileSize, CharacterClass.ARCHER);
                 drawItemClassSelection("Razboinic", y += gPanel.tileSize, CharacterClass.WARRIOR);
-                drawItemClassSelection("Pisicuta", y += gPanel.tileSize, CharacterClass.CAT);
+//                drawItemClassSelection("Pisicuta", y += gPanel.tileSize, CharacterClass.CAT);
                 drawItemClassSelection("Inapoi", y += gPanel.tileSize*2, CharacterClass.BACK);
             }
         }
@@ -843,8 +878,8 @@ public class UI {
                 switch (characterClass) {
                     case MAGE -> characterClass = CharacterClass.ARCHER;
                     case ARCHER -> characterClass = CharacterClass.WARRIOR;
-                    case WARRIOR -> characterClass = CharacterClass.CAT;
-                    case CAT -> characterClass = CharacterClass.BACK;
+                    case WARRIOR -> characterClass = CharacterClass.BACK;
+//                    case CAT -> characterClass = CharacterClass.BACK;
                     case BACK -> characterClass = CharacterClass.MAGE;
                 }
             }
@@ -862,11 +897,11 @@ public class UI {
             }
             case CLASS_SELECTION -> {
                 switch (characterClass) {
-                    case CAT -> characterClass = CharacterClass.WARRIOR;
+//                    case CAT -> characterClass = CharacterClass.WARRIOR;
                     case WARRIOR -> characterClass = CharacterClass.ARCHER;
                     case ARCHER -> characterClass = CharacterClass.MAGE;
                     case MAGE -> characterClass = CharacterClass.BACK;
-                    case BACK -> characterClass = CharacterClass.CAT;
+                    case BACK -> characterClass = CharacterClass.WARRIOR;
                 }
             }
         }
@@ -895,7 +930,7 @@ public class UI {
             case MAGE -> gPanel.characterClassPath = "mage";
             case ARCHER -> gPanel.characterClassPath = "archer";
             case WARRIOR -> gPanel.characterClassPath = "warrior";
-            case CAT -> gPanel.characterClassPath = "cat";
+//            case CAT -> gPanel.characterClassPath = "cat";
             case BACK -> {
                 titleScreenState = TitleScreenState.MAIN_PAGE;
                 return;
@@ -940,7 +975,6 @@ public class UI {
 //    }
 
     public void drawDialogueScreen() {
-
         // fereastra de dialog
         int x = 156;
         int y = 24;
@@ -959,6 +993,10 @@ public class UI {
             g2D.drawString(line, x, y);
             y += 40;
         }
+
+//        if (GamePanel.gameState == GameState.CutSceneState && gPanel.keyH.enterPressed) {
+//            gPanel.cutSceneManager.scenePhase++;
+//        }
     }
 
     private void drawCharacterScreen() {
@@ -1021,7 +1059,7 @@ public class UI {
         return frameX / 2 - length / 2;
     }
 
-    private void drawSubWindow(int x, int y, int width, int height) {
+    public void drawSubWindow(int x, int y, int width, int height) {
 
         Color c = new Color(0, 0, 0, 210);
         g2D.setColor(c);

@@ -84,6 +84,13 @@ public class CollisionDetector {
 
     private int manageObjListCollision(ArrayList<Entity> objects, Entity entity) {
         int index=-1;
+
+        // Use a temporal direction when it's being knocbacked
+        Direction direction = entity.direction;
+        if (entity.knockBack) {
+            direction = entity.knockBackDirection;
+        }
+
         if (objects != null) {
             for (int i = 0; i < objects.size(); i++) { // FIXED
                 if (objects.get(i) != null) { // FIXED
@@ -95,7 +102,7 @@ public class CollisionDetector {
                     objects.get(i).solidArea.x += objects.get(i).worldX; // FIXED
                     objects.get(i).solidArea.y += objects.get(i).worldY; // FIXED
 
-                    switch (entity.direction) {
+                    switch (direction) {
                         case UP -> entity.solidArea.y -= entity.speed;
                         case DOWN -> entity.solidArea.y += entity.speed;
                         case LEFT -> entity.solidArea.x -= entity.speed;

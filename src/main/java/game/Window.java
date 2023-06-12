@@ -1,7 +1,10 @@
 package game;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class Window {
 
@@ -21,6 +24,7 @@ public class Window {
 //        window.setBounds(0,0, width, height);
         // titlul ferestrei
         window.setTitle("Huntily Poke");
+        setIcon(window);
 
         // panou de joc - instantiere
         GamePanel gamePanel = new GamePanel();
@@ -47,5 +51,16 @@ public class Window {
 //        gamePanel.setupGame();
         gamePanel.startGameThread();
 
+
+    }
+
+    public void setIcon(JFrame window) {
+        ImageIcon icon = null;
+        try {
+            icon = new ImageIcon(ImageIO.read(new FileInputStream("res/item/equipable/weapon/sword/sword_normal.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        window.setIconImage(icon.getImage());
     }
 }

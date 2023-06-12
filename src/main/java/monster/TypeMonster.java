@@ -2,5 +2,7 @@ package monster;
 
 public enum TypeMonster {
     GreenSlime,
-    Orc
+    Orc,
+    Bat,
+    SkeletonLord
 }

@@ -47,7 +47,7 @@ public class KeyHandler implements KeyListener {
         switch (GamePanel.gameState) {
             case Title -> titleState(code);
             case Play -> playState(code);
-            case Dialogue -> dialogueState(code);
+            case Dialogue, CutSceneState -> dialogueState(code);
             case CharacterState -> characterState(code);
             case OptionsState -> optionsState(code);
             case GameOverState -> gameOverState(code);
@@ -292,6 +292,9 @@ public class KeyHandler implements KeyListener {
 
     public void dialogueState(int code) {
         if (code == KeyEvent.VK_ENTER) {
+            if (GamePanel.gameState == GameState.CutSceneState) {
+                gPanel.cutSceneManager.scenePhase++;
+            }
             GamePanel.gameState = GameState.Play;
         }
     }

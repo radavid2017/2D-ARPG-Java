@@ -125,6 +125,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // GAME STATE - starea jocului
     public static GameState gameState = GameState.Title;
+    public boolean bossBattleOn = false;
+    public CutSceneManager cutSceneManager = new CutSceneManager(this);
 
     // AREA
     public Area currentArea;
@@ -164,7 +166,6 @@ public class GamePanel extends JPanel implements Runnable {
         GamePanel.gameState = GameState.Play;
         ui.titleScreenState = TitleScreenState.MAIN_PAGE;
         player.getPlayerSprites();
-        playMusic("BlueBoyAdventure.wav");
     }
 
     /** instantieri joc */
@@ -182,24 +183,28 @@ public class GamePanel extends JPanel implements Runnable {
         // Efecte de lumina
         environmentManager.setup();
         // setup muzica de fundal
-        gameState = GameState.Title;
+        playMusic("BlueBoyAdventure.wav");
+//        gameState = GameState.Title;
         currentArea = Area.Outside;
     }
 
     public void resetGame(boolean restart) {
         player.setDefaultPositions();
+        removeTempEntity(objects.get(currentMap));
+        bossBattleOn = false;
         player.restoreStatus();
         player.resetCounter();
         assetPool.setNPC();
         assetPool.setMonster();
-        this.playMusic("BlueBoyAdventure.wav");
+        stopMusic();
+//        playMusic("BlueBoyAdventure.wav");
 
         if (restart) {
             player.setItems();
             assetPool.setObjects();
             assetPool.setInteractiveTiles();
             environmentManager.getLighting().resetDay();
-            this.stopMusic();
+            stopMusic();
         }
     }
 
@@ -262,6 +267,14 @@ public class GamePanel extends JPanel implements Runnable {
                 if (entity != null) {
                     entity.update();
                 }
+            }
+        }
+    }
+
+    public void removeTempEntity(ArrayList<Entity> arrayList) {
+        for (int i = 0; i < arrayList.size(); i++) {
+            if (arrayList.get(i) != null && arrayList.get(i).temp) {
+                arrayList.set(i, null);
             }
         }
     }
@@ -399,6 +412,9 @@ public class GamePanel extends JPanel implements Runnable {
             // MINI MAP SCREEN
             map.drawMiniMap(g2D);
 
+            // CUTSCENE
+            cutSceneManager.draw(g2D);
+
             // UI
             ui.draw(g2D);
         }
@@ -514,6 +530,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         currentArea = nextArea;
         assetPool.setMonster();
-        assetPool.setMovableObstacles(2);
+//        assetPool.resetBigRocks(2);
+        assetPool.setObjects();
     }
 }

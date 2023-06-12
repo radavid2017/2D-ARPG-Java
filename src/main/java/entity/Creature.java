@@ -118,15 +118,34 @@ public abstract class Creature extends Entity {
 //        }
     }
 
+    public int getCenterX() {
+        return (int) (worldX + currentAnimation.nextFrame().getWidth()/2);
+    }
+
+    public int getCenterY() {
+        return (int) (worldY + currentAnimation.nextFrame().getHeight()/2);
+    }
+
     public void setupMovement(String creaturePath) {
         movement = new StateMachine();
         movement.loadCompleteAnimation(gPanel, creaturePath + "\\movement", TypeAnimation.IN_MOTION);
         currentAnimation = movement.down;
     }
 
+    public void setupMovement(int scale, String creaturePath) {
+        movement = new StateMachine();
+        movement.loadCompleteAnimation(gPanel, scale, creaturePath + "\\movement", TypeAnimation.IN_MOTION);
+        currentAnimation = movement.down;
+    }
+
     public void setupIdle(String creaturePath) {
         idle = new StateMachine();
         idle.loadCompleteAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE);
+    }
+
+    public void setupIdle(int scale, String creaturePath) {
+        idle = new StateMachine();
+        idle.loadCompleteAnimation(gPanel, scale, creaturePath + "\\idle", TypeAnimation.IDLE);
     }
 
     public void setupStaticIdle(String creaturePath) {
@@ -144,20 +163,40 @@ public abstract class Creature extends Entity {
         }
     }
 
+    public void setupStaticIdle(int scale, String creaturePath) {
+        idle = new StateMachine();
+        idle.loadCompleteAnimation(gPanel, scale, creaturePath + "\\idle", TypeAnimation.IDLE);
+        currentAnimation = idle.down;
+//        idle.loadSingleAnimation(gPanel, creaturePath + "\\idle", TypeAnimation.IDLE, Direction.DOWN);
+
+        /** setari statice */
+        this.collisionOn = false;
+        inMotion = false;
+        this.direction = Direction.DOWN;
+        for (int i = 0; i < idle.states.size(); i++) {
+            idle.states.get(i).timeToChangeFrame = 28;
+        }
+    }
+
     public void setupAttack(String creaturePath) {
         attackState = new StateMachine();
         attackState.loadCompleteAnimation(gPanel, creaturePath + "\\attack", TypeAnimation.ATTACK);
     }
 
-    public int getXDistance(Entity target) {
-        return (int) Math.abs(worldX - target.worldX);
+    public void setupAttack(int scale, String creaturePath) {
+        attackState = new StateMachine();
+        attackState.loadCompleteAnimation(gPanel, scale, creaturePath + "\\attack", TypeAnimation.ATTACK);
     }
 
-    public int getYDistance(Entity target) {
-        return (int) Math.abs(worldY - target.worldY);
+    public int getXDistance(Creature target) {
+        return Math.abs(getCenterX() - target.getCenterX());
     }
 
-    public int getTileDistance(Entity target) {
+    public int getYDistance(Creature target) {
+        return Math.abs(getCenterY() - target.getCenterY());
+    }
+
+    public int getTileDistance(Creature target) {
         return (getXDistance(target) + getYDistance(target)) / getGamePanel().tileSize;
     }
 
@@ -226,22 +265,22 @@ public abstract class Creature extends Entity {
 
         switch (direction) {
             case UP -> {
-                if (getGamePanel().player.worldY < worldY && yDis < straight && xDis < horizontal) {
+                if (getGamePanel().player.getCenterY() < getCenterY() && yDis < straight && xDis < horizontal) {
                     targetInRange = true;
                 }
             }
             case DOWN -> {
-                if (getGamePanel().player.worldY > worldY && yDis < straight && xDis < horizontal) {
+                if (getGamePanel().player.getCenterY() > getCenterY() && yDis < straight && xDis < horizontal) {
                     targetInRange = true;
                 }
             }
             case LEFT -> {
-                if (getGamePanel().player.worldX < worldX && xDis < straight && yDis < horizontal) {
+                if (getGamePanel().player.getCenterX() < getCenterX() && xDis < straight && yDis < horizontal) {
                     targetInRange = true;
                 }
             }
             case RIGHT -> {
-                if (getGamePanel().player.worldX > worldX && xDis < straight && yDis < horizontal) {
+                if (getGamePanel().player.getCenterX() > getCenterX() && xDis < straight && yDis < horizontal) {
                     targetInRange = true;
                 }
             }

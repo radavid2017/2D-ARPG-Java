@@ -110,7 +110,7 @@ public class Lighting {
             case Day -> {
                 dayCounter++;
 
-                if (dayCounter > 600000) {
+                if (dayCounter > 600) {
                     dayState = DayState.Dusk;
                     dayCounter = 0;
                 }
@@ -128,7 +128,7 @@ public class Lighting {
             case Night -> {
                 dayCounter++;
 
-                if (dayCounter > 600000) {
+                if (dayCounter > 600) {
                     dayState = DayState.Dawn;
                     dayCounter = 0;
                 }

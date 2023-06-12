@@ -159,18 +159,20 @@ public class SaveLoad {
             for (int mapNum = 0; mapNum < gp.maxMap; mapNum++) {
                 if (gp.objects.get(mapNum) != null) {
                     for (int i = 0; i < ds.mapObjectNames[mapNum].length; i++) {
-                        if (ds.mapObjectNames[mapNum][i].equals("NA")) {
-                            gp.objects.get(mapNum).set(i, null);
-                        } else {
-                            gp.objects.get(mapNum).set(i, getObject(ds.mapObjectNames[mapNum][i]));
-                            if (gp.objects.get(mapNum).get(i) != null) {
-                                gp.objects.get(mapNum).get(i).worldX = ds.mapObjectWorldX[mapNum][i];
-                                gp.objects.get(mapNum).get(i).worldY = ds.mapObjectWorldY[mapNum][i];
-                                if (gp.objects.get(mapNum).get(i) instanceof OBJ_Chest chest) {
-                                    chest.setLoot((Item) getObject(ds.mapObjectLootNames[mapNum][i]));
-                                    chest.setOpened(ds.mapObjectOpened[mapNum][i]);
-                                    if (chest.getIsOpened()) {
-                                        chest.image = chest.nextState();
+                        if (ds.mapObjectNames[mapNum][i] != null) {
+                            if (ds.mapObjectNames[mapNum][i].equals("NA")) {
+                                gp.objects.get(mapNum).set(i, null);
+                            } else {
+                                gp.objects.get(mapNum).set(i, getObject(ds.mapObjectNames[mapNum][i]));
+                                if (gp.objects.get(mapNum).get(i) != null) {
+                                    gp.objects.get(mapNum).get(i).worldX = ds.mapObjectWorldX[mapNum][i];
+                                    gp.objects.get(mapNum).get(i).worldY = ds.mapObjectWorldY[mapNum][i];
+                                    if (gp.objects.get(mapNum).get(i) instanceof OBJ_Chest chest) {
+                                        chest.setLoot((Item) getObject(ds.mapObjectLootNames[mapNum][i]));
+                                        chest.setOpened(ds.mapObjectOpened[mapNum][i]);
+                                        if (chest.getIsOpened()) {
+                                            chest.image = chest.nextState();
+                                        }
                                     }
                                 }
                             }

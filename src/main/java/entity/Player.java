@@ -11,13 +11,16 @@ import interactive_tile.IT_DestructibleWall;
 import item.Consumable;
 import item.Equipable;
 import item.Item;
+import item.consumable.LegendaryTreasure.OBJ_BlueHeart;
 import item.consumable.Tent;
 import item.consumable.coin.Coin;
 import item.consumable.key.KeyGold;
 import item.consumable.potion.PotionRed;
+import item.equipable.light.Lantern;
 import item.equipable.light.Light;
 import item.equipable.shield.Shield;
 import item.equipable.weapon.Weapon;
+import item.equipable.weapon.pickaxe.Tarnacop;
 import item.equipable.weapon.rangeattack.Projectile;
 import item.equipable.weapon.rangeattack.spell.Fireball;
 import item.equipable.shield.NormalShield;
@@ -123,6 +126,7 @@ public class Player extends Creature {
         dexterity = 1;
         exp = 0;
         nextLevelExp = 5;
+
         coin = 500;
         currentWeapon = new NormalSword(gPanel);
         currentShield = new NormalShield(gPanel);
@@ -155,10 +159,22 @@ public class Player extends Creature {
     }
 
     public void setDefaultPositions() {
-        worldX = gPanel.tileSize * 23;
-        worldY = gPanel.tileSize * 21;
 
-        // map 2
+        if (gPanel.currentMap == 3) {
+            worldX = gPanel.tileSize * 26;
+            worldY = gPanel.tileSize * 40;
+        }
+
+        else if (gPanel.currentMap != 2) {
+            worldX = gPanel.tileSize * 23;
+            worldY = gPanel.tileSize * 21;
+        }
+        else {
+            worldX = gPanel.tileSize * 9;
+            worldY = gPanel.tileSize * 40;
+        }
+
+        // negustor
 //        worldX = gPanel.tileSize * 12;
 //        worldY = gPanel.tileSize * 10;
 
@@ -299,6 +315,7 @@ public class Player extends Creature {
         }
 
         // Animatii jucator
+
         this.managePlayerMovement();
 
         /** actualizare imagine/avansare animatie cadru urmator dupa un interval de cadre rulate din cele 60 per secunda */
@@ -310,12 +327,12 @@ public class Player extends Creature {
         }
 
         manageInvincible();
-        if (life <= 0) {
-            GamePanel.gameState = GameState.GameOverState;
-            gPanel.ui.setCommandNum(0);
-            gPanel.stopMusic();
-            gPanel.playSE("gameover.wav");
-        }
+//        if (life <= 0) {
+//            GamePanel.gameState = GameState.GameOverState;
+//            gPanel.ui.setCommandNum(0);
+//            gPanel.stopMusic();
+//            gPanel.playSE("gameover.wav");
+//        }
 
         if (offBalance) {
             offBalanceCounter++;
@@ -379,8 +396,7 @@ public class Player extends Creature {
 
         if (GamePanel.gameState == GameState.SleepState) {
             sprite = Tent.Image;
-        }
-        else {
+        } else {
             inMotion = keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed;
             /** Animatiile de atac */
             if (isAttacking()) {
@@ -436,16 +452,17 @@ public class Player extends Creature {
             g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
         }
 
-        if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.UP)
-            g2D.drawImage(sprite, x, y-gPanel.tileSize, null);
-        else if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.LEFT)
-            g2D.drawImage(sprite, x-gPanel.tileSize, y, null);
-        else
-            g2D.drawImage(sprite, x, y, null);
+        if (drawing) {
+            if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.UP)
+                g2D.drawImage(sprite, x, y - gPanel.tileSize, null);
+            else if (currentAnimation.typeAnimation == TypeAnimation.ATTACK && direction == Direction.LEFT)
+                g2D.drawImage(sprite, x - gPanel.tileSize, y, null);
+            else
+                g2D.drawImage(sprite, x, y, null);
 
         g2D.setColor(Color.red);
         g2D.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
-
+        }
         // resetarea opacitatii
         g2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
@@ -466,6 +483,8 @@ public class Player extends Creature {
             obtainItem(new KeyGold(gPanel));
             obtainItem(new PotionRed(gPanel));
         }
+        obtainItem(new Lantern(gPanel));
+        obtainItem(new Tarnacop(gPanel));
     }
 
     public boolean hasSpace() {
@@ -686,9 +705,9 @@ public class Player extends Creature {
         if (objIndex > -1) {
             // PICKUP COIN
             if (gPanel.objects.get(gPanel.currentMap).get(objIndex) instanceof Item item) {
-                if (item instanceof Coin coin) {//[gPanel.currentMap][objIndex] instanceof Coin) {  // FIXED
+                if (item instanceof Coin coin || item instanceof OBJ_BlueHeart) {//[gPanel.currentMap][objIndex] instanceof Coin) {  // FIXED
                     // FIXED
-                    coin.use(this);
+                    ((Consumable) item).use(this);
                     gPanel.objects.get(gPanel.currentMap).set(objIndex, null);  // FIXED
                 }
                 else {
@@ -802,7 +821,7 @@ public class Player extends Creature {
 
 //                int damageValue = gPanel.monsterList.get(monsterIndex).touchingDamage(this);
                 Monster monster = (Monster) gPanel.monsterList.get(gPanel.currentMap).get(monsterIndex); // FIXED
-                if (monster instanceof MON_GreenSlime) {
+                if (monster.attackStyle == AttackStyle.Touching) {
                     monster.doDamage();
                 }
 

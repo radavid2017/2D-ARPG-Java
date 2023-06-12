@@ -94,10 +94,10 @@ public class Camera {
         }
     }
 
-    boolean isOnCamera() {
-        return worldX + gPanel.tileSize > gPanel.player.worldX - gPanel.player.screenX &&
+    public boolean isOnCamera() {
+        return worldX + gPanel.tileSize*5 > gPanel.player.worldX - gPanel.player.screenX &&
                 worldX - gPanel.tileSize < gPanel.player.worldX + gPanel.player.screenX &&
-                worldY + gPanel.tileSize > gPanel.player.worldY - gPanel.player.screenY &&
+                worldY + gPanel.tileSize*5 > gPanel.player.worldY - gPanel.player.screenY &&
                 worldY - gPanel.tileSize < gPanel.player.worldY + gPanel.player.screenY;
     }
 
